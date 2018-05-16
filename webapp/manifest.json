@@ -1,7 +1,17 @@
 {
 	"sap.app": {
-		"id": "sap.ui.demo.todo",
-		"type": "application"
+		"id": "sap.ui.demo.todo.markII",
+		"type": "application",
+		"dataSources": {
+			"mainService": {
+				"uri": "/odata/TODO_SRV/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"localUri": "model/metadata.xml"
+				}
+			}
+		}
 	},
 	"sap.ui5": {
 		"dependencies": {
@@ -24,8 +34,11 @@
 				}
 			},
 			"": {
-				"type": "sap.ui.model.json.JSONModel",
-				"uri": "model/todoitems.json"
+				"dataSource": "mainService",
+				"settings": {
+					"defaultBindingMode": "TwoWay",
+					"defaultCountMode": "InlineRepeat"
+				}
 			}
 		},
 		"resources": {
