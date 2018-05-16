@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>OpenUI5 Todo App</title>
+	<title>OpenUI5 Todo App (Mark II)</title>
 
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta charset="UTF-8">
@@ -19,13 +19,16 @@
 		sap.ui.getCore().attachInit(function() {
 			sap.ui.require([
 				"sap/ui/core/Component",
-				"sap/ui/core/ComponentContainer"
-			], function(Component, ComponentContainer) {
+				"sap/ui/core/ComponentContainer",
+				"sap/ui/demo/todo/test/MockServer"
+
+			], function(Component, ComponentContainer, MockServer) {
 				sap.ui.component({
 					id: "todo",
 					name: "sap.ui.demo.todo",
 					async: true
 				}).then(function(oComponent) {
+					MockServer.init();
 					new ComponentContainer({
 						component: oComponent
 					}).placeAt("root");
