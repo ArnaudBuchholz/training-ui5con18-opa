@@ -13,11 +13,11 @@
 				<content>
 					<Input class="todoInput" id="addTodoItemInput" value="{/newTodo}" placeholder="{i18n>INPUT_PLACEHOLDER}" change="addTodo" />
 					<List id="todoList"
-						items="{ path: '/todos', events: { change: '.updateItemsLeftCount' } }"
+						items="{ path: '/TodoItemSet', events: { change: '.updateItemsLeftCount' } }"
 						mode="MultiSelect"
 						growing="true"
 						growingScrollToLoad="true"
-						showNoData="false"
+						showNoData="true"
 						showSeparators="None"
 						rememberSelections="false">
 						<infoToolbar>
@@ -25,8 +25,8 @@
 								<Label id="itemsLeftLabel" text="{= ${/itemsLeftCount} === 1 ? ${/itemsLeftCount} + ' ' + ${i18n>ITEM_LEFT} : ${/itemsLeftCount} + ' ' + ${i18n>ITEMS_LEFT} }"/>
 							</Toolbar>
 						</infoToolbar>
-						<CustomListItem class="todoListItem" selected="{completed}">
-							<Input enabled="{=!${completed}}" value="{title}"/>
+						<CustomListItem class="todoListItem" selected="{= !!${CompletionDate} }">
+							<Input enabled="{= !${CompletionDate} }" value="{Title}"/>
 						</CustomListItem>
 					</List>
 				</content>
