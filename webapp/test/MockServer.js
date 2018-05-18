@@ -14,7 +14,8 @@ sap.ui.define([
 				oMainDataSource = oManifest["sap.app"].dataSources.mainService,
 				// ensure there is a trailing slash
 				sMockServerUrl = /.*\/$/.test(oMainDataSource.uri) ? oMainDataSource.uri : oMainDataSource.uri + "/",
-				sMetadataUrl = jQuery.sap.getModulePath("sap/ui/demo/todo/model/metadata", ".xml");
+				sMetadataUrl = jQuery.sap.getModulePath("sap/ui/demo/todo/model/metadata", ".xml"),
+				oMockServer;
 
 			// init the inner mockserver
 			oMockServer = new MockServer({
@@ -33,7 +34,18 @@ sap.ui.define([
 			});
 
 			if (oUriParameters.get("sap-ui-debug") === "true") {
-
+				// Trace requests
+				Object.keys(MockServer.HTTPMETHOD).forEach(function(sMethodName) {
+					var sMethod = MockServer.HTTPMETHOD[sMethodName];
+					oMockServer.attachBefore(sMethod, function(oEvent) {
+						var oXhr = oEvent.getParameters().oXhr;
+						console.log("MockServer::before", sMethod, oXhr.url, oXhr);
+					});
+					oMockServer.attachAfter(sMethod, function(oEvent) {
+						var oXhr = oEvent.getParameters().oXhr;
+						console.log("MockServer::after", sMethod, oXhr.url, oXhr);
+					});
+				});
 			}
 
 			oMockServer.start();
