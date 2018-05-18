@@ -23,12 +23,12 @@
 				"sap/ui/demo/todo/test/MockServer"
 
 			], function(Component, ComponentContainer, MockServer) {
+				MockServer.init();
 				sap.ui.component({
 					id: "todo",
 					name: "sap.ui.demo.todo",
 					async: true
 				}).then(function(oComponent) {
-					MockServer.init();
 					new ComponentContainer({
 						component: oComponent
 					}).placeAt("root");
