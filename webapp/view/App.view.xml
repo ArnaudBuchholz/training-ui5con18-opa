@@ -32,7 +32,7 @@
 										<FlexItemData growFactor="14" />
 									</layoutData>
 								</Input>
-								<DatePicker enabled="{= !${CompletionDate} }" value="{DueDate}">
+								<DatePicker enabled="{= !${CompletionDate} }" dateValue="{DueDate}">
 									<layoutData>
 										<FlexItemData growFactor="1" />
 									</layoutData>
