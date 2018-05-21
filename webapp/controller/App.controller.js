@@ -1,64 +1,61 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
+	"sap/ui/demo/todo/const",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator"
-], function(Controller, JSONModel, Filter, FilterOperator) {
-	'use strict';
+	"sap/ui/model/FilterOperator",
+	"sap/m/MessageToast"
 
-	return Controller.extend('sap.ui.demo.todo.controller.App', {
+], function(Controller, CONST, JSONModel, Filter, FilterOperator, MessageToast) {
+	"use strict";
+
+	return Controller.extend("sap.ui.demo.todo.controller.App", {
 
 		onInit: function() {
 			this.aSearchFilters = [];
 			this.aTabFilters = [];
+			this.getView().setModel(new JSONModel({
+				listTitle: "Number of items left",
+				filterAll: "All (123)",
+				filterActive: "Active (52)",
+				filterLate: "Late (2)",
+				filterCompleted: "Late (81)"
+			}), "labels");
+		},
+
+		_refresh: function () {
+			this._applyListFilters();
+			// call function module to update statistics
 		},
 
 		/**
 		 * Adds a new todo item to the bottom of the list.
 		 */
 		addTodo: function() {
-			var oModel = this.getView().getModel();
-			var aTodos = jQuery.extend(true, [], oModel.getProperty('/todos'));
+			var oView = this.getView(),
+				sLabel = oView.byId("addTodoItemInput").getValue(),
+				oModel = oView.getModel(),
+				oBody = {};
 
-			aTodos.push({
-				title: oModel.getProperty('/newTodo'),
-				completed: false
+			if (!sLabel) {
+				return;
+			}
+
+			oBody[CONST.OData.entityProperties.todoItem.title] = sLabel;
+			oModel.create("/" + CONST.OData.entityNames.todoItemSet, oBody, {
+				success: function (oResultBody) {
+					MessageToast.show("SUCCESS");
+				}
 			});
-
-			oModel.setProperty('/todos', aTodos);
-			oModel.setProperty('/newTodo', '');
+			this._refresh(); // Done in the same roundtrip
 		},
 
 		/**
 		 * Removes all completed items from the todo list.
 		 */
 		clearCompleted: function() {
-			var oModel = this.getView().getModel();
-			var aTodos = jQuery.extend(true, [], oModel.getProperty('/todos'));
-
-			var i = aTodos.length;
-			while (i--) {
-				var oTodo = aTodos[i];
-				if (oTodo.completed) {
-					aTodos.splice(i, 1);
-				}
-			}
-
-			oModel.setProperty('/todos', aTodos);
-		},
-
-		/**
-		 * Updates the number of items not yet completed
-		 */
-		updateItemsLeftCount: function() {
-			var oModel = this.getView().getModel();
-			var aTodos = oModel.getProperty('/todos') || [];
-
-			var iItemsLeft = aTodos.filter(function(oTodo) {
-				return oTodo.completed !== true;
-			}).length;
-
-			oModel.setProperty('/itemsLeftCount', iItemsLeft);
+			// call function to remove completed
+			this._refresh();
 		},
 
 		/**
@@ -74,11 +71,11 @@ sap.ui.define([
 			// add filter for search
 			var sQuery = oEvent.getSource().getValue();
 			if (sQuery && sQuery.length > 0) {
-				oModel.setProperty('/itemsRemovable', false);
+				oModel.setProperty("/itemsRemovable", false);
 				var filter = new Filter("title", FilterOperator.Contains, sQuery);
 				this.aSearchFilters.push(filter);
 			} else {
-				oModel.setProperty('/itemsRemovable', true);
+				oModel.setProperty("/itemsRemovable", true);
 			}
 
 			this._applyListFilters();
@@ -102,7 +99,7 @@ sap.ui.define([
 					break;
 				case "all":
 				default:
-					// Don't use any filter
+					// Don"t use any filter
 			}
 
 			this._applyListFilters();
