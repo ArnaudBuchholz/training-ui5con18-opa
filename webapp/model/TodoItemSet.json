@@ -1,8 +1,9 @@
 [{
 	"Guid": "0MOCKSVR-TODO-0000-0000-00000001",
 	"Title": "Start this app",
-	"CompetionDate": "/Date(1526389176552)/"
+	"CompletionDate": "/Date(1526389176552)/"
 }, {
 	"Guid": "0MOCKSVR-TODO-0000-0000-00000002",
-	"Title": "Learn OpenUI5"
+	"Title": "Learn OpenUI5",
+	"DueDate": "/Date(1546318800000)/"
 }]
