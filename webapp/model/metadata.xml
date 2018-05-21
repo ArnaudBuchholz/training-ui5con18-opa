@@ -12,7 +12,7 @@
 					<PropertyRef Name="Id"/>
 				</Key>
 				<Property Name="Id"			 	Type="Edm.String"					sap:label="Application ID"								Nullable="false" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" sap:visible="false"/>
-				<Property Name="IsReadOnly" 	Type="Edm.Boolean"					sap:label="No modifications allowed"					Nullable="false" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" sap:visible="false"/>
+				<Property Name="EnableClear" 	Type="Edm.Boolean"					sap:label="Enable clear completed"						Nullable="false" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" sap:visible="false"/>
 			</EntityType>
 			<EntityType Name="TodoItem" sap:content-version="1">
 				<Key>
