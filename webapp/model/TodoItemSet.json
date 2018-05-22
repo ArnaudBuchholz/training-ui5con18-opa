@@ -1,9 +1,13 @@
 [{
-	"Guid": "0MOCKSVR-TODO-0000-0000-00000001",
+	"Guid": "0MOCKSVR-TODO-MKII-MOCK-00000001",
 	"Title": "Start this app",
 	"CompletionDate": "/Date(1526389176552)/"
 }, {
-	"Guid": "0MOCKSVR-TODO-0000-0000-00000002",
 	"Title": "Learn OpenUI5",
+	"Guid": "0MOCKSVR-TODO-MKII-MOCK-00000002",
 	"DueDate": "/Date(1546318800000)/"
+}, {
+	"Guid": "0MOCKSVR-TODO-MKII-MOCK-00000003",
+	"Title": "Finish UICon'18 presentation",
+	"DueDate": "/Date(1526918400000)/"
 }]
