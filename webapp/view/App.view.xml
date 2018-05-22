@@ -20,25 +20,11 @@
 						showNoData="true"
 						showSeparators="None"
 						rememberSelections="false">
-						<infoToolbar>
-							<Toolbar>
-								<Label id="listTitle" text="{labels>/listTitle}"/>
-							</Toolbar>
-						</infoToolbar>
-						<CustomListItem class="todoListItem" selected="{= !!${CompletionDate} }">
-							<HBox>
-								<Input enabled="{= !${CompletionDate} }" value="{Title}">
-									<layoutData>
-										<FlexItemData growFactor="14" />
-									</layoutData>
-								</Input>
-								<DatePicker enabled="{= !${CompletionDate} }" dateValue="{DueDate}">
-									<layoutData>
-										<FlexItemData growFactor="1" />
-									</layoutData>
-								</DatePicker>
-							</HBox>
-						</CustomListItem>
+						<ObjectListItem class="todoListItem" selected="{= !!${CompletionDate} }"
+							icon="{path: '', formatter: '.getIcon'}"
+							title="{Title}"
+							type="Navigation"
+						/>
 					</List>
 				</content>
 				<footer>
