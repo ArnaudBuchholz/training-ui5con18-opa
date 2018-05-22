@@ -1,10 +1,18 @@
 sap.ui.define([
-	"sap/ui/core/util/MockServer"
+	"sap/ui/core/util/MockServer",
+	"sap/ui/demo/todo/const"
 
-], function (MockServer) {
-    "use strict";
+], function (MockServer, CONST) {
+	"use strict";
 
-    return {
+	var _lastTodoItemId = 0;
+
+	function _getNewItemGuid() {
+		var sNewId = (++_lastTodoItemId).toString();
+		return 	"0MOCKSVR-TODO-MKII-DYNK-00000000".substr(0, 32 - sNewId.length) + sNewId;
+	}
+
+	return {
 
 		init: function() {
 			var oUriParameters = jQuery.sap.getUriParameters(),
@@ -47,6 +55,23 @@ sap.ui.define([
 					});
 				});
 			}
+
+			// Generate random items
+			var aTodoItemSet = oMockServer.getEntitySetData(CONST.OData.entityNames.todoItemSet);
+			for (var idx = 0; idx < 100; ++idx) {
+				var oNewTodoItemSet = {},
+					sGuid = _getNewItemGuid();
+				oNewTodoItemSet[CONST.OData.entityProperties.todoItem.guid] = sGuid;
+				oNewTodoItemSet[CONST.OData.entityProperties.todoItem.title] = "Random stuff " + idx;
+				oNewTodoItemSet[CONST.OData.entityProperties.todoItem.completionDate] = null;
+				oNewTodoItemSet.__metadata = {
+					id: "/odata/TODO_SRV/TodoItemSet(guid'" + sGuid + "')",
+					uri: "/odata/TODO_SRV/TodoItemSet(guid'" + sGuid + "')",
+					type: "TODO_SRV.TodoItem"
+				}
+				aTodoItemSet.push(oNewTodoItemSet);
+			}
+			oMockServer.setEntitySetData(CONST.OData.entityNames.todoItemSet, aTodoItemSet);
 
 			oMockServer.start();
 		},
