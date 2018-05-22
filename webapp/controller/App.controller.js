@@ -19,7 +19,7 @@ sap.ui.define([
 				filterAll: "All (123)",
 				filterActive: "Active (52)",
 				filterLate: "Late (2)",
-				filterCompleted: "Late (81)"
+				filterCompleted: "Completed (81)"
 			}), "labels");
 		},
 
@@ -35,13 +35,16 @@ sap.ui.define([
 			var oView = this.getView(),
 				sLabel = oView.byId("addTodoItemInput").getValue(),
 				oModel = oView.getModel(),
-				oBody = {};
+				oBody = {},
+				dDueDate = new Date();
+			dDueDate.setHours(23,59,59,999);
 
 			if (!sLabel) {
 				return;
 			}
 
 			oBody[CONST.OData.entityProperties.todoItem.title] = sLabel;
+			oBody[CONST.OData.entityProperties.todoItem.dueDate] = dDueDate;
 			oModel.create("/" + CONST.OData.entityNames.todoItemSet, oBody, {
 				success: function (oResultBody) {
 					MessageToast.show("SUCCESS");
@@ -92,10 +95,10 @@ sap.ui.define([
 			// eslint-disable-line default-case
 			switch (sFilterKey) {
 				case "active":
-					this.aTabFilters.push(new Filter("completed", FilterOperator.EQ, false));
+					this.aTabFilters.push(new Filter(CONST.OData.entityProperties.todoItem.completionDate, FilterOperator.EQ, null));
 					break;
 				case "completed":
-					this.aTabFilters.push(new Filter("completed", FilterOperator.EQ, true));
+					this.aTabFilters.push(new Filter(CONST.OData.entityProperties.todoItem.completionDate, FilterOperator.NE, null));
 					break;
 				case "all":
 				default:
@@ -110,6 +113,24 @@ sap.ui.define([
 			var oBinding = oList.getBinding("items");
 
 			oBinding.filter(this.aSearchFilters.concat(this.aTabFilters), "todos");
+		},
+
+		getIcon: function (oTodoItem) {
+			if (new Date() > oTodoItem[CONST.OData.entityProperties.todoItem.dueDate]) {
+				return "sap-icon://lateness";
+			}
+/*
+			var sIconName,
+				dNow = new Date();
+			if (oTodoItem[CONST.OData.entityProperties.todoItem.completionDate]) {
+				sIconName = "complete";
+			} else if (dNow > oTodoItem[CONST.OData.entityProperties.todoItem.dueDate]) {
+				sIconName = "lateness";
+			} else {
+				sIconName = "border";
+			}
+			return "sap-icon://" + sIconName;
+*/
 		}
 
 	});
