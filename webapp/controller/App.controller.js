@@ -66,19 +66,14 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent Input changed event
 		 */
 		onSearch: function(oEvent) {
-			var oModel = this.getView().getModel();
-
 			// First reset current filters
 			this.aSearchFilters = [];
 
 			// add filter for search
 			var sQuery = oEvent.getSource().getValue();
 			if (sQuery && sQuery.length > 0) {
-				oModel.setProperty("/itemsRemovable", false);
-				var filter = new Filter("title", FilterOperator.Contains, sQuery);
+				var filter = new Filter(CONST.OData.entityProperties.todoItem.title, FilterOperator.Contains, sQuery);
 				this.aSearchFilters.push(filter);
-			} else {
-				oModel.setProperty("/itemsRemovable", true);
 			}
 
 			this._applyListFilters();
@@ -95,10 +90,13 @@ sap.ui.define([
 			// eslint-disable-line default-case
 			switch (sFilterKey) {
 				case "active":
-					this.aTabFilters.push(new Filter(CONST.OData.entityProperties.todoItem.completionDate, FilterOperator.EQ, null));
+					this.aTabFilters.push(new Filter(CONST.OData.entityProperties.todoItem.completed, FilterOperator.EQ, false));
 					break;
 				case "completed":
-					this.aTabFilters.push(new Filter(CONST.OData.entityProperties.todoItem.completionDate, FilterOperator.NE, null));
+					this.aTabFilters.push(new Filter(CONST.OData.entityProperties.todoItem.completed, FilterOperator.EQ, true));
+					break;
+				case "late":
+					this.aTabFilters.push(new Filter(CONST.OData.entityProperties.todoItem.dueDate, FilterOperator.LE, new Date()));
 					break;
 				case "all":
 				default:
@@ -131,6 +129,14 @@ sap.ui.define([
 			}
 			return "sap-icon://" + sIconName;
 */
+		},
+
+		getIntro: function (oTodoItem) {
+			if (oTodoItem[CONST.OData.entityProperties.todoItem.completed]) {
+				return "Completed on " + oTodoItem[CONST.OData.entityProperties.todoItem.completionDate];
+			} else if (new Date() > oTodoItem[CONST.OData.entityProperties.todoItem.dueDate]) {
+				return "Late by xxx days";
+			}
 		}
 
 	});
