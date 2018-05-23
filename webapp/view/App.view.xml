@@ -20,8 +20,9 @@
 						showNoData="true"
 						showSeparators="None"
 						rememberSelections="false">
-						<ObjectListItem class="todoListItem" selected="{= !!${CompletionDate} }"
+						<ObjectListItem class="todoListItem" selected="{Completed}"
 							icon="{path: '', formatter: '.getIcon'}"
+							intro="{path: '', formatter: '.getIntro'}"
 							title="{Title}"
 							type="Navigation"
 						/>
