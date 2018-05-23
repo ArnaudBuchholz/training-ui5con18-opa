@@ -19,6 +19,15 @@ sap.ui.define([], function () {
 					completionDate: "CompletionDate"
 				}
 
+			},
+
+			functionImports: {
+
+				clearCompleted: {
+					name: "ClearCompleted",
+					method: "GET"
+				}
+
 			}
 
 		}
