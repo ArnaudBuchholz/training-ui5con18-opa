@@ -57,7 +57,9 @@ sap.ui.define([
 			}
 
 			// Generate random items
-			var aTodoItemSet = oMockServer.getEntitySetData(CONST.OData.entityNames.todoItemSet);
+			var aTodoItemSet = oMockServer.getEntitySetData(CONST.OData.entityNames.todoItemSet),
+				sDateMax = "/Date(" + new Date(2099,11,31).getTime() + ")/",
+				sDateNow = "/Date(" + (new Date().getTime() - 60000) + ")/";
 			for (var idx = 0; idx < 100; ++idx) {
 				var oNewTodoItemSet = {},
 					sGuid = _getNewItemGuid();
@@ -68,6 +70,13 @@ sap.ui.define([
 					uri: "/odata/TODO_SRV/TodoItemSet(guid'" + sGuid + "')",
 					type: "TODO_SRV.TodoItem"
 				}
+				if (idx % 2) {
+					oNewTodoItemSet[CONST.OData.entityProperties.todoItem.completionDate] = sDateNow;
+					oNewTodoItemSet[CONST.OData.entityProperties.todoItem.completed] = true;
+				}
+				if (idx % 5 === 0) {
+					oNewTodoItemSet[CONST.OData.entityProperties.todoItem.dueDate] = sDateNow;
+				}
 				aTodoItemSet.push(oNewTodoItemSet);
 			}
 			// Fill missing properties
@@ -76,14 +85,30 @@ sap.ui.define([
 					oTodoItemSet[sPropertyName] = vDefaultValue;
 				}
 			}
-			var sMaxDate = "/Date(" + new Date(2099,11,31).getTime() + ")/";
 			aTodoItemSet.forEach(function (oTodoItemSet) {
 				_setIfNotSet(oTodoItemSet, CONST.OData.entityProperties.todoItem.completionDate, null);
 				_setIfNotSet(oTodoItemSet, CONST.OData.entityProperties.todoItem.completed, false);
-				_setIfNotSet(oTodoItemSet, CONST.OData.entityProperties.todoItem.dueDate, sMaxDate);
+				_setIfNotSet(oTodoItemSet, CONST.OData.entityProperties.todoItem.dueDate, sDateMax);
 			});
 
 			oMockServer.setEntitySetData(CONST.OData.entityNames.todoItemSet, aTodoItemSet);
+
+			var aRequests = oMockServer.getRequests();
+
+			aRequests.push({
+				method: CONST.OData.functionImports.clearCompleted.method,
+				path: CONST.OData.functionImports.clearCompleted.name,
+				response: function (oXhr) {
+					var aTodoItemSet = oMockServer.getEntitySetData(CONST.OData.entityNames.todoItemSet);
+					oMockServer.setEntitySetData(CONST.OData.entityNames.todoItemSet, aTodoItemSet.filter(function (oTodoItem) {
+						return !oTodoItem[CONST.OData.entityProperties.todoItem.completed];
+					}));
+					oXhr.respond(200);
+					return true;
+				}
+			});
+
+			oMockServer.setRequests(aRequests);
 
 			oMockServer.start();
 		},
