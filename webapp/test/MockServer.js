@@ -63,7 +63,6 @@ sap.ui.define([
 					sGuid = _getNewItemGuid();
 				oNewTodoItemSet[CONST.OData.entityProperties.todoItem.guid] = sGuid;
 				oNewTodoItemSet[CONST.OData.entityProperties.todoItem.title] = "Random stuff " + idx;
-				oNewTodoItemSet[CONST.OData.entityProperties.todoItem.completionDate] = null;
 				oNewTodoItemSet.__metadata = {
 					id: "/odata/TODO_SRV/TodoItemSet(guid'" + sGuid + "')",
 					uri: "/odata/TODO_SRV/TodoItemSet(guid'" + sGuid + "')",
@@ -71,6 +70,19 @@ sap.ui.define([
 				}
 				aTodoItemSet.push(oNewTodoItemSet);
 			}
+			// Fill missing properties
+			function _setIfNotSet (oTodoItemSet, sPropertyName, vDefaultValue) {
+				if (!oTodoItemSet.hasOwnProperty(sPropertyName)) {
+					oTodoItemSet[sPropertyName] = vDefaultValue;
+				}
+			}
+			var sMaxDate = "/Date(" + new Date(2099,11,31).getTime() + ")/";
+			aTodoItemSet.forEach(function (oTodoItemSet) {
+				_setIfNotSet(oTodoItemSet, CONST.OData.entityProperties.todoItem.completionDate, null);
+				_setIfNotSet(oTodoItemSet, CONST.OData.entityProperties.todoItem.completed, false);
+				_setIfNotSet(oTodoItemSet, CONST.OData.entityProperties.todoItem.dueDate, sMaxDate);
+			});
+
 			oMockServer.setEntitySetData(CONST.OData.entityNames.todoItemSet, aTodoItemSet);
 
 			oMockServer.start();
