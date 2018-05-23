@@ -15,6 +15,7 @@ sap.ui.define([], function () {
 					guid: "Guid",
 					title: "Title",
 					dueDate: "DueDate",
+					completed: "Completed",
 					completionDate: "CompletionDate"
 				}
 
