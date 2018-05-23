@@ -27,6 +27,7 @@
 			<EntityContainer Name="TODO_SETUPAPP_SRV_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
 				<EntitySet Name="AppConfigurationSet"			EntityType="TODO_SRV.AppConfiguration"		 								sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="true" sap:content-version="1" />
 				<EntitySet Name="TodoItemSet"					EntityType="TODO_SRV.TodoItem"				 								sap:creatable="true"  sap:updatable="true"  sap:deletable="true"  sap:pageable="true"  sap:addressable="true" sap:content-version="1" />
+				<FunctionImport Name="ClearCompleted" m:HttpMethod="GET" sap:label="Clear completed items" />
 			</EntityContainer>
 		</Schema>
 	</edmx:DataServices>
