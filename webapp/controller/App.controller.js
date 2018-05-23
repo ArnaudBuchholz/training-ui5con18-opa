@@ -55,9 +55,12 @@ sap.ui.define([
 
 		_refresh: function () {
 			this._applyListFilters();
+			this._refreshCounts();
+		},
+
+		_refreshCounts: function () {
 			var oCountsModel = this.getView().getModel("counts"),
 				oODataModel = this.getView().getModel();
-			// Update statistics
 			_aFilters.forEach(function (oFilter) {
 				oODataModel.read("/" + CONST.OData.entityNames.todoItemSet, {
 					filters: oFilter.get(),
@@ -73,9 +76,6 @@ sap.ui.define([
 			});
 		},
 
-		/**
-		 * Adds a new todo item to the bottom of the list.
-		 */
 		addTodo: function() {
 			var oView = this.getView(),
 				sLabel = oView.byId("addTodoItemInput").getValue(),
@@ -98,17 +98,14 @@ sap.ui.define([
 			this._refresh(); // Done in the same roundtrip
 		},
 
-		/**
-		 * Removes all completed items from the todo list.
-		 */
 		clearCompleted: function() {
 			this.getView().getModel().callFunction("/" + CONST.OData.functionImports.clearCompleted.name, {
 				method: CONST.OData.functionImports.clearCompleted.method,
-				success: function () {
-					MessageToast.show("SUCCESS");
+				success: function (oResult) {
+					var iCount = oResult[CONST.OData.functionImports.clearCompleted.name][CONST.OData.functionImports.clearCompleted.returnType.count];
+					MessageToast.show("Cleared " + iCount + " items");
 				}
 			});
-			// call function to remove completed
 			this._refresh();
 		},
 
@@ -137,6 +134,27 @@ sap.ui.define([
 
 		_applyListFilters: function() {
 			this.byId("todoList").getBinding("items").filter(this.aSearchFilters.concat(this.aTabFilters), "todos");
+		},
+
+		onItemPress: function (oEvent) {
+			var oListItem = oEvent.getParameter("listItem");
+			alert(oListItem.getBindingContext().getPath());
+		},
+
+		onSelectionChange: function (oEvent) {
+			var oModel = this.getView().getModel(),
+				aListItems = oEvent.getParameter("listItems");
+			aListItems.forEach(function (oListItem) {
+				oListItem.setBusy(true);
+			});
+			oModel.submitChanges({
+				success: function () {
+					aListItems.forEach(function (oListItem) {
+						oListItem.setBusy(false);
+					});
+				}
+			});
+			this._refreshCounts();
 		},
 
 		getIcon: function (oTodoItem) {
