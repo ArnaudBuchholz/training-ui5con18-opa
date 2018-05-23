@@ -25,7 +25,10 @@ sap.ui.define([], function () {
 
 				clearCompleted: {
 					name: "ClearCompleted",
-					method: "GET"
+					method: "POST",
+					returnType: {
+						count: "Count"
+					}
 				}
 
 			}
