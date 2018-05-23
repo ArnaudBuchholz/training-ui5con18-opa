@@ -4,28 +4,73 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/m/MessageToast"
+	"sap/m/MessageToast",
+	"sap/m/SegmentedButtonItem"
 
-], function(Controller, CONST, JSONModel, Filter, FilterOperator, MessageToast) {
+], function(Controller, CONST, JSONModel, Filter, FilterOperator, MessageToast, SegmentedButtonItem) {
 	"use strict";
+
+	var _aFilters = [{
+		key: "all",
+		get: function () {
+			return [];
+		}
+	}, {
+		key: "active",
+		get: function () {
+			return [new Filter(CONST.OData.entityProperties.todoItem.completed, FilterOperator.EQ, false)];
+		}
+	}, {
+		key: "late",
+		get: function () {
+			return [new Filter(CONST.OData.entityProperties.todoItem.dueDate, FilterOperator.LE, new Date())];
+		}
+	}, {
+		key: "completed",
+		get: function () {
+			return [new Filter(CONST.OData.entityProperties.todoItem.completed, FilterOperator.EQ, true)];
+		}
+	}];
 
 	return Controller.extend("sap.ui.demo.todo.controller.App", {
 
+		aSearchFilters: [],
+		aTabFilters: [],
+
 		onInit: function() {
-			this.aSearchFilters = [];
-			this.aTabFilters = [];
-			this.getView().setModel(new JSONModel({
-				listTitle: "Number of items left",
-				filterAll: "All (123)",
-				filterActive: "Active (52)",
-				filterLate: "Late (2)",
-				filterCompleted: "Completed (81)"
-			}), "labels");
+			var mCounts = {},
+				oSegmentedButton = this.getView().byId("filters");
+			_aFilters.forEach(function (oFilter) {
+				var sKey = oFilter.key;
+				mCounts[sKey] = 0;
+				oSegmentedButton.addItem(new SegmentedButtonItem({
+					id: "filterButton-" +  sKey,
+					text: "{ parts: [ 'i18n>filterButton." + sKey + "', 'counts>/" + sKey + "' ], formatter: 'jQuery.sap.formatMessage' }",
+					key: sKey
+				}));
+			});
+			this.getView().setModel(new JSONModel(mCounts), "counts");
+			this._refresh();
 		},
 
 		_refresh: function () {
 			this._applyListFilters();
-			// call function module to update statistics
+			var oCountsModel = this.getView().getModel("counts"),
+				oODataModel = this.getView().getModel();
+			// Update statistics
+			_aFilters.forEach(function (oFilter) {
+				oODataModel.read("/" + CONST.OData.entityNames.todoItemSet, {
+					filters: oFilter.get(),
+					urlParameters: {
+						$skip: 0,
+						$top: 1,
+						$inlinecount: "allpages"
+					},
+					success: function (oResult) {
+						oCountsModel.setProperty("/" + oFilter.key, oResult.__count || 0);
+					}
+				});
+			});
 		},
 
 		/**
@@ -57,78 +102,47 @@ sap.ui.define([
 		 * Removes all completed items from the todo list.
 		 */
 		clearCompleted: function() {
+			this.getView().getModel().callFunction("/" + CONST.OData.functionImports.clearCompleted.name, {
+				method: CONST.OData.functionImports.clearCompleted.method,
+				success: function () {
+					MessageToast.show("SUCCESS");
+				}
+			});
 			// call function to remove completed
 			this._refresh();
 		},
 
-		/**
-		 * Trigger search for specific items. The removal of items is disable as long as the search is used.
-		 * @param {sap.ui.base.Event} oEvent Input changed event
-		 */
 		onSearch: function(oEvent) {
-			// First reset current filters
-			this.aSearchFilters = [];
-
-			// add filter for search
 			var sQuery = oEvent.getSource().getValue();
 			if (sQuery && sQuery.length > 0) {
-				var filter = new Filter(CONST.OData.entityProperties.todoItem.title, FilterOperator.Contains, sQuery);
-				this.aSearchFilters.push(filter);
+				this.aSearchFilters = [new Filter(CONST.OData.entityProperties.todoItem.title, FilterOperator.Contains, sQuery)];
+			} else {
+				delete this.aSearchFilters;
 			}
-
 			this._applyListFilters();
 		},
 
 		onFilter: function(oEvent) {
-
-			// First reset current filters
-			this.aTabFilters = [];
-
-			// add filter for search
+			delete this.aTabFilters;
 			var sFilterKey = oEvent.getParameter("key");
-
-			// eslint-disable-line default-case
-			switch (sFilterKey) {
-				case "active":
-					this.aTabFilters.push(new Filter(CONST.OData.entityProperties.todoItem.completed, FilterOperator.EQ, false));
-					break;
-				case "completed":
-					this.aTabFilters.push(new Filter(CONST.OData.entityProperties.todoItem.completed, FilterOperator.EQ, true));
-					break;
-				case "late":
-					this.aTabFilters.push(new Filter(CONST.OData.entityProperties.todoItem.dueDate, FilterOperator.LE, new Date()));
-					break;
-				case "all":
-				default:
-					// Don"t use any filter
-			}
-
+			_aFilters.every(function (oFilter) {
+				if (sFilterKey === oFilter.key) {
+					this.aTabFilters = oFilter.get();
+					return false;
+				}
+				return true;
+			}, this);
 			this._applyListFilters();
 		},
 
 		_applyListFilters: function() {
-			var oList = this.byId("todoList");
-			var oBinding = oList.getBinding("items");
-
-			oBinding.filter(this.aSearchFilters.concat(this.aTabFilters), "todos");
+			this.byId("todoList").getBinding("items").filter(this.aSearchFilters.concat(this.aTabFilters), "todos");
 		},
 
 		getIcon: function (oTodoItem) {
 			if (new Date() > oTodoItem[CONST.OData.entityProperties.todoItem.dueDate]) {
 				return "sap-icon://lateness";
 			}
-/*
-			var sIconName,
-				dNow = new Date();
-			if (oTodoItem[CONST.OData.entityProperties.todoItem.completionDate]) {
-				sIconName = "complete";
-			} else if (dNow > oTodoItem[CONST.OData.entityProperties.todoItem.dueDate]) {
-				sIconName = "lateness";
-			} else {
-				sIconName = "border";
-			}
-			return "sap-icon://" + sIconName;
-*/
 		},
 
 		getIntro: function (oTodoItem) {
