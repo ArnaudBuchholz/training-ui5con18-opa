@@ -19,8 +19,13 @@
 						growingScrollToLoad="true"
 						showNoData="true"
 						showSeparators="None"
-						rememberSelections="false">
-						<ObjectListItem class="todoListItem" selected="{Completed}"
+						rememberSelections="false"
+						itemPress="onItemPress"
+						selectionChange="onSelectionChange">
+						<ObjectListItem
+							class="todoListItem"
+							selected="{Completed}"
+							busyIndicatorDelay="0"
 							icon="{path: '', formatter: '.getIcon'}"
 							intro="{path: '', formatter: '.getIntro'}"
 							title="{Title}"
