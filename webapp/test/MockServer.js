@@ -7,14 +7,18 @@ sap.ui.define([
 
 	var _lastTodoItemId = 0;
 
-	function _getNewItemGuid() {
+	function _getJSONDateReplacer (dValue) {
+		return "/Date(" + dValue.getTime() + ")/";
+	}
+
+	function _getNewItemGuid () {
 		var sNewId = (++_lastTodoItemId).toString();
 		return 	"0MOCKSVR-TODO-MKII-DYNK-00000000".substr(0, 32 - sNewId.length) + sNewId;
 	}
 
 	return {
 
-		init: function() {
+		init: function () {
 			var oUriParameters = jQuery.sap.getUriParameters(),
 				sJsonFilesUrl = jQuery.sap.getModulePath("sap/ui/demo/todo/model"),
 				sManifestUrl = jQuery.sap.getModulePath("sap/ui/demo/todo/manifest", ".json"),
@@ -95,16 +99,43 @@ sap.ui.define([
 
 			var aRequests = oMockServer.getRequests();
 
+			// Update of a todo list item
+			aRequests.push({
+				method: "MERGE",
+				path: CONST.OData.entityNames.todoItemSet + "\\(guid'([^']+)'\\)",
+				response: function (oXhr, sTodoItemGuid) {
+					// Inject or remove completion date/time
+					var oBody = JSON.parse(oXhr.requestBody);
+					if (oBody[CONST.OData.entityProperties.todoItem.completed]) {
+						oBody[CONST.OData.entityProperties.todoItem.completionDate] = _getJSONDateReplacer(new Date());
+					} else {
+						oBody[CONST.OData.entityProperties.todoItem.completionDate] = null;
+					}
+					oXhr.requestBody = JSON.stringify(oBody);
+					return false; // Keep default processing
+				}
+			});
+
+			// Clear Completed
 			aRequests.push({
 				method: CONST.OData.functionImports.clearCompleted.method,
 				path: CONST.OData.functionImports.clearCompleted.name,
 				response: function (oXhr) {
-					var aTodoItemSet = oMockServer.getEntitySetData(CONST.OData.entityNames.todoItemSet);
-					oMockServer.setEntitySetData(CONST.OData.entityNames.todoItemSet, aTodoItemSet.filter(function (oTodoItem) {
-						return !oTodoItem[CONST.OData.entityProperties.todoItem.completed];
+					var aInitialTodoItemSet = oMockServer.getEntitySetData(CONST.OData.entityNames.todoItemSet),
+						aClearedTodoItemSet = aInitialTodoItemSet.filter(function (oTodoItem) {
+							return !oTodoItem[CONST.OData.entityProperties.todoItem.completed];
+						}),
+						oReturnType = {},
+						oResult = {};
+					oMockServer.setEntitySetData(CONST.OData.entityNames.todoItemSet, aClearedTodoItemSet);
+					oReturnType[CONST.OData.functionImports.clearCompleted.returnType.count] = aInitialTodoItemSet.length - aClearedTodoItemSet.length;
+					oResult[CONST.OData.functionImports.clearCompleted.name] = oReturnType;
+					oXhr.respond(200, {
+						"Content-Type": "application/json;charset=utf-8"
+					}, JSON.stringify({
+						d: oResult
 					}));
-					oXhr.respond(200);
-					return true;
+					return true; // Skip default processing
 				}
 			});
 
@@ -113,10 +144,6 @@ sap.ui.define([
 			oMockServer.start();
 		},
 
-		/**
-		 * @public returns the mockserver of the app, should be used in integration tests
-		 * @returns {sap.ui.core.util.MockServer} the mockserver instance
-		 */
 		getMockServer: function() {
 			return oMockServer;
 		}
