@@ -21,7 +21,8 @@
 				<Property Name="Guid"			Type="Edm.Guid"						sap:label="GUID"										Nullable="false" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" sap:visible="false"/>
 				<Property Name="Title"			Type="Edm.String"   MaxLength="200"	sap:label="Title"										Nullable="false" sap:unicode="false" sap:creatable="true"  sap:updatable="true"/>
 				<Property Name="DueDate"		Type="Edm.DateTime" Precision="7"	sap:label="Due date"		sap:display-format="Date"	Nullable="true"  sap:unicode="false" sap:creatable="true"  sap:updatable="true"/>
-				<Property Name="CompletionDate"	Type="Edm.DateTime" Precision="7"	sap:label="Completion date"	sap:display-format="Date"	Nullable="true"  sap:unicode="false" sap:creatable="true"  sap:updatable="true"/>
+				<Property Name="Completed"		Type="Edm.Boolean" 					sap:label="Completed"		sap:display-format="Date"	Nullable="true"  sap:unicode="false" sap:creatable="false"  sap:updatable="true"/>
+				<Property Name="CompletionDate"	Type="Edm.DateTime" Precision="7"	sap:label="Completion date"	sap:display-format="Date"	Nullable="true"  sap:unicode="false" sap:creatable="false"  sap:updatable="false"/>
 			</EntityType>
 			<EntityContainer Name="TODO_SETUPAPP_SRV_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
 				<EntitySet Name="AppConfigurationSet"			EntityType="TODO_SRV.AppConfiguration"		 								sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="true" sap:content-version="1" />
