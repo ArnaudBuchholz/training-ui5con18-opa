@@ -29,21 +29,12 @@
 					</List>
 				</content>
 				<footer>
-					<Bar>
-						<contentMiddle>
-							<SegmentedButton selectedKey="all" select="onFilter" class="sapMSegmentedButtonNoAutoWidth">
-								<items>
-									<SegmentedButtonItem id="filterButton-all" text="{labels>/filterAll}" key="all" />
-									<SegmentedButtonItem id="filterButton-active" text="{labels>/filterActive}" key="active" />
-									<SegmentedButtonItem id="filterButton-late" text="{labels>/filterLate}" key="late" />
-									<SegmentedButtonItem id="filterButton-completed" text="{labels>/filterCompleted}" key="completed" />
-								</items>
-							</SegmentedButton>
-						</contentMiddle>
-						<contentRight>
-							<Button id="clearCompleted" enabled="{/AppConfigurationSet('Todo')/EnableClear}" icon="sap-icon://delete" text="{i18n>button.clearCompleted}" press="clearCompleted" />
-						</contentRight>
-					</Bar>
+					<OverflowToolbar>
+						<ToolbarSpacer />
+						<SegmentedButton id="filters" selectedKey="all" select="onFilter" class="sapMSegmentedButtonNoAutoWidth" />
+						<ToolbarSpacer />
+						<Button id="clearCompleted" enabled="{/AppConfigurationSet('Todo')/EnableClear}" icon="sap-icon://delete" text="{i18n>button.clearCompleted}" press="clearCompleted" />
+					</OverflowToolbar>
 				</footer>
 			</Page>
 		</App>
