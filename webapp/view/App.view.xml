@@ -4,14 +4,11 @@
 			<Page title="{i18n>page.title}" backgroundDesign="Solid">
 				<subHeader>
 					<Toolbar>
-						<SearchField
-							id="searchTodoItemsInput"
-							liveChange="onSearch"
-							width="100%" />
+						<SearchField id="searchTodoItemsInput" liveChange="onSearch" width="100%" />
 					</Toolbar>
 				</subHeader>
 				<content>
-					<Input class="todoInput" id="addTodoItemInput" placeholder="{i18n>INPUT_PLACEHOLDER}" change="addTodo" />
+					<Input class="todoInput" id="addTodoItemInput" placeholder="{i18n>addTodoInput.placeholder}" change="addTodo" />
 					<List id="todoList"
 						items="{/TodoItemSet}"
 						mode="MultiSelect"
