@@ -109,12 +109,8 @@ sap.ui.define([
 					var oBody = JSON.parse(oXhr.requestBody);
 					if (sTodoItemGuid === STOP_PROCRASTINATING_GUID) {
 						oXhr.respond(400, {
-							"Content-Type": "application/json;charset=utf-8"
-						}, JSON.stringify({
-							d: {
-								error: "I'll start tomorrow !"
-							}
-						}));
+							"Content-Type": "text/plain;charset=utf-8"
+						}, "I'll start tomorrow !");
 						return true; // Skip default processing
 					}
 					if (oBody[CONST.OData.entityProperties.todoItem.completed]) {
