@@ -5,32 +5,35 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/m/MessageToast",
-	"sap/m/SegmentedButtonItem"
+	"sap/m/SegmentedButtonItem",
+	 "sap/ui/core/format/DateFormat"
 
-], function(Controller, CONST, JSONModel, Filter, FilterOperator, MessageToast, SegmentedButtonItem) {
+], function(Controller, CONST, JSONModel, Filter, FilterOperator, MessageToast, SegmentedButtonItem, DateFormat) {
 	"use strict";
 
-	var _aFilters = [{
-		key: "all",
-		get: function () {
-			return [];
-		}
-	}, {
-		key: "active",
-		get: function () {
-			return [new Filter(CONST.OData.entityProperties.todoItem.completed, FilterOperator.EQ, false)];
-		}
-	}, {
-		key: "late",
-		get: function () {
-			return [new Filter(CONST.OData.entityProperties.todoItem.dueDate, FilterOperator.LE, new Date())];
-		}
-	}, {
-		key: "completed",
-		get: function () {
-			return [new Filter(CONST.OData.entityProperties.todoItem.completed, FilterOperator.EQ, true)];
-		}
-	}];
+	var MS_PER_DAY = 24 * 60 * 60 * 1000,
+		_aFilters = [{
+			key: "all",
+			get: function () {
+				return [];
+			}
+		}, {
+			key: "active",
+			get: function () {
+				return [new Filter(CONST.OData.entityProperties.todoItem.completed, FilterOperator.EQ, false)];
+			}
+		}, {
+			key: "late",
+			get: function () {
+				return [new Filter(CONST.OData.entityProperties.todoItem.dueDate, FilterOperator.LE, new Date())];
+			}
+		}, {
+			key: "completed",
+			get: function () {
+				return [new Filter(CONST.OData.entityProperties.todoItem.completed, FilterOperator.EQ, true)];
+			}
+		}],
+		_oDateFormatter = DateFormat.getDateTimeInstance();
 
 	return Controller.extend("sap.ui.demo.todo.controller.App", {
 
@@ -50,6 +53,8 @@ sap.ui.define([
 				}));
 			});
 			this.getView().setModel(new JSONModel(mCounts), "counts");
+			var oI18nResourceBundle = this.getView().getModel("i18n").getResourceBundle();
+			this._i18n = oI18nResourceBundle.getText.bind(oI18nResourceBundle);
 			this._refresh();
 		},
 
@@ -102,9 +107,10 @@ sap.ui.define([
 			this.getView().getModel().callFunction("/" + CONST.OData.functionImports.clearCompleted.name, {
 				method: CONST.OData.functionImports.clearCompleted.method,
 				success: function (oResult) {
-					var iCount = oResult[CONST.OData.functionImports.clearCompleted.name][CONST.OData.functionImports.clearCompleted.returnType.count];
-					MessageToast.show("Cleared " + iCount + " items");
-				}
+					var iCount = oResult[CONST.OData.functionImports.clearCompleted.name][CONST.OData.functionImports.clearCompleted.returnType.count],
+						sMessageKey = ["none", "one"][iCount] || "many";
+					MessageToast.show(this._i18n("message.clearedCompleted." + sMessageKey, [iCount]));
+				}.bind(this)
 			});
 			this._refresh();
 		},
@@ -165,9 +171,17 @@ sap.ui.define([
 
 		getIntro: function (oTodoItem) {
 			if (oTodoItem[CONST.OData.entityProperties.todoItem.completed]) {
-				return "Completed on " + oTodoItem[CONST.OData.entityProperties.todoItem.completionDate];
+				return this._i18n("todoItem.intro.completedOn", [
+					_oDateFormatter.format(oTodoItem[CONST.OData.entityProperties.todoItem.completionDate])
+				]);
+
 			} else if (new Date() > oTodoItem[CONST.OData.entityProperties.todoItem.dueDate]) {
-				return "Late by xxx days";
+				var iNumberOfDaysLate = Math.ceil((new Date() - oTodoItem[CONST.OData.entityProperties.todoItem.dueDate]) / MS_PER_DAY);
+				if (1 === iNumberOfDaysLate) {
+					return this._i18n("todoItem.intro.lateByYesterday");
+				} else {
+					return this._i18n("todoItem.intro.lateDays", [iNumberOfDaysLate]);
+				}
 			}
 		}
 
