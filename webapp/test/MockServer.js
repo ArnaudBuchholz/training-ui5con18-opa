@@ -5,7 +5,8 @@ sap.ui.define([
 ], function (MockServer, CONST) {
 	"use strict";
 
-	var _lastTodoItemId = 0;
+	var STOP_PROCRASTINATING_GUID = "0MOCKSVR-TODO-MKII-MOCK-00000000",
+		_lastTodoItemId = 0;
 
 	function _getJSONDateReplacer (dValue) {
 		return "/Date(" + dValue.getTime() + ")/";
@@ -106,6 +107,16 @@ sap.ui.define([
 				response: function (oXhr, sTodoItemGuid) {
 					// Inject or remove completion date/time
 					var oBody = JSON.parse(oXhr.requestBody);
+					if (sTodoItemGuid === STOP_PROCRASTINATING_GUID) {
+						oXhr.respond(400, {
+							"Content-Type": "application/json;charset=utf-8"
+						}, JSON.stringify({
+							d: {
+								error: "I'll start tomorrow !"
+							}
+						}));
+						return true; // Skip default processing
+					}
 					if (oBody[CONST.OData.entityProperties.todoItem.completed]) {
 						oBody[CONST.OData.entityProperties.todoItem.completionDate] = _getJSONDateReplacer(new Date());
 					} else {
