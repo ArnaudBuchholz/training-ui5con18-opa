@@ -1,4 +1,10 @@
-<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="sap.ui.demo.todo.controller.App" displayBlock="true">
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:form="sap.ui.layout.form"
+	controllerName="sap.ui.demo.todo.controller.App"
+	displayBlock="true"
+>
 	<Shell>
 		<App>
 			<Page title="{i18n>page.title}" backgroundDesign="Solid">
@@ -17,6 +23,7 @@
 						showNoData="true"
 						showSeparators="None"
 						rememberSelections="false"
+						noDataText="{i18n>list.nodata}"
 						itemPress="onItemPress"
 						selectionChange="onSelectionChange">
 						<ObjectListItem
@@ -29,6 +36,33 @@
 							type="Navigation"
 						/>
 					</List>
+					<Dialog id="todoItem"
+						title="{Title}"
+						icon="{path: '', formatter: '.getIcon'}"
+					>
+						<form:SimpleForm
+							layout="ResponsiveGridLayout"
+							labelSpanXL="3"
+							labelSpanL="3"
+							labelSpanM="3"
+							labelSpanS="12"
+							adjustLabelSpan="false"
+							emptySpanXL="4"
+							emptySpanL="4"
+							emptySpanM="4"
+							emptySpanS="0"
+							columnsXL="1"
+							columnsL="1"
+							columnsM="1"
+							singleContainerFullSize="false">
+							<Label text="{i18n>form.Title}" />
+							<Input type="text" value="{Title}" visible="{= !${Completed} }" />
+							<Label text="{i18n>form.DueDate}" />
+							<DateTimePicker dateValue="{DueDate}" editable="{= !${Completed} }" />
+							<Label text="{i18n>form.CompletionDate}" visible="{Completed}" />
+							<DateTimePicker dateValue="{CompletionDate}" editable="false" visible="{Completed}" />
+						</form:SimpleForm>
+					</Dialog>
 				</content>
 				<footer>
 					<OverflowToolbar>
