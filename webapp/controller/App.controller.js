@@ -6,32 +6,26 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/m/MessageToast",
 	"sap/m/SegmentedButtonItem",
-	 "sap/ui/core/format/DateFormat"
+	 "sap/ui/core/format/DateFormat",
+	 "sap/m/MessageBox"
 
-], function(Controller, CONST, JSONModel, Filter, FilterOperator, MessageToast, SegmentedButtonItem, DateFormat) {
+], function(Controller, CONST, JSONModel, Filter, FilterOperator, MessageToast, SegmentedButtonItem, DateFormat, MessageBox) {
 	"use strict";
 
 	var MS_PER_DAY = 24 * 60 * 60 * 1000,
+		TODOITEM = CONST.OData.entityProperties.todoItem,
 		_aFilters = [{
 			key: "all",
-			get: function () {
-				return [];
-			}
+			get: function () { return []; }
 		}, {
 			key: "active",
-			get: function () {
-				return [new Filter(CONST.OData.entityProperties.todoItem.completed, FilterOperator.EQ, false)];
-			}
+			get: function () { return [new Filter(TODOITEM.completed, FilterOperator.EQ, false)]; }
 		}, {
 			key: "late",
-			get: function () {
-				return [new Filter(CONST.OData.entityProperties.todoItem.dueDate, FilterOperator.LE, new Date())];
-			}
+			get: function () { return [new Filter(TODOITEM.dueDate, FilterOperator.LE, new Date())]; }
 		}, {
 			key: "completed",
-			get: function () {
-				return [new Filter(CONST.OData.entityProperties.todoItem.completed, FilterOperator.EQ, true)];
-			}
+			get: function () { return [new Filter(TODOITEM.completed, FilterOperator.EQ, true)]; }
 		}],
 		_oDateFormatter = DateFormat.getDateTimeInstance();
 
@@ -93,12 +87,12 @@ sap.ui.define([
 				return;
 			}
 
-			oBody[CONST.OData.entityProperties.todoItem.title] = sLabel;
-			oBody[CONST.OData.entityProperties.todoItem.dueDate] = dDueDate;
+			oBody[TODOITEM.title] = sLabel;
+			oBody[TODOITEM.dueDate] = dDueDate;
 			oModel.create("/" + CONST.OData.entityNames.todoItemSet, oBody, {
 				success: function (oResultBody) {
-					MessageToast.show("SUCCESS");
-				}
+					MessageToast.show(this._i18n("message.created"));
+				}.bind(this)
 			});
 			this._refresh(); // Done in the same roundtrip
 		},
@@ -118,7 +112,7 @@ sap.ui.define([
 		onSearch: function(oEvent) {
 			var sQuery = oEvent.getSource().getValue();
 			if (sQuery && sQuery.length > 0) {
-				this.aSearchFilters = [new Filter(CONST.OData.entityProperties.todoItem.title, FilterOperator.Contains, sQuery)];
+				this.aSearchFilters = [new Filter(TODOITEM.title, FilterOperator.Contains, sQuery)];
 			} else {
 				delete this.aSearchFilters;
 			}
@@ -143,45 +137,58 @@ sap.ui.define([
 		},
 
 		onItemPress: function (oEvent) {
-			var oListItem = oEvent.getParameter("listItem");
-			alert(oListItem.getBindingContext().getPath());
+			var oListItem = oEvent.getParameter("listItem"),
+				oDialog = this.getView().byId("todoItem");
+			oDialog.setBindingContext(oListItem.getBindingContext());
+			oDialog.open();
+		},
+
+		_onSelectionChanged: function (oListItem, oData) {
+			var oView = this.getView(),
+				oModel = oView.getModel();
+			if (oModel.hasPendingChanges()) {
+				// Either another pending change or something wrong happened
+				oData.__batchResponses.forEach(function (oResponse) {
+					if (oResponse.response && oResponse.response.statusCode === "400") {
+						MessageBox.error(oResponse.response.body, {
+							title: this._i18n("message.error")
+						});
+						oModel.resetChanges([
+							oListItem.getBindingContext().getPath()
+						]);
+					}
+				}, this);
+			}
+			oListItem.setBusy(false);
 		},
 
 		onSelectionChange: function (oEvent) {
-			var oModel = this.getView().getModel(),
-				aListItems = oEvent.getParameter("listItems");
-			aListItems.forEach(function (oListItem) {
-				oListItem.setBusy(true);
-			});
-			oModel.submitChanges({
-				success: function () {
-					aListItems.forEach(function (oListItem) {
-						oListItem.setBusy(false);
-					});
-				}
+			var oListItem = oEvent.getParameter("listItems")[0]; // Expect only one item to be changed at a time
+			oListItem.setBusy(true);
+			this.getView().getModel().submitChanges({
+				success: this._onSelectionChanged.bind(this, oListItem)
 			});
 			this._refreshCounts();
 		},
 
 		getIcon: function (oTodoItem) {
-			if (new Date() > oTodoItem[CONST.OData.entityProperties.todoItem.dueDate]) {
+			if (new Date() > oTodoItem[TODOITEM.dueDate]) {
 				return "sap-icon://lateness";
 			}
 		},
 
 		getIntro: function (oTodoItem) {
-			if (oTodoItem[CONST.OData.entityProperties.todoItem.completed]) {
-				return this._i18n("todoItem.intro.completedOn", [
-					_oDateFormatter.format(oTodoItem[CONST.OData.entityProperties.todoItem.completionDate])
-				]);
+			var dCompletionDate = oTodoItem[TODOITEM.completionDate],
+				dDueDate = oTodoItem[TODOITEM.dueDate];
+			if (oTodoItem[TODOITEM.completed] && dCompletionDate) {
+				return this._i18n("todoItem.intro.completedOn", [_oDateFormatter.format(dCompletionDate)]);
 
-			} else if (new Date() > oTodoItem[CONST.OData.entityProperties.todoItem.dueDate]) {
-				var iNumberOfDaysLate = Math.ceil((new Date() - oTodoItem[CONST.OData.entityProperties.todoItem.dueDate]) / MS_PER_DAY);
+			} else if (new Date() > dDueDate) {
+				var iNumberOfDaysLate = Math.ceil((new Date() - dDueDate) / MS_PER_DAY);
 				if (1 === iNumberOfDaysLate) {
 					return this._i18n("todoItem.intro.lateByYesterday");
-				} else {
-					return this._i18n("todoItem.intro.lateDays", [iNumberOfDaysLate]);
 				}
+				return this._i18n("todoItem.intro.lateDays", [iNumberOfDaysLate]);
 			}
 		}
 
