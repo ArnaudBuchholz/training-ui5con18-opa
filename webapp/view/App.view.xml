@@ -62,6 +62,12 @@
 							<Label text="{i18n>form.CompletionDate}" visible="{Completed}" />
 							<DateTimePicker dateValue="{CompletionDate}" editable="false" visible="{Completed}" />
 						</form:SimpleForm>
+						<beginButton>
+							<Button id="btnOK" press="onFormOK" text="{i18n>form.OK}" type="Accept" visible="{= !${Completed} }" />
+						</beginButton>
+						<endButton>
+							<Button id="btnCancel" press="onFormCancel" text="{i18n>form.Cancel}" />
+						</endButton>
 					</Dialog>
 				</content>
 				<footer>
