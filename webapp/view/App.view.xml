@@ -24,7 +24,6 @@
 						showSeparators="None"
 						rememberSelections="false"
 						noDataText="{i18n>list.nodata}"
-						itemPress="onItemPress"
 						selectionChange="onSelectionChange">
 						<ObjectListItem
 							class="todoListItem"
@@ -33,7 +32,8 @@
 							icon="{path: '', formatter: '.getIcon'}"
 							intro="{path: '', formatter: '.getIntro'}"
 							title="{Title}"
-							type="Navigation"
+							type="Detail"
+							detailPress="onItemPress"
 						/>
 					</List>
 					<Dialog id="todoItem"
