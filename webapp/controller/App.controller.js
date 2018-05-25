@@ -14,19 +14,13 @@ sap.ui.define([
 
 	var MS_PER_DAY = 24 * 60 * 60 * 1000,
 		TODOITEM = CONST.OData.entityProperties.todoItem,
-		_aFilters = [{
-			key: "all",
-			get: function () { return []; }
-		}, {
-			key: "active",
-			get: function () { return [new Filter(TODOITEM.completed, FilterOperator.EQ, false)]; }
-		}, {
-			key: "late",
-			get: function () { return [new Filter(TODOITEM.dueDate, FilterOperator.LE, new Date())]; }
-		}, {
-			key: "completed",
-			get: function () { return [new Filter(TODOITEM.completed, FilterOperator.EQ, true)]; }
-		}],
+		_aFilters = [
+			{ key: "all",		get: function () { return []; } },
+			{ key: "active",	get: function () { return [new Filter(TODOITEM.completed, FilterOperator.EQ, false)]; } },
+			{ key: "late",		get: function () { return [new Filter(TODOITEM.dueDate, FilterOperator.LE, new Date())]; } },
+			{ key: "completed",	get: function () { return [new Filter(TODOITEM.completed, FilterOperator.EQ, true)]; } }
+		],
+		_mFilters = {}, // Map of above filters indexed by key
 		_oDateFormatter = DateFormat.getDateTimeInstance();
 
 	return Controller.extend("sap.ui.demo.todo.controller.App", {
@@ -40,6 +34,7 @@ sap.ui.define([
 			_aFilters.forEach(function (oFilter) {
 				var sKey = oFilter.key;
 				mCounts[sKey] = 0;
+				_mFilters[sKey] = oFilter;
 				oSegmentedButton.addItem(new SegmentedButtonItem({
 					id: "filterButton-" +  sKey,
 					text: "{ parts: [ 'i18n>filterButton." + sKey + "', 'counts>/" + sKey + "' ], formatter: 'jQuery.sap.formatMessage' }",
@@ -63,11 +58,7 @@ sap.ui.define([
 			_aFilters.forEach(function (oFilter) {
 				oODataModel.read("/" + CONST.OData.entityNames.todoItemSet, {
 					filters: oFilter.get(),
-					urlParameters: {
-						$skip: 0,
-						$top: 1,
-						$inlinecount: "allpages"
-					},
+					urlParameters: { $skip: 0, $top: 1, $inlinecount: "allpages" },
 					success: function (oResult) {
 						oCountsModel.setProperty("/" + oFilter.key, oResult.__count || 0);
 					}
@@ -82,19 +73,15 @@ sap.ui.define([
 				oBody = {},
 				dDueDate = new Date();
 			dDueDate.setHours(23,59,59,999);
-
 			if (!sLabel) {
 				return;
 			}
-
 			oBody[TODOITEM.title] = sLabel;
 			oBody[TODOITEM.dueDate] = dDueDate;
 			oModel.create("/" + CONST.OData.entityNames.todoItemSet, oBody, {
-				success: function (oResultBody) {
-					MessageToast.show(this._i18n("message.created"));
-				}.bind(this)
+				success: MessageToast.show.bind(MessageToast, this._i18n("message.created"))
 			});
-			this._refresh(); // Done in the same roundtrip
+			this._refresh();
 		},
 
 		clearCompleted: function() {
@@ -110,11 +97,10 @@ sap.ui.define([
 		},
 
 		onSearch: function(oEvent) {
+			delete this.aSearchFilters;
 			var sQuery = oEvent.getSource().getValue();
 			if (sQuery && sQuery.length > 0) {
 				this.aSearchFilters = [new Filter(TODOITEM.title, FilterOperator.Contains, sQuery)];
-			} else {
-				delete this.aSearchFilters;
 			}
 			this._applyListFilters();
 		},
@@ -122,13 +108,7 @@ sap.ui.define([
 		onFilter: function(oEvent) {
 			delete this.aTabFilters;
 			var sFilterKey = oEvent.getParameter("key");
-			_aFilters.every(function (oFilter) {
-				if (sFilterKey === oFilter.key) {
-					this.aTabFilters = oFilter.get();
-					return false;
-				}
-				return true;
-			}, this);
+			this.aTabFilters = _mFilters[sFilterKey].get();
 			this._applyListFilters();
 		},
 
@@ -137,42 +117,64 @@ sap.ui.define([
 		},
 
 		onItemPress: function (oEvent) {
-			var oListItem = oEvent.getParameter("listItem"),
+			var oListItem = oEvent.getSource(),
 				oDialog = this.getView().byId("todoItem");
 			oDialog.setBindingContext(oListItem.getBindingContext());
 			oDialog.open();
 		},
 
-		_onSelectionChanged: function (oListItem, oData) {
-			var oView = this.getView(),
-				oModel = oView.getModel();
-			if (oModel.hasPendingChanges()) {
-				// Either another pending change or something wrong happened
-				oData.__batchResponses.forEach(function (oResponse) {
-					if (oResponse.response && oResponse.response.statusCode === "400") {
-						MessageBox.error(oResponse.response.body, {
-							title: this._i18n("message.error")
+		_update: function (sBindingPath, oBody) {
+			var that = this,
+				oModel = this.getView().getModel();
+			return new Promise(function (resolve) {
+				oModel.update(sBindingPath, oBody, {
+					success: resolve,
+					error: function (response) {
+						MessageBox.error(response.responseText, {
+							title: that._i18n("message.error")
 						});
-						oModel.resetChanges([
-							oListItem.getBindingContext().getPath()
-						]);
+						oModel.resetChanges([sBindingPath]);
+						resolve();
 					}
-				}, this);
+				});
+			});
+		},
+
+		onFormOK: function (oEvent) {
+			var oView = this.getView(),
+				oModel = oView.getModel(),
+				oDialog = this.getView().byId("todoItem"),
+				sBindingPath = oDialog.getBindingContext().getPath(),
+				oPromise;
+			if (oModel.hasPendingChanges()) {
+				oDialog.setBusy(true);
+				oPromise = this._update(sBindingPath, oModel.getObject(sBindingPath))
+			} else {
+				oPromise = Promise.resolve();
 			}
-			oListItem.setBusy(false);
+			oPromise.then(function () {
+				oDialog.setBusy(false);
+				oDialog.close();
+			})
+		},
+
+		onFormCancel: function (oEvent) {
+			this.getView().byId("todoItem").close();
 		},
 
 		onSelectionChange: function (oEvent) {
-			var oListItem = oEvent.getParameter("listItems")[0]; // Expect only one item to be changed at a time
+			var oListItem = oEvent.getParameter("listItems")[0],  // Expect only one item to be changed at a time
+				oBody = {};
 			oListItem.setBusy(true);
-			this.getView().getModel().submitChanges({
-				success: this._onSelectionChanged.bind(this, oListItem)
+			oBody[TODOITEM.completed] = oListItem.getSelected();
+			this._update(oListItem.getBindingContext().getPath(), oBody).then(function () {
+				oListItem.setBusy(false);
 			});
 			this._refreshCounts();
 		},
 
 		getIcon: function (oTodoItem) {
-			if (new Date() > oTodoItem[TODOITEM.dueDate]) {
+			if (oTodoItem && new Date() > oTodoItem[TODOITEM.dueDate]) {
 				return "sap-icon://lateness";
 			}
 		},
