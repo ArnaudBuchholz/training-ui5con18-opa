@@ -9,10 +9,10 @@
 		<Schema Namespace="TODO_SRV" xml:lang="en" sap:schema-version="1" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
 			<EntityType Name="AppConfiguration" sap:content-version="1">
 				<Key>
-					<PropertyRef Name="Id"/>
+					<PropertyRef Name="Key"/>
 				</Key>
-				<Property Name="Id"			 	Type="Edm.String"					sap:label="Application ID"								Nullable="false" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" sap:visible="false"/>
-				<Property Name="EnableClear" 	Type="Edm.Boolean"					sap:label="Enable clear completed"						Nullable="false" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" sap:visible="false"/>
+				<Property Name="Key"		 	Type="Edm.String"					sap:label="Configuration Key"							Nullable="false" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" sap:visible="false"/>
+				<Property Name="Enable" 		Type="Edm.Boolean"					sap:label="Enabled"										Nullable="false" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" sap:visible="false"/>
 			</EntityType>
 			<EntityType Name="TodoItem" sap:content-version="1">
 				<Key>
