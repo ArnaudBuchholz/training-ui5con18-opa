@@ -12,8 +12,7 @@ sap.ui.define([
 ], function(Controller, CONST, JSONModel, Filter, FilterOperator, MessageToast, SegmentedButtonItem, DateFormat, MessageBox) {
 	"use strict";
 
-	var MS_PER_DAY = 24 * 60 * 60 * 1000,
-		TODOITEM = CONST.OData.entityProperties.todoItem,
+	var TODOITEM = CONST.OData.entityProperties.todoItem,
 		_aFilters = [{
 			key: "all",
 			get: function() {
@@ -192,8 +191,23 @@ sap.ui.define([
 		},
 
 		getIcon: function(oTodoItem) {
-			if (oTodoItem && new Date() > oTodoItem[TODOITEM.dueDate]) {
+			var dCompletionDate = oTodoItem[TODOITEM.completionDate],
+				dDueDate = oTodoItem[TODOITEM.dueDate],
+				dRefDate;
+			if (oTodoItem[TODOITEM.completed]) {
+				dRefDate = dCompletionDate;
+			} else {
+				dRefDate = new Date();
+			}
+			if (dRefDate > dDueDate) {
 				return "sap-icon://lateness";
+			}
+			return "";
+		},
+
+		getIconSafe: function(oTodoItem) {
+			if (oTodoItem) {
+				return this.getIcon(oTodoItem);
 			}
 			return "";
 		},
@@ -205,7 +219,7 @@ sap.ui.define([
 				return this._i18n("todoItem.intro.completedOn", [_oDateFormatter.format(dCompletionDate)]);
 
 			} else if (new Date() > dDueDate) {
-				var iNumberOfDaysLate = Math.ceil((new Date() - dDueDate) / MS_PER_DAY);
+				var iNumberOfDaysLate = Math.ceil((new Date() - dDueDate) / CONST.msPerDay);
 				if (1 === iNumberOfDaysLate) {
 					return this._i18n("todoItem.intro.lateByYesterday");
 				}
