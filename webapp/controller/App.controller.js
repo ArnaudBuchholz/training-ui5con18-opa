@@ -67,9 +67,8 @@ sap.ui.define([
 		},
 
 		addTodo: function() {
-			var oView = this.getView(),
-				sLabel = oView.byId("addTodoItemInput").getValue(),
-				oModel = oView.getModel(),
+			var sLabel = this.getView().byId("addTodoItemInput").getValue(),
+				oModel = this.getView().getModel(),
 				oBody = {},
 				dDueDate = new Date();
 			dDueDate.setHours(23,59,59,999);
@@ -141,8 +140,7 @@ sap.ui.define([
 		},
 
 		onFormOK: function (oEvent) {
-			var oView = this.getView(),
-				oModel = oView.getModel(),
+			var oModel = this.getView().getModel(),
 				oDialog = this.getView().byId("todoItem"),
 				sBindingPath = oDialog.getBindingContext().getPath(),
 				oPromise;
@@ -177,6 +175,7 @@ sap.ui.define([
 			if (oTodoItem && new Date() > oTodoItem[TODOITEM.dueDate]) {
 				return "sap-icon://lateness";
 			}
+			return "";
 		},
 
 		getIntro: function (oTodoItem) {
@@ -192,6 +191,7 @@ sap.ui.define([
 				}
 				return this._i18n("todoItem.intro.lateDays", [iNumberOfDaysLate]);
 			}
+			return "";
 		}
 
 	});
