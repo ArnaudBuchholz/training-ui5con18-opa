@@ -14,10 +14,14 @@
 					</Toolbar>
 				</subHeader>
 				<content>
-					<Input class="todoInput" id="addTodoItemInput" placeholder="{i18n>addTodoInput.placeholder}" change="addTodo" />
+					<Input id="addTodoItemInput" class="todoInput"
+						placeholder="{i18n>addTodoInput.placeholder}"
+						change="addTodo"
+						visible="{/AppConfigurationSet('NewItem')/Enable}"
+					/>
 					<List id="todoList"
 						items="{/TodoItemSet}"
-						mode="MultiSelect"
+						mode="{= ${/AppConfigurationSet('ItemCompletion')/Enable} === false ? 'None' : 'MultiSelect' }"
 						growing="true"
 						growingScrollToLoad="true"
 						showNoData="true"
@@ -32,7 +36,7 @@
 							icon="{path: '', formatter: '.getIcon'}"
 							intro="{path: '', formatter: '.getIntro'}"
 							title="{Title}"
-							type="Detail"
+							type="{= ${/AppConfigurationSet('ItemEditing')/Enable} ? 'Detail' : 'Active' }"
 							detailPress="onItemPress"
 						/>
 					</List>
@@ -75,7 +79,7 @@
 						<ToolbarSpacer />
 						<SegmentedButton id="filters" selectedKey="all" select="onFilter" class="sapMSegmentedButtonNoAutoWidth" />
 						<ToolbarSpacer />
-						<Button id="clearCompleted" enabled="{/AppConfigurationSet('Todo')/EnableClear}" icon="sap-icon://delete" text="{i18n>button.clearCompleted}" press="clearCompleted" />
+						<Button id="clearCompleted" enabled="{/AppConfigurationSet('ClearCompleted')/Enable}" icon="sap-icon://delete" text="{i18n>button.clearCompleted}" press="clearCompleted" />
 					</OverflowToolbar>
 				</footer>
 			</Page>
