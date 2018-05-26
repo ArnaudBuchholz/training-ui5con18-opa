@@ -6,7 +6,7 @@
 	"Enable": true
 }, {
 	"Key": "ItemCompletion",
-	"Enable": false
+	"Enable": true
 }, {
 	"Key": "NewItem",
 	"Enable": true
