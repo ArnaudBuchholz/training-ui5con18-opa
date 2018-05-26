@@ -61,42 +61,52 @@ sap.ui.define([
 				});
 			}
 
-			// Generate random items
-			var aTodoItemSet = oMockServer.getEntitySetData(CONST.OData.entityNames.todoItemSet),
-				sDateMax = "/Date(" + new Date(2099,11,31).getTime() + ")/",
-				sDateNow = "/Date(" + (new Date().getTime() - 60000) + ")/";
-			for (var idx = 0; idx < 100; ++idx) {
-				var oNewTodoItemSet = {},
-					sGuid = _getNewItemGuid();
-				oNewTodoItemSet[CONST.OData.entityProperties.todoItem.guid] = sGuid;
-				oNewTodoItemSet[CONST.OData.entityProperties.todoItem.title] = "Random stuff " + idx;
-				oNewTodoItemSet.__metadata = {
-					id: "/odata/TODO_SRV/TodoItemSet(guid'" + sGuid + "')",
-					uri: "/odata/TODO_SRV/TodoItemSet(guid'" + sGuid + "')",
-					type: "TODO_SRV.TodoItem"
-				}
-				if (idx % 2) {
-					oNewTodoItemSet[CONST.OData.entityProperties.todoItem.completionDate] = sDateNow;
-					oNewTodoItemSet[CONST.OData.entityProperties.todoItem.completed] = true;
-				}
-				if (idx % 5 === 0) {
-					oNewTodoItemSet[CONST.OData.entityProperties.todoItem.dueDate] = sDateNow;
-				}
-				aTodoItemSet.push(oNewTodoItemSet);
+			if (oUriParameters.get("read-only") === "true") {
+				// Set all AppConfiguration options to false
+				var aAppConfigurationSet = oMockServer.getEntitySetData(CONST.OData.entityNames.appConfigurationSet);
+				aAppConfigurationSet.forEach(function (oAppConfigurationSet) {
+					oAppConfigurationSet[CONST.OData.entityProperties.appConfiguration.enable] = false;
+				});
+				oMockServer.setEntitySetData(CONST.OData.entityNames.appConfigurationSet, aAppConfigurationSet);
 			}
-			// Fill missing properties
-			function _setIfNotSet (oTodoItemSet, sPropertyName, vDefaultValue) {
-				if (!oTodoItemSet.hasOwnProperty(sPropertyName)) {
-					oTodoItemSet[sPropertyName] = vDefaultValue;
-				}
-			}
-			aTodoItemSet.forEach(function (oTodoItemSet) {
-				_setIfNotSet(oTodoItemSet, CONST.OData.entityProperties.todoItem.completionDate, null);
-				_setIfNotSet(oTodoItemSet, CONST.OData.entityProperties.todoItem.completed, false);
-				_setIfNotSet(oTodoItemSet, CONST.OData.entityProperties.todoItem.dueDate, sDateMax);
-			});
 
-			oMockServer.setEntitySetData(CONST.OData.entityNames.todoItemSet, aTodoItemSet);
+			if (oUriParameters.get("randomize") === "true") {
+				// Generate random items
+				var aTodoItemSet = oMockServer.getEntitySetData(CONST.OData.entityNames.todoItemSet),
+					sDateMax = "/Date(" + new Date(2099,11,31).getTime() + ")/",
+					sDateNow = "/Date(" + (new Date().getTime() - 60000) + ")/";
+				for (var idx = 0; idx < 100; ++idx) {
+					var oNewTodoItemSet = {},
+						sGuid = _getNewItemGuid();
+					oNewTodoItemSet[CONST.OData.entityProperties.todoItem.guid] = sGuid;
+					oNewTodoItemSet[CONST.OData.entityProperties.todoItem.title] = "Random stuff " + idx;
+					oNewTodoItemSet.__metadata = {
+						id: "/odata/TODO_SRV/TodoItemSet(guid'" + sGuid + "')",
+						uri: "/odata/TODO_SRV/TodoItemSet(guid'" + sGuid + "')",
+						type: "TODO_SRV.TodoItem"
+					}
+					if (idx % 2) {
+						oNewTodoItemSet[CONST.OData.entityProperties.todoItem.completionDate] = sDateNow;
+						oNewTodoItemSet[CONST.OData.entityProperties.todoItem.completed] = true;
+					}
+					if (idx % 5 === 0) {
+						oNewTodoItemSet[CONST.OData.entityProperties.todoItem.dueDate] = sDateNow;
+					}
+					aTodoItemSet.push(oNewTodoItemSet);
+				}
+				// Fill missing properties
+				function _setIfNotSet (oTodoItemSet, sPropertyName, vDefaultValue) {
+					if (!oTodoItemSet.hasOwnProperty(sPropertyName)) {
+						oTodoItemSet[sPropertyName] = vDefaultValue;
+					}
+				}
+				aTodoItemSet.forEach(function (oTodoItemSet) {
+					_setIfNotSet(oTodoItemSet, CONST.OData.entityProperties.todoItem.completionDate, null);
+					_setIfNotSet(oTodoItemSet, CONST.OData.entityProperties.todoItem.completed, false);
+					_setIfNotSet(oTodoItemSet, CONST.OData.entityProperties.todoItem.dueDate, sDateMax);
+				});
+				oMockServer.setEntitySetData(CONST.OData.entityNames.todoItemSet, aTodoItemSet);
+			}
 
 			var aRequests = oMockServer.getRequests();
 
