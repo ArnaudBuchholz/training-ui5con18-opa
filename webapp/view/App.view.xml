@@ -47,7 +47,7 @@
 					</List>
 					<Dialog id="todoItem"
 						title="{Title}"
-						icon="{path: '', formatter: '.getIcon'}"
+						icon="{path: '', formatter: '.getIconSafe'}"
 					>
 						<form:SimpleForm
 							layout="ResponsiveGridLayout"
