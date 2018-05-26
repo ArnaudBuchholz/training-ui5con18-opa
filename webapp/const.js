@@ -12,6 +12,11 @@ sap.ui.define([], function () {
 
 			entityProperties: {
 
+				appConfiguration: {
+					key: "Key",
+					enable: "Enable"
+				},
+
 				todoItem: {
 					guid: "Guid",
 					title: "Title",
