@@ -44,6 +44,7 @@ sap.ui.define([
 			this.getView().setModel(new JSONModel(mCounts), "counts");
 			var oI18nResourceBundle = this.getView().getModel("i18n").getResourceBundle();
 			this._i18n = oI18nResourceBundle.getText.bind(oI18nResourceBundle);
+			this.getView().getModel().read("/" + CONST.OData.entityNames.appConfigurationSet);
 			this._refresh();
 		},
 
