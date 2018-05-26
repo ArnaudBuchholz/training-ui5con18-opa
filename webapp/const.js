@@ -3,6 +3,8 @@ sap.ui.define([], function () {
 
 	return {
 
+		msPerDay:  24 * 60 * 60 * 1000,
+
 		OData: {
 
 			entityNames: {
