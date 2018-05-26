@@ -6,7 +6,8 @@ sap.ui.define([], function () {
 		OData: {
 
 			entityNames: {
-				todoItemSet: "TodoItemSet"
+				todoItemSet: "TodoItemSet",
+				appConfigurationSet: "AppConfigurationSet"
 			},
 
 			entityProperties: {
