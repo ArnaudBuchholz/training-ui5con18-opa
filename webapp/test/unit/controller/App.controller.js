@@ -3,112 +3,108 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/demo/todo/controller/App.controller",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/demo/todo/const",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/sinon-qunit"
-], function(ManagedObject, Controller, AppController, JSONModel/*, sinon, sinonQunit*/) {
+], function(ManagedObject, Controller, AppController, JSONModel, CONST/*, sinon, sinonQunit*/) {
 	"use strict";
 
-	QUnit.module("Test model modification", {
+	QUnit.module("App.controller", {
 
 		beforeEach: function() {
-
 			this.oAppController = new AppController();
 			this.oViewStub = new ManagedObject({});
 			sinon.stub(Controller.prototype, "getView").returns(this.oViewStub);
-
-			this.oJSONModelStub = new JSONModel({
-				todos: []
-			});
+			this.oJSONModelStub = new JSONModel({});
 			this.oViewStub.setModel(this.oJSONModelStub);
+			this.oAppController._i18n = sinon.spy();
 		},
 
 		afterEach: function() {
 			Controller.prototype.getView.restore();
-
 			this.oViewStub.destroy();
 		}
 	});
 
-	QUnit.test("Should add a todo element to the model", function(assert) {
-		// Arrange
-		// initial assumption: to-do list is empty
-		assert.strictEqual(this.oJSONModelStub.getObject('/todos').length, 0, "There must be no todos defined.");
+	var dToday = new Date(),
+		dYesterday = new Date(dToday.getTime() - CONST.msPerDay),
+		dTwoDaysAgo = new Date(dYesterday.getTime() - CONST.msPerDay),
+		dTomorrow = new Date(dToday.getTime() + CONST.msPerDay);
 
-		// Act
-		this.oJSONModelStub.setProperty('/newTodo', "new todo item");
-		this.oAppController.addTodo();
+	function buildItem (oItemDefinition) {
+		var oTodoItem = {};
+		Object.keys(oItemDefinition).forEach(function (sProperty) {
+			oTodoItem[CONST.OData.entityProperties.todoItem[sProperty]] = oItemDefinition[sProperty];
+		});
+		return oTodoItem;
+	}
 
-		// Assumption
-		assert.strictEqual(this.oJSONModelStub.getObject('/todos').length, 1, "There is one new item.");
+	// Testing getIcon
+	[{
+		label: "DueDate is in the past",
+		item: {
+			dueDate: dYesterday,
+			completed: false
+		},
+		expectedIcon: true
+
+	}, {
+		label: "DueDate is in the future",
+		item: {
+			dueDate: dTomorrow,
+			completed: false
+		},
+		expectedIcon: false
+
+	}, {
+		label: "Item is completed on time",
+		item: {
+			dueDate: dYesterday,
+			completed: true,
+			completionDate: dTwoDaysAgo
+		},
+		expectedIcon: false
+
+	}, {
+		label: "Item is completed late",
+		item: {
+			dueDate: dYesterday,
+			completed: true,
+			completionDate: dToday
+		},
+		expectedIcon: true
+
+	}].forEach(function (oTestCase) {
+		QUnit.test("getIcon when" + oTestCase.label, function (assert) {
+			var oTodoItem = buildItem(oTestCase.item),
+				sIcon = this.oAppController.getIcon(oTodoItem);
+			if (oTestCase.expectedIcon) {
+				assert.notEqual(sIcon, "", "An icon is expected");
+			} else {
+				assert.equal(sIcon, "", "No icon is expected");
+			}
+		});
 	});
 
-	QUnit.test("Should toggle the completed items in the model", function(assert) {
-		// Arrange
-		var oModelData = {
-			todos: [{
-				"title": "Start this app",
-				"completed": false
-			}],
-			itemsLeftCount: 1
-		};
-		this.oJSONModelStub.setData(oModelData);
+	// Testing getIntro
+	[{
+		label: "Item has nothing to show",
+		item: {
+			dueDate: dTomorrow,
+			completed: false
+		},
+		expectedKey: ""
 
-
-		// initial assumption
-		assert.strictEqual(this.oJSONModelStub.getObject('/todos').length, 1, "There is one item.");
-		assert.strictEqual(this.oJSONModelStub.getProperty('/itemsLeftCount'), 1, "There is one item left.");
-
-		// Act
-		this.oJSONModelStub.setProperty("/todos/0/completed", true);
-		this.oAppController.updateItemsLeftCount();
-
-		// Assumption
-		assert.strictEqual(this.oJSONModelStub.getProperty('/itemsLeftCount'), 0, "There is no item left.");
-	});
-
-	QUnit.test("Should clear the completed items", function(assert) {
-		// Arrange
-		var oModelData = {
-			todos: [{
-				"title": "Start this app1",
-				"completed": false
-			}, {
-				"title": "Start this app2",
-				"completed": true
-			}],
-			itemsLeftCount: 1
-		};
-		this.oJSONModelStub.setData(oModelData);
-
-
-		// initial assumption
-		assert.strictEqual(this.oJSONModelStub.getObject('/todos').length, 2, "There are two items.");
-		assert.strictEqual(this.oJSONModelStub.getProperty('/itemsLeftCount'), 1, "There is no item left.");
-
-		// Act
-		this.oAppController.clearCompleted();
-		this.oAppController.updateItemsLeftCount();
-
-		// Assumption
-		assert.strictEqual(this.oJSONModelStub.getObject('/todos').length, 1, "There is one item left.");
-		assert.strictEqual(this.oJSONModelStub.getProperty('/itemsLeftCount'), 1, "There is one item left.");
-	});
-
-	QUnit.test("Should update items left count when no todos are loaded, yet", function(assert) {
-		// Arrange
-		var oModelData = {};
-		this.oJSONModelStub.setData(oModelData);
-
-
-		// initial assumption
-		assert.strictEqual(this.oJSONModelStub.getObject('/todos'), undefined, "There are no items.");
-		assert.strictEqual(this.oJSONModelStub.getProperty('/itemsLeftCount'), undefined, "Items left is not set");
-
-		// Act
-		this.oAppController.updateItemsLeftCount();
-
-		// Assumption
-		assert.strictEqual(this.oJSONModelStub.getProperty('/itemsLeftCount'), 0, "There is no item left.");
+	}].forEach(function (oTestCase) {
+		QUnit.test("getIntro when" + oTestCase.label, function (assert) {
+			var oTodoItem = buildItem(oTestCase.item),
+				sIntro = this.oAppController.getIntro(oTodoItem);
+			if (oTestCase.expectedKey) {
+				assert.notEqual(sIntro, "", "An intro is expected");
+			} else {
+				assert.equal(sIntro, "", "No intro is expected");
+			}
+		});
 	});
 
 });
