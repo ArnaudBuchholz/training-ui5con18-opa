@@ -20,7 +20,12 @@
 						visible="{/AppConfigurationSet('NewItem')/Enable}"
 					/>
 					<List id="todoList"
-						items="{/TodoItemSet}"
+						items="{
+							path: '/TodoItemSet',
+							sorter: {
+								path: 'DueDate'
+							}
+						}"
 						mode="{= ${/AppConfigurationSet('ItemCompletion')/Enable} === false ? 'None' : 'MultiSelect' }"
 						growing="true"
 						growingScrollToLoad="true"
@@ -79,7 +84,7 @@
 						<ToolbarSpacer />
 						<SegmentedButton id="filters" selectedKey="all" select="onFilter" class="sapMSegmentedButtonNoAutoWidth" />
 						<ToolbarSpacer />
-						<Button id="clearCompleted" enabled="{/AppConfigurationSet('ClearCompleted')/Enable}" icon="sap-icon://delete" text="{i18n>button.clearCompleted}" press="clearCompleted" />
+						<Button id="clearCompleted" visible="{/AppConfigurationSet('ClearCompleted')/Enable}" icon="sap-icon://delete" text="{i18n>button.clearCompleted}" press="clearCompleted" />
 					</OverflowToolbar>
 				</footer>
 			</Page>
