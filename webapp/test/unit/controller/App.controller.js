@@ -204,13 +204,16 @@ sap.ui.define([
 			assert.ok(this.oJSONModelStub.callFunction.calledOnce, "Model.callFunction is triggered");
 			assert.equal(this.oJSONModelStub.callFunction.getCall(0).args[0], "/" + CONST.OData.functionImports.clearCompleted.name, "Proper function name");
 			assert.ok(this.oAppController._refresh.calledOnce, "Lists are refreshed without waiting for success");
-			// Simulate respone
+			// Simulate response
+			// Given
 			var mParameters = this.oJSONModelStub.callFunction.getCall(0).args[1],
 				oResponse = {},
 				oReturnType = {};
 			oReturnType[CONST.OData.functionImports.clearCompleted.returnType.count] = oTestCase.count;
 			oResponse[CONST.OData.functionImports.clearCompleted.name] = oReturnType;
+			// When
 			mParameters.success(oResponse);
+			// Then
 			assert.equal(this.oAppController._i18n.getCall(0).args[0], oTestCase.expectedKey, "The proper translation key was used");
 			if (oTestCase.count > 1) {
 				assert.equal(this.oAppController._i18n.getCall(0).args[1][0], oTestCase.count, "The number of items was provided");
