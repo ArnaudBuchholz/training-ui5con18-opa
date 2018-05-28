@@ -9,7 +9,9 @@ sap.ui.define([
 
 	Opa5.extendConfig({
 		arrangements: new Common(),
-		pollingInterval: 1
+		pollingInterval: 1,
+		autoWait: true,
+		viewName: sViewName // Since we have only one view
 	});
 
 });
