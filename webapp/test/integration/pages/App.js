@@ -21,17 +21,17 @@ sap.ui.require([
 			baseClass: Common,
 
 			actions: {
-				iEnterTextForNewItemAndPressEnter: function(text) {
+				iEnterTextForNewItemAndPressEnter: function(sText) {
 					return this.waitFor({
 						id: sAddToItemInputId,
-						actions: [new EnterText({ text: text })],
+						actions: [new EnterText({ text: sText })],
 						errorMessage: "The text cannot be entered"
 					});
 				},
-				iEnterTextForSearchAndPressEnter: function(text) {
+				iEnterTextForSearchAndPressEnter: function(sText) {
 					return this.waitFor({
 						id: sSearchTodoItemsInputId,
-						actions: [new EnterText({ text: text })],
+						actions: [new EnterText({ text: sText })],
 						errorMessage: "The text cannot be entered"
 					});
 				},
@@ -47,16 +47,17 @@ sap.ui.require([
 						errorMessage: "Last checkbox cannot be pressed"
 					});
 				},
-				iSelectAllItems: function(bSelected) {
+				iSelectItem: function(sText) {
+					var opa = this;
 					return this.waitFor({
-						id: sItemListId,
-						actions: [function(oList) {
-
-							oList.getItems().forEach(function(oListItem) {
-								this._triggerCheckboxSelection(oListItem, bSelected)
-
-							}.bind(this));
-						}.bind(this)],
+						controlType: "sap.m.ObjectListItem",
+						matchers: [new PropertyStrictEquals({
+							name: "title",
+							value: sText
+						})],
+						actions: [function(oListItem) {
+							opa._triggerCheckboxSelection(oListItem, true)
+						}],
 						errorMessage: "checkbox cannot be pressed"
 					});
 				},
@@ -89,7 +90,7 @@ sap.ui.require([
 			},
 
 			assertions: {
-				iShouldSeeTheItemBeingAdded: function(sLastAddedText) {
+				iShouldSeeTheItem: function(sLastAddedText) {
 					return this.waitFor({
 						controlType: "sap.m.ObjectListItem",
 						matchers: [new PropertyStrictEquals({
