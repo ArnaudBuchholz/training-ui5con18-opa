@@ -46,6 +46,7 @@
 						/>
 					</List>
 					<Dialog id="todoItem"
+						visible="false"
 						title="{Title}"
 						icon="{path: '', formatter: '.getIconSafe'}"
 					>
@@ -65,11 +66,11 @@
 							columnsM="1"
 							singleContainerFullSize="false">
 							<Label text="{i18n>form.Title}" />
-							<Input type="text" value="{Title}" visible="{= !${Completed} }" />
+							<Input id="title" type="text" value="{Title}" visible="{= !${Completed} }" />
 							<Label text="{i18n>form.DueDate}" />
-							<DateTimePicker dateValue="{DueDate}" editable="{= !${Completed} }" />
+							<DateTimePicker id="dueDate" dateValue="{DueDate}" editable="{= !${Completed} }" />
 							<Label text="{i18n>form.CompletionDate}" visible="{Completed}" />
-							<DateTimePicker dateValue="{CompletionDate}" editable="false" visible="{Completed}" />
+							<DateTimePicker id="completionDate" dateValue="{CompletionDate}" editable="false" visible="{Completed}" />
 						</form:SimpleForm>
 						<beginButton>
 							<Button id="btnOK" press="onFormOK" text="{i18n>form.OK}" type="Accept" visible="{= !${Completed} }" />
