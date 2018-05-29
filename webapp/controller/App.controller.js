@@ -138,6 +138,7 @@ sap.ui.define([
 			var oListItem = oEvent.getSource(),
 				oDialog = this.getView().byId("todoItem");
 			oDialog.setBindingContext(oListItem.getBindingContext());
+			oDialog.setVisible(true);
 			oDialog.open();
 		},
 
@@ -158,6 +159,13 @@ sap.ui.define([
 			});
 		},
 
+		_closeDialog: function () {
+			var oDialog = this.getView().byId("todoItem");
+			oDialog.setVisible(false);
+			oDialog.setBusy(false);
+			oDialog.close();
+		},
+
 		onFormOK: function(oEvent) {
 			var oModel = this.getView().getModel(),
 				oDialog = this.getView().byId("todoItem"),
@@ -169,14 +177,11 @@ sap.ui.define([
 			} else {
 				oPromise = Promise.resolve();
 			}
-			oPromise.then(function() {
-				oDialog.setBusy(false);
-				oDialog.close();
-			})
+			oPromise.then(this._closeDialog.bind(this))
 		},
 
 		onFormCancel: function(oEvent) {
-			this.getView().byId("todoItem").close();
+			this._closeDialog();
 		},
 
 		onSelectionChange: function(oEvent) {
