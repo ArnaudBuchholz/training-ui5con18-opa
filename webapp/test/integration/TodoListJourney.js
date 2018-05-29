@@ -16,7 +16,7 @@ sap.ui.define([
 		When.onTheAppPage.iEnterTextForNewItemAndPressEnter("my test");
 
 		// Assertions
-		Then.onTheAppPage.iShouldSeeTheItemBeingAdded("my test").
+		Then.onTheAppPage.iShouldSeeTheItem("my test").
 			and.iTeardownTheApp();
 	});
 
@@ -26,9 +26,9 @@ sap.ui.define([
 		Given.iStartTheApp();
 
 		//Actions
-		When.onTheAppPage.iEnterTextForNewItemAndPressEnter("my test")
-			.and.iSelectAllItems(true)
-			.and.iClearTheCompletedItems()
+		When.onTheAppPage.iClearTheCompletedItems()
+			.and.iEnterTextForNewItemAndPressEnter("my test")
+			.and.iSelectItem("my test")
 			.and.iEnterTextForNewItemAndPressEnter("my test");
 
 		// Assertions
