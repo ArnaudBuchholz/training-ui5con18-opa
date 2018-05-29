@@ -11,7 +11,7 @@ sap.ui.define([
 		arrangements: new Common(),
 		pollingInterval: 1,
 		autoWait: true,
-		viewName: sViewName // Since we have only one view
+		viewName: "sap.ui.demo.todo.view.App" // Since we have only one view
 	});
 
 });
