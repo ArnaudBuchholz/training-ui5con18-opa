@@ -9,7 +9,6 @@ sap.ui.require([
 ], function (Opa5, Common, AggregationLengthEquals, PropertyStrictEquals, Properties, EnterText, Press) {
 	"use strict";
 
-	var sViewName = "sap.ui.demo.todo.view.App";
 	var sAddToItemInputId = "addTodoItemInput";
 	var sSearchTodoItemsInputId = "searchTodoItemsInput";
 	var sItemListId = "todoList";
@@ -25,7 +24,6 @@ sap.ui.require([
 				iEnterTextForNewItemAndPressEnter: function(text) {
 					return this.waitFor({
 						id: sAddToItemInputId,
-						viewName: sViewName,
 						actions: [new EnterText({ text: text })],
 						errorMessage: "The text cannot be entered"
 					});
@@ -33,7 +31,6 @@ sap.ui.require([
 				iEnterTextForSearchAndPressEnter: function(text) {
 					return this.waitFor({
 						id: sSearchTodoItemsInputId,
-						viewName: sViewName,
 						actions: [new EnterText({ text: text })],
 						errorMessage: "The text cannot be entered"
 					});
@@ -41,7 +38,6 @@ sap.ui.require([
 				iSelectTheLastItem: function(bSelected) {
 					return this.waitFor({
 						id: sItemListId,
-						viewName: sViewName,
 						// selectionChange
 						actions: [function(oList) {
 							var iLength = oList.getItems().length;
@@ -54,7 +50,6 @@ sap.ui.require([
 				iSelectAllItems: function(bSelected) {
 					return this.waitFor({
 						id: sItemListId,
-						viewName: sViewName,
 						actions: [function(oList) {
 
 							oList.getItems().forEach(function(oListItem) {
@@ -77,14 +72,12 @@ sap.ui.require([
 				iClearTheCompletedItems: function() {
 					return this.waitFor({
 						id: sClearCompletedId,
-						viewName: sViewName,
 						actions: [new Press()],
 						errorMessage: "checkbox cannot be pressed"
 					});
 				},
 				iFilterForItems: function(filterKey) {
 					return this.waitFor({
-						viewName: sViewName,
 						controlType: "sap.m.SegmentedButtonItem",
 						matchers: [
 							new Properties({ key: filterKey })
@@ -96,23 +89,15 @@ sap.ui.require([
 			},
 
 			assertions: {
-				iShouldSeeTheItemBeingAdded: function(iItemCount, sLastAddedText) {
+				iShouldSeeTheItemBeingAdded: function(sLastAddedText) {
 					return this.waitFor({
-						id: sItemListId,
-						viewName: sViewName,
-						matchers: [new AggregationLengthEquals({
-							name: "items",
-							length: iItemCount
-						}), function(oControl) {
-							var iLength = oControl.getItems().length;
-							var oInput = oControl.getItems()[iLength - 1].getContent()[0];
-							return new PropertyStrictEquals({
-								name: "value",
-								value: sLastAddedText
-							}).isMatching(oInput);
-						}],
+						controlType: "sap.m.ObjectListItem",
+						matchers: [new PropertyStrictEquals({
+							name: "title",
+							value: sLastAddedText
+						})],
 						success: function() {
-							Opa5.assert.ok(true, "The table has " + iItemCount + " item(s), with '" + sLastAddedText + "' as last item");
+							Opa5.assert.ok(true, "The table has the expected entry '" + sLastAddedText + "'");
 						},
 						errorMessage: "List does not have expected entry '" + sLastAddedText + "'."
 					});
@@ -120,7 +105,6 @@ sap.ui.require([
 				iShouldSeeTheLastItemBeingCompleted: function(bSelected) {
 					return this.waitFor({
 						id: sItemListId,
-						viewName: sViewName,
 						matchers: [function(oControl) {
 							var iLength = oControl.getItems().length;
 							var oInput = oControl.getItems()[iLength - 1].getContent()[0];
@@ -135,7 +119,6 @@ sap.ui.require([
 				iShouldSeeAllButOneItemBeingRemoved: function(sLastItemText) {
 					return this.waitFor({
 						id: sItemListId,
-						viewName: sViewName,
 						matchers: [new AggregationLengthEquals({
 							name: "items",
 							length: 1
@@ -155,7 +138,6 @@ sap.ui.require([
 				iShouldSeeItemLeftCount: function(iNumberItemsLeft) {
 					return this.waitFor({
 						id: sItemsLeftLabelId,
-						viewName: sViewName,
 						matchers: [new PropertyStrictEquals({
 							name: "text",
 							value: iNumberItemsLeft + (iNumberItemsLeft === 1 ? " item left" : " items left")
@@ -170,7 +152,6 @@ sap.ui.require([
 				iShouldSeeItemCount: function(iItemCount) {
 					return this.waitFor({
 						id: sItemListId,
-						viewName: sViewName,
 						matchers: [new AggregationLengthEquals({
 							name: "items",
 							length: iItemCount
