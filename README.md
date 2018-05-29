@@ -2,7 +2,10 @@
 
 # training-uicon18-opa
 > [OpenUI5](https://github.com/SAP/openui5) sample app to demonstrate UI5's OPA (UICon'18)
-*copied from [openui5-sample-app](https://github.com/SAP/openui5-sample-app)*
+
+* copied from [openui5-sample-app](https://github.com/SAP/openui5-sample-app)
+* Uses OData Model to manipulate todo items
+* Relies on MockServer to simulate backend
 
 ## Getting started
 * Install Node.js (from [nodejs.org](http://nodejs.org/)).
