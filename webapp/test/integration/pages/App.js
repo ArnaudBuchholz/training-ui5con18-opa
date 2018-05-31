@@ -11,7 +11,6 @@ sap.ui.require([
 
 	var sAddToItemInputId = "addTodoItemInput",
 		sSearchTodoItemsInputId = "searchTodoItemsInput",
-		sItemListId = "todoList",
 		sClearCompletedId = "clearCompleted",
 		sItemsLeftLabelId = "itemsLeftLabel";
 
@@ -36,32 +35,6 @@ sap.ui.require([
 				// 	});
 				// },
 
-				iClickTheItemToSetItToCompleted: function(sTitle) {
-					var opa = this;
-					return this.waitFor({
-						controlType: "sap.m.ObjectListItem",
-						matchers: [new Properties({
-							title: sTitle,
-							selected: false
-						})],
-						actions: [function(oListItem) {
-							opa._triggerCheckboxSelection(oListItem, true)
-						}],
-						errorMessage: "Item cannot be set to completed"
-					});
-
-				},
-
-				_triggerCheckboxSelection: function(oListItem, bSelected) {
-					//determine existing selection state and ensure that it becomes <code>bSelected</code>
-					if (oListItem.getSelected() && !bSelected || !oListItem.getSelected() && bSelected) {
-						var oPress = new Press();
-						//search within the CustomListItem for the checkbox id ending with 'selectMulti-CB'
-						oPress.controlAdapters["sap.m.CustomListItem"] = "sapMLIBSelectM";
-						oPress.executeOn(oListItem);
-					}
-				},
-
 				iClearTheCompletedItems: function() {
 					return this.waitFor({
 						id: sClearCompletedId,
@@ -83,34 +56,6 @@ sap.ui.require([
 			},
 
 			assertions: {
-
-				iShouldSeeTheItemTitled: function(sTitle) {
-					return this.waitFor({
-						controlType: "sap.m.ObjectListItem",
-						matchers: [new Properties({
-							title: sTitle
-						})],
-						success: function() {
-							Opa5.assert.ok(true, "The list has the expected item titled '" + sTitle + "'");
-						},
-						errorMessage: "The list does not have the expected item titled '" + sTitle
-					});
-				},
-
-				iShouldNotSeeAnyItemTitled: function(sTitle) {
-					return this.waitFor({
-						controlType: "sap.m.ObjectListItem",
-						check: function (aItems) {
-							return aItems.every(function (oItem) {
-								return oItem.getTitle() !== sTitle;
-							});
-						},
-						success: function() {
-							Opa5.assert.ok(true, "The list has no item titled '" + sTitle + "'");
-						},
-						errorMessage: "The list still has not have expected item titled '" + sTitle
-					});
-				}
 
 				// iShouldSeeTheLastItemBeingCompleted: function(bSelected) {
 				// 	return this.waitFor({
