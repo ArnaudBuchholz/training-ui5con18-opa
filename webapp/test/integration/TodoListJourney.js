@@ -1,8 +1,5 @@
-/* global QUnit */
-
 sap.ui.define([
-	"sap/ui/test/opaQunit",
-	"sap/ui/demo/todo/test/integration/pages/App"
+	"sap/ui/test/opaQunit"
 ], function (opaTest) {
 	"use strict";
 
@@ -16,7 +13,7 @@ sap.ui.define([
 		When.onTheAppPage.iEnterTextForNewItemAndPressEnter("my test");
 
 		// Assertions
-		Then.onTheAppPage.iShouldSeeTheItemTitled("my test")
+		Then.onTheListOfItems.iShouldSeeTheItemTitled("my test")
 			.and.iTeardownTheApp();
 	});
 
@@ -25,12 +22,12 @@ sap.ui.define([
 		Given.iStartTheApp();
 
 		//Actions
-		When.onTheAppPage.iEnterTextForNewItemAndPressEnter("my test")
-			.and.iClickTheItemToSetItToCompleted("my test")
-			.and.iClearTheCompletedItems();
+		When.onTheAppPage.iEnterTextForNewItemAndPressEnter("my test");
+		When.onTheListOfItems.iClickTheItemToSetItToCompleted("my test");
+		When.onTheAppPage.iClearTheCompletedItems();
 
 		// Assertions
-		Then.onTheAppPage.iShouldNotSeeAnyItemTitled("my test")
+		Then.onTheListOfItems.iShouldNotSeeAnyItemTitled("my test")
 		// 	.and.iTeardownTheApp();
 	});
 
