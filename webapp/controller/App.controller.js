@@ -72,7 +72,7 @@ sap.ui.define([
 				oODataModel = this.getView().getModel();
 			_aFilters.forEach(function(oFilter) {
 				oODataModel.read("/" + CONST.OData.entityNames.todoItemSet, {
-					filters: oFilter.get(),
+					filters: this.aSearchFilters.concat(oFilter.get()),
 					urlParameters: {
 						$skip: 0,
 						$top: 1,
@@ -82,7 +82,7 @@ sap.ui.define([
 						oCountsModel.setProperty("/" + oFilter.key, oResult.__count || 0);
 					}
 				});
-			});
+			}, this);
 		},
 
 		addTodo: function() {
@@ -120,7 +120,7 @@ sap.ui.define([
 			if (sQuery && sQuery.length > 0) {
 				this.aSearchFilters = [new Filter(TODOITEM.title, FilterOperator.Contains, sQuery)];
 			}
-			this._applyListFilters();
+			this._refresh();
 		},
 
 		onFilter: function(oEvent) {
