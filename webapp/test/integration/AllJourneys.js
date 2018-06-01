@@ -1,11 +1,12 @@
-sap.ui.define([
+sap.ui.require([
 	"sap/ui/test/Opa5",
 	"sap/ui/demo/todo/test/integration/pages/Common",
 	"sap/ui/demo/todo/test/integration/pages/App",
 	"sap/ui/demo/todo/test/integration/pages/List",
+	"sap/ui/demo/todo/test/integration/pages/Filters",
 	"sap/ui/demo/todo/test/integration/TodoListJourney",
-	// "sap/ui/demo/todo/test/integration/SearchJourney",
-	// "sap/ui/demo/todo/test/integration/FilterJourney"
+	"sap/ui/demo/todo/test/integration/SearchJourney",
+	"sap/ui/demo/todo/test/integration/FilterJourney"
 ], function(Opa5, Common) {
 	"use strict";
 
