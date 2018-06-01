@@ -8,8 +8,6 @@ sap.ui.require([
 ], function (Opa5, Common, AggregationLengthEquals, Properties, Press) {
 	"use strict";
 
-	var S_LIST_ID = "todoList";
-
 	function _pressObjectListItemPart (sSubPartId) {
 		var oPress = new Press();
 		//search within the ObjectListItem for the constrol ending with sSubPartId
@@ -25,6 +23,47 @@ sap.ui.require([
 		return _pressObjectListItemPart("imgDet");
 	}
 
+	function iClickTheItemCheckbox (sTitle, bShouldBeSelected, sErrorMessage) {
+		return this.waitFor({
+			controlType: "sap.m.ObjectListItem",
+			matchers: [new Properties({
+				title: sTitle,
+				selected: bShouldBeSelected
+			})],
+			actions: [pressItemCheckbox()],
+			success: function () {
+				Opa5.assert.ok(true, "Clicked the checkbox of item '" + sTitle + "'");
+			},
+			errorMessage: sErrorMessage
+		});
+	}
+
+	function iShouldSeeTheItem (sTitle, bOptionalCompletedStatus) {
+		var oProperties = {
+				title: sTitle
+			},
+			sMessage;
+		if (undefined !== bOptionalCompletedStatus) {
+			oProperties.selected = bOptionalCompletedStatus;
+			if (bOptionalCompletedStatus) {
+				sMessage = "completed ";
+			} else {
+				sMessage = "new ";
+			}
+		} else {
+			sMessage = ""
+		}
+		sMessage += "item titled '" + sTitle + "'";
+		return this.waitFor({
+			controlType: "sap.m.ObjectListItem",
+			matchers: [new Properties(oProperties)],
+			success: function() {
+				Opa5.assert.ok(true, "The list has the expected " + sMessage);
+			},
+			errorMessage: "The list does not have the expected " + sMessage
+		});
+	}
+
 	Opa5.createPageObjects({
 		onTheListOfItems: {
 
@@ -32,37 +71,24 @@ sap.ui.require([
 
 			actions: {
 
-				iClickTheItemToSetItToCompleted: function(sTitle) {
-					return this.waitFor({
-						controlType: "sap.m.ObjectListItem",
-						matchers: [new Properties({
-							title: sTitle,
-							selected: false
-						})],
-						actions: [pressItemCheckbox()],
-						errorMessage: "Item cannot be set to completed"
-					});
+				iSetTheItemToCompleted: function(sTitle) {
+					return iClickTheItemCheckbox.call(this, sTitle, false, "Item '" + sTitle + "' cannot be completed");
 				},
 
-				iClickTheItemToSetItToNotCompleted: function(sTitle) {
-					return this.waitFor({
-						controlType: "sap.m.ObjectListItem",
-						matchers: [new Properties({
-							title: sTitle,
-							selected: true
-						})],
-						actions: [pressItemCheckbox()],
-						errorMessage: "Item cannot be set to completed"
-					});
+				iSetTheItemToNew: function(sTitle) {
+					return iClickTheItemCheckbox.call(this, sTitle, true, "Item '" + sTitle + "' cannot be completed");
 				},
 
-				iClickTheItemEditButton: function(sTitle) {
+				iEditTheItem: function(sTitle) {
 					return this.waitFor({
 						controlType: "sap.m.ObjectListItem",
 						matchers: [new Properties({
 							title: sTitle
 						})],
 						actions: [pressItemEdit()],
+						success: function () {
+							Opa5.assert.ok(true, "Clicked the edit button of item '" + sText + "'");
+						},
 						errorMessage: "Item cannot be edited"
 					});
 				}
@@ -71,17 +97,16 @@ sap.ui.require([
 
 			assertions: {
 
-				iShouldSeeTheItemTitled: function(sTitle) {
-					return this.waitFor({
-						controlType: "sap.m.ObjectListItem",
-						matchers: [new Properties({
-							title: sTitle
-						})],
-						success: function() {
-							Opa5.assert.ok(true, "The list has the expected item titled '" + sTitle + "'");
-						},
-						errorMessage: "The list does not have the expected item titled '" + sTitle
-					});
+				iShouldSeeTheItem: function(sTitle) {
+					return iShouldSeeTheItem.call(this, sTitle);
+				},
+
+				iShouldSeeTheNewItem: function(sTitle) {
+					return iShouldSeeTheItem.call(this, sTitle, false);
+				},
+
+				iShouldSeeTheCompletedItem: function(sTitle) {
+					return iShouldSeeTheItem.call(this, sTitle, true);
 				},
 
 				iShouldNotSeeAnyItemTitled: function(sTitle) {
