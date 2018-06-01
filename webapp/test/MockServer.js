@@ -70,7 +70,10 @@ sap.ui.define([
 				oMockServer.setEntitySetData(CONST.OData.entityNames.appConfigurationSet, aAppConfigurationSet);
 			}
 
-			if (oUriParameters.get("randomize") === "true") {
+			if (oUriParameters.get("empty") === "true") {
+				oMockServer.setEntitySetData(CONST.OData.entityNames.todoItemSet, []);
+
+			} else if (oUriParameters.get("randomize") === "true") {
 				// Generate random items
 				var aTodoItemSet = oMockServer.getEntitySetData(CONST.OData.entityNames.todoItemSet),
 					sDateMax = "/Date(" + new Date(2099,11,31).getTime() + ")/",
