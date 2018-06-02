@@ -23,7 +23,7 @@
 				"sap/ui/demo/todo/test/MockServer"
 
 			], function(Component, ComponentContainer, MockServer) {
-				MockServer.init();
+				MockServer.init(jQuery.sap.getUriParameters());
 				sap.ui.component({
 					id: "todo",
 					name: "sap.ui.demo.todo",
