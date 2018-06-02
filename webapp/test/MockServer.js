@@ -6,7 +6,8 @@ sap.ui.define([
 	"use strict";
 
 	var STOP_PROCRASTINATING_GUID = "0MOCKSVR-TODO-MKII-MOCK-00000000",
-		_lastTodoItemId = 0;
+		_lastTodoItemId = 0,
+		_oMockServer;
 
 	function _getJSONDateReplacer (dValue) {
 		return "/Date(" + dValue.getTime() + ")/";
@@ -19,63 +20,61 @@ sap.ui.define([
 
 	return {
 
-		init: function () {
-			var oUriParameters = jQuery.sap.getUriParameters(),
-				sJsonFilesUrl = jQuery.sap.getModulePath("sap/ui/demo/todo/model"),
+		init: function (oParameters) {
+			var sJsonFilesUrl = jQuery.sap.getModulePath("sap/ui/demo/todo/model"),
 				sManifestUrl = jQuery.sap.getModulePath("sap/ui/demo/todo/manifest", ".json"),
 				oManifest = jQuery.sap.syncGetJSON(sManifestUrl).data,
 				oMainDataSource = oManifest["sap.app"].dataSources.mainService,
 				// ensure there is a trailing slash
 				sMockServerUrl = /.*\/$/.test(oMainDataSource.uri) ? oMainDataSource.uri : oMainDataSource.uri + "/",
-				sMetadataUrl = jQuery.sap.getModulePath("sap/ui/demo/todo/model/metadata", ".xml"),
-				oMockServer;
+				sMetadataUrl = jQuery.sap.getModulePath("sap/ui/demo/todo/model/metadata", ".xml");
 
 			// init the inner mockserver
-			oMockServer = new MockServer({
+			_oMockServer = new MockServer({
 				rootUri: sMockServerUrl
 			});
 
 			// configure mock server with a delay of 1s
 			MockServer.config({
 				autoRespond: true,
-				autoRespondAfter: (oUriParameters.get("serverDelay") || 0)
+				autoRespondAfter: (oParameters.get("serverDelay") || 0)
 			});
 
 			// load local mock data
-			oMockServer.simulate(sMetadataUrl, {
+			_oMockServer.simulate(sMetadataUrl, {
 				sMockdataBaseUrl: sJsonFilesUrl,
 			});
 
-			if (oUriParameters.get("sap-ui-debug") === "true") {
+			if (oParameters.get("sap-ui-debug") === "true") {
 				// Trace requests
 				Object.keys(MockServer.HTTPMETHOD).forEach(function(sMethodName) {
 					var sMethod = MockServer.HTTPMETHOD[sMethodName];
-					oMockServer.attachBefore(sMethod, function(oEvent) {
+					_oMockServer.attachBefore(sMethod, function(oEvent) {
 						var oXhr = oEvent.getParameters().oXhr;
 						console.log("MockServer::before", sMethod, oXhr.url, oXhr);
 					});
-					oMockServer.attachAfter(sMethod, function(oEvent) {
+					_oMockServer.attachAfter(sMethod, function(oEvent) {
 						var oXhr = oEvent.getParameters().oXhr;
 						console.log("MockServer::after", sMethod, oXhr.url, oXhr);
 					});
 				});
 			}
 
-			if (oUriParameters.get("read-only") === "true") {
+			if (oParameters.get("read-only") === "true") {
 				// Set all AppConfiguration options to false
-				var aAppConfigurationSet = oMockServer.getEntitySetData(CONST.OData.entityNames.appConfigurationSet);
+				var aAppConfigurationSet = _oMockServer.getEntitySetData(CONST.OData.entityNames.appConfigurationSet);
 				aAppConfigurationSet.forEach(function (oAppConfigurationSet) {
 					oAppConfigurationSet[CONST.OData.entityProperties.appConfiguration.enable] = false;
 				});
-				oMockServer.setEntitySetData(CONST.OData.entityNames.appConfigurationSet, aAppConfigurationSet);
+				_oMockServer.setEntitySetData(CONST.OData.entityNames.appConfigurationSet, aAppConfigurationSet);
 			}
 
-			if (oUriParameters.get("empty") === "true") {
-				oMockServer.setEntitySetData(CONST.OData.entityNames.todoItemSet, []);
+			if (oParameters.get("empty") === "true") {
+				_oMockServer.setEntitySetData(CONST.OData.entityNames.todoItemSet, []);
 
-			} else if (oUriParameters.get("randomize") === "true") {
+			} else if (oParameters.get("randomize") === "true") {
 				// Generate random items
-				var aTodoItemSet = oMockServer.getEntitySetData(CONST.OData.entityNames.todoItemSet),
+				var aTodoItemSet = _oMockServer.getEntitySetData(CONST.OData.entityNames.todoItemSet),
 					sDateMax = "/Date(" + new Date(2099,11,31).getTime() + ")/",
 					sDateNow = "/Date(" + (new Date().getTime() - 60000) + ")/";
 				for (var idx = 0; idx < 100; ++idx) {
@@ -108,10 +107,10 @@ sap.ui.define([
 					_setIfNotSet(oTodoItemSet, CONST.OData.entityProperties.todoItem.completed, false);
 					_setIfNotSet(oTodoItemSet, CONST.OData.entityProperties.todoItem.dueDate, sDateMax);
 				});
-				oMockServer.setEntitySetData(CONST.OData.entityNames.todoItemSet, aTodoItemSet);
+				_oMockServer.setEntitySetData(CONST.OData.entityNames.todoItemSet, aTodoItemSet);
 			}
 
-			var aRequests = oMockServer.getRequests();
+			var aRequests = _oMockServer.getRequests();
 
 			// Update of a todo list item
 			aRequests.push({
@@ -141,13 +140,13 @@ sap.ui.define([
 				method: CONST.OData.functionImports.clearCompleted.method,
 				path: CONST.OData.functionImports.clearCompleted.name,
 				response: function (oXhr) {
-					var aInitialTodoItemSet = oMockServer.getEntitySetData(CONST.OData.entityNames.todoItemSet),
+					var aInitialTodoItemSet = _oMockServer.getEntitySetData(CONST.OData.entityNames.todoItemSet),
 						aClearedTodoItemSet = aInitialTodoItemSet.filter(function (oTodoItem) {
 							return !oTodoItem[CONST.OData.entityProperties.todoItem.completed];
 						}),
 						oReturnType = {},
 						oResult = {};
-					oMockServer.setEntitySetData(CONST.OData.entityNames.todoItemSet, aClearedTodoItemSet);
+					_oMockServer.setEntitySetData(CONST.OData.entityNames.todoItemSet, aClearedTodoItemSet);
 					oReturnType[CONST.OData.functionImports.clearCompleted.returnType.count] = aInitialTodoItemSet.length - aClearedTodoItemSet.length;
 					oResult[CONST.OData.functionImports.clearCompleted.name] = oReturnType;
 					oXhr.respond(200, {
@@ -159,14 +158,20 @@ sap.ui.define([
 				}
 			});
 
-			oMockServer.setRequests(aRequests);
+			_oMockServer.setRequests(aRequests);
 
-			oMockServer.start();
+			_oMockServer.start();
+		},
+
+		shutdown: function() {
+			_oMockServer.stop();
+			_oMockServer = null;
 		},
 
 		getMockServer: function() {
-			return oMockServer;
+			return _oMockServer;
 		}
+
 	};
 
 });
