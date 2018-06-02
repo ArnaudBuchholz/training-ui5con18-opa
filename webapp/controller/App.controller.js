@@ -26,7 +26,8 @@ sap.ui.define([
 		}, {
 			key: "late",
 			get: function() {
-				return [new Filter(TODOITEM.dueDate, FilterOperator.LE, new Date())];
+				return [new Filter(TODOITEM.dueDate, FilterOperator.LE, new Date()),
+						new Filter(TODOITEM.completed, FilterOperator.EQ, false)];
 			}
 		}, {
 			key: "completed",
