@@ -122,6 +122,20 @@ sap.ui.require([
 						},
 						errorMessage: "The list still has not have expected item titled '" + sTitle
 					});
+				},
+
+				iShouldSeeAGivenNumberOfItems: function(iCount) {
+					return this.waitFor({
+						controlType: "sap.m.ListBase",
+						matchers: [new AggregationLengthEquals({
+							name: "items",
+							length: iCount
+						})],
+						success: function() {
+							Opa5.assert.ok(true, "The list shows " + iCount + " items");
+						},
+						errorMessage: "The list doesn't show " + iCount + " items"
+					});
 				}
 
 			}
