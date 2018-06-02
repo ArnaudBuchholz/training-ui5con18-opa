@@ -8,7 +8,9 @@ sap.ui.require([
 
 	opaTest("the default filter should be all", function (Given, When, Then) {
 		// Arrangements
-		Given.iStartTheApp();
+		Given.iStartTheApp({
+			force: true
+		});
 
 		//Actions
 
@@ -17,49 +19,54 @@ sap.ui.require([
 			.and.iTeardownTheApp();
 	});
 
-	opaTest("should show correct items when filtering for 'Active' items", function (Given, When, Then) {
+	[{
+		label: "All",
+		button: filters.ALL,
+		expectedCount: 4
+	}, {
+		label: "Active",
+		button: filters.ACTIVE,
+		expectedCount: 3
+	}, {
+		label: "Late",
+		button: filters.LATE,
+		expectedCount: 2
+	}, {
+		label: "Completed",
+		button: filters.COMPLETED,
+		expectedCount: 1
+
+	}].forEach(function (oTestCase) {
+		opaTest("should show correct items when filtering for '" + oTestCase.label + "' items", function (Given, When, Then) {
+			// Arrangements
+			Given.iStartTheApp();
+
+			//Actions
+			When.onTheFilterButtons.iClick(oTestCase.button);
+
+			// Assertions
+			Then.onTheFilterButtons.iShouldSeeTheButtonCount(oTestCase.button, oTestCase.expectedCount);
+			Then.onTheListOfItems.iShouldSeeAGivenNumberOfItems(oTestCase.expectedCount)
+				.and.iTeardownTheApp();
+		});
+	})
+
+	opaTest("should show correct items when filtering for 'Completed' items and switch back to 'All'", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartTheApp();
 
 		//Actions
-		When.onTheFilterButtons.iClick(filters.ACTIVE);
+		When.onTheFilterButtons.iClick(filters.COMPLETED);
 
 		// Assertions
-		Then.onTheFilterButtons.iShouldSeeTheButtonCount(filters.ACTIVE, 3);
-		Then.onTheListOfItems.iShouldSeeAGivenNumberOfItems(3)
-			and.iTeardownTheApp();
+		Then.onTheListOfItems.iShouldSeeAGivenNumberOfItems(1);
+
+		//Actions
+		When.onTheFilterButtons.iClick(filters.ALL);
+
+		// Assertions
+		Then.onTheListOfItems.iShouldSeeAGivenNumberOfItems(4)
+			.and.iTeardownTheApp(/*force*/ true);
 	});
-	//
-	// opaTest("should show correct items when filtering for 'Completed' items", function (Given, When, Then) {
-	//
-	// 	// Arrangements
-	// 	Given.iStartTheApp();
-	//
-	// 	//Actions
-	// 	When.onTheAppPage.iFilterForItems("completed");
-	//
-	// 	// Assertions
-	// 	Then.onTheAppPage.iShouldSeeItemCount(1).
-	// 		and.iTeardownTheApp();
-	// });
-	//
-	// opaTest("should show correct items when filtering for 'Completed' items and switch back to 'All'", function (Given, When, Then) {
-	//
-	// 	// Arrangements
-	// 	Given.iStartTheApp();
-	//
-	// 	//Actions
-	// 	When.onTheAppPage.iFilterForItems("completed");
-	//
-	// 	// Assertions
-	// 	Then.onTheAppPage.iShouldSeeItemCount(1);
-	//
-	// 	//Actions
-	// 	When.onTheAppPage.iFilterForItems("all");
-	//
-	// 	// Assertions
-	// 	Then.onTheAppPage.iShouldSeeItemCount(2).
-	// 		and.iTeardownTheApp();
-	// });
 
 });
