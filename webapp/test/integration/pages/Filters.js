@@ -50,19 +50,19 @@ sap.ui.define([
 
 				},
 
-				iShouldSeeTheButtonCount: function (sFilterButtonCode, iCount) {
+				iShouldSeeTheButtonCount: function (sFilterButtonCode, vCount) {
 					return this.waitFor({
 						viewName: "", // Since the buttons are created dynamically
 						id: "filterButton-" + sFilterButtonCode,
 						matchers: [new I18NText({
 							propertyName: "text",
 							key: "filterButton." + sFilterButtonCode,
-							parameters: [iCount]
+							parameters: [vCount]
 						})],
 						success: function () {
-							Opa5.assert.ok(true, "The filter button '" + sFilterButtonCode + "' shows the the record count " + iCount);
+							Opa5.assert.ok(true, "The filter button '" + sFilterButtonCode + "' shows the the record count " + vCount);
 						},
-						errorMessage: "The filter button '" + sFilterButtonCode + "' does not show the record count " + iCount
+						errorMessage: "The filter button '" + sFilterButtonCode + "' does not show the record count " + vCount
 					});
 				}
 
