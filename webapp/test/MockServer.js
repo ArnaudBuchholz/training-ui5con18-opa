@@ -112,6 +112,26 @@ sap.ui.define([
 
 			var aRequests = _oMockServer.getRequests();
 
+			// Creation of a todo list item
+			aRequests.push({
+				method: "POST",
+				path: CONST.OData.entityNames.todoItemSet,
+				response: function (oXhr) {
+					if (oParameters.get("error") === "new") {
+						oXhr.respond(400, {
+							"Content-Type": "text/plain;charset=utf-8"
+						}, "Creation failed");
+						return true; // Skip default processing
+					}
+					// Initialize some fields
+					var oBody = JSON.parse(oXhr.requestBody);
+					oBody[CONST.OData.entityProperties.todoItem.completed] = false;
+					oBody[CONST.OData.entityProperties.todoItem.completionDate] = null;
+					oXhr.requestBody = JSON.stringify(oBody);
+					return false; // Keep default processing
+				}
+			});
+
 			// Update of a todo list item
 			aRequests.push({
 				method: "MERGE",
@@ -131,6 +151,21 @@ sap.ui.define([
 						oBody[CONST.OData.entityProperties.todoItem.completionDate] = null;
 					}
 					oXhr.requestBody = JSON.stringify(oBody);
+					return false; // Keep default processing
+				}
+			});
+
+			// Getting a todo list item with filter
+			aRequests.push({
+				method: "GET",
+				path: CONST.OData.entityNames.todoItemSet + "\\?.*\\$filter=.*",
+				response: function (oXhr) {
+					if (oParameters.get("error") === "filter") {
+						oXhr.respond(400, {
+							"Content-Type": "text/plain;charset=utf-8"
+						}, "Get failed");
+						return true; // Skip default processing
+					}
 					return false; // Keep default processing
 				}
 			});
