@@ -87,7 +87,7 @@ sap.ui.require([
 						})],
 						actions: [pressItemEdit()],
 						success: function () {
-							Opa5.assert.ok(true, "Clicked the edit button of item '" + sText + "'");
+							Opa5.assert.ok(true, "Clicked the edit button of item '" + sTitle + "'");
 						},
 						errorMessage: "Item cannot be edited"
 					});
