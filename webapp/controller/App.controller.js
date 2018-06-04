@@ -81,6 +81,9 @@ sap.ui.define([
 					},
 					success: function(oResult) {
 						oCountsModel.setProperty("/" + oFilter.key, oResult.__count || 0);
+					},
+					error: function () {
+						oCountsModel.setProperty("/" + oFilter.key, "-");
 					}
 				});
 			}, this);
@@ -98,7 +101,12 @@ sap.ui.define([
 			oBody[TODOITEM.title] = sLabel;
 			oBody[TODOITEM.dueDate] = dDueDate;
 			oModel.create("/" + CONST.OData.entityNames.todoItemSet, oBody, {
-				success: MessageToast.show.bind(MessageToast, this._i18n("message.created"))
+				success: MessageToast.show.bind(MessageToast, this._i18n("message.created")),
+				error: function(response) {
+					MessageBox.error(response.responseText, {
+						title: this._i18n("message.error")
+					});
+				}.bind(this)
 			});
 			this._refresh();
 		},
