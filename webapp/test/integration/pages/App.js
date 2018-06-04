@@ -4,9 +4,10 @@ sap.ui.require([
 	"sap/ui/test/matchers/AggregationLengthEquals",
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/actions/EnterText",
-	"sap/ui/test/actions/Press"
+	"sap/ui/test/actions/Press",
+	"sap/ui/test/matchers/I18NText"
 
-], function (Opa5, Common, AggregationLengthEquals, Properties, EnterText, Press) {
+], function (Opa5, Common, AggregationLengthEquals, Properties, EnterText, Press, I18NText) {
 	"use strict";
 
 	var sAddToItemInputId = "addTodoItemInput",
@@ -49,11 +50,43 @@ sap.ui.require([
 						},
 						errorMessage: "The 'Clear completed' button cannot be pressed"
 					});
+				},
+
+				iCloseTheError: function () {
+					return this.waitFor({
+						searchOpenDialogs: true,
+						controlType: "sap.m.Dialog",
+						matchers: [new Properties({
+							icon: "sap-icon://message-error"
+						}), function (oDialog) {
+							return oDialog.getButtons()[0];
+						}],
+						actions: [new Press()],
+						success: function () {
+							Opa5.assert.ok(true, "Closed the error message");
+						},
+						errorMessage: "Not able to close the error message"
+					});
 				}
 
 			},
 
 			assertions: {
+
+				iShouldSeeAnError: function () {
+					return this.waitFor({
+						searchOpenDialogs: true,
+						controlType: "sap.m.Dialog",
+						matchers: [new Properties({
+							icon: "sap-icon://message-error"
+						})],
+						success: function () {
+							Opa5.assert.ok(true, "An error message is displayed");
+						},
+						errorMessage: "No error message is displayed"
+					});
+				}
+
 			}
 
 		}
