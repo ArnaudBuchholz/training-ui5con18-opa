@@ -5,11 +5,11 @@ sap.ui.define([
 	"use strict";
 
 	var bInOpaPage = location.toString().indexOf("opaTests.qunit.html") !== -1 &&
-						jQuery.sap.getUriParameters().get("component") !== "true";
+		jQuery.sap.getUriParameters().get("component") !== "true";
 
-	function _wrapParameters (oParameters) {
+	function _wrapParameters(oParameters) {
 		return {
-			get: function (name) {
+			get: function(name) {
 				return (oParameters[name] || "").toString();
 			}
 		};
@@ -19,7 +19,7 @@ sap.ui.define([
 
 		iStartTheApp: function(oParameters) {
 			if (bInOpaPage) {
-				var aUrlParams = Object.keys(oParameters || {}).map(function (sParameterName) {
+				var aUrlParams = Object.keys(oParameters || {}).map(function(sParameterName) {
 					return sParameterName + "=" + encodeURIComponent(oParameters[sParameterName]);
 				});
 				aUrlParams.push(location.search.toString().substr(1)); // Also forward OPA parameters
