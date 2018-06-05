@@ -1,9 +1,9 @@
-sap.ui.define([], function () {
+sap.ui.define([], function() {
 	"use strict";
 
 	return {
 
-		msPerDay:  24 * 60 * 60 * 1000,
+		msPerDay: 24 * 60 * 60 * 1000,
 
 		OData: {
 
