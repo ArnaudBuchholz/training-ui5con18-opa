@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/demo/todo/const",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/sinon-qunit"
-], function(ManagedObject, Controller, AppController, JSONModel, CONST/*, sinon, sinonQunit*/) {
+], function(ManagedObject, Controller, AppController, JSONModel, CONST /*, sinon, sinonQunit*/ ) {
 	"use strict";
 
 	QUnit.module("App.controller", {
@@ -18,7 +18,7 @@ sap.ui.define([
 			this.oViewStub.setModel(this.oJSONModelStub);
 			this.oAppController._i18n = sinon.spy();
 			this.oAppController._refresh = sinon.spy();
-			["create", "read", "update", "callFunction"].forEach(function (sMethod) {
+			["create", "read", "update", "callFunction"].forEach(function(sMethod) {
 				this.oJSONModelStub[sMethod] = sinon.spy();
 			}, this);
 			this.mControls = {
@@ -26,7 +26,7 @@ sap.ui.define([
 					getValue: sinon.stub()
 				}
 			};
-			this.oViewStub.byId = function (sId) {
+			this.oViewStub.byId = function(sId) {
 				return this.mControls[sId];
 			}.bind(this);
 		},
@@ -41,9 +41,9 @@ sap.ui.define([
 		dTwoDaysAgo = new Date(dYesterday.getTime() - CONST.msPerDay),
 		dTomorrow = new Date(dToday.getTime() + CONST.msPerDay);
 
-	function buildItem (oItemDefinition) {
+	function buildItem(oItemDefinition) {
 		var oTodoItem = {};
-		Object.keys(oItemDefinition).forEach(function (sProperty) {
+		Object.keys(oItemDefinition).forEach(function(sProperty) {
 			oTodoItem[CONST.OData.entityProperties.todoItem[sProperty]] = oItemDefinition[sProperty];
 		});
 		return oTodoItem;
@@ -84,11 +84,11 @@ sap.ui.define([
 		},
 		expectedIcon: true
 
-	}].forEach(function (oTestCase) {
-		QUnit.test("getIcon when " + oTestCase.label, function (assert) {
+	}].forEach(function(oTestCase) {
+		QUnit.test("getIcon when " + oTestCase.label, function(assert) {
 			// Given
 			var oTodoItem = buildItem(oTestCase.item),
-			// When
+				// When
 				sIcon = this.oAppController.getIcon(oTodoItem);
 			// Then
 			if (oTestCase.expectedIcon) {
@@ -131,12 +131,11 @@ sap.ui.define([
 		expectedKey: "todoItem.intro.lateDays",
 		expectedDaysCount: true
 
-
-	}].forEach(function (oTestCase) {
-		QUnit.test("getIntro when " + oTestCase.label, function (assert) {
+	}].forEach(function(oTestCase) {
+		QUnit.test("getIntro when " + oTestCase.label, function(assert) {
 			// Given
 			var oTodoItem = buildItem(oTestCase.item),
-			// When
+				// When
 				sIntro = this.oAppController.getIntro(oTodoItem);
 			// Then
 			if (oTestCase.expectedKey) {
@@ -153,7 +152,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Item creation - check API usage", function (assert) {
+	QUnit.test("Item creation - check API usage", function(assert) {
 		// Given
 		var sTitle = "Hello World!";
 		this.mControls.addTodoItemInput.getValue.returns(sTitle);
@@ -175,7 +174,7 @@ sap.ui.define([
 		assert.ok(this.oAppController._refresh.calledOnce, "Lists are refreshed without waiting for success");
 	});
 
-	QUnit.test("Item creation - blocked if no title", function (assert) {
+	QUnit.test("Item creation - blocked if no title", function(assert) {
 		// Given
 		this.mControls.addTodoItemInput.getValue.returns("");
 		// When
@@ -195,14 +194,15 @@ sap.ui.define([
 		count: 2,
 		expectedKey: "message.clearedCompleted.many"
 
-	}].forEach(function (oTestCase) {
-		QUnit.test("Clearing of completed items - when " + oTestCase.count + " items are cleared", function (assert) {
+	}].forEach(function(oTestCase) {
+		QUnit.test("Clearing of completed items - when " + oTestCase.count + " items are cleared", function(assert) {
 			// Given
 			// When
 			this.oAppController.clearCompleted();
 			// Then
 			assert.ok(this.oJSONModelStub.callFunction.calledOnce, "Model.callFunction is triggered");
-			assert.equal(this.oJSONModelStub.callFunction.getCall(0).args[0], "/" + CONST.OData.functionImports.clearCompleted.name, "Proper function name");
+			assert.equal(this.oJSONModelStub.callFunction.getCall(0).args[0], "/" + CONST.OData.functionImports.clearCompleted.name,
+				"Proper function name");
 			assert.ok(this.oAppController._refresh.calledOnce, "Lists are refreshed without waiting for success");
 			// Simulate response
 			// Given
