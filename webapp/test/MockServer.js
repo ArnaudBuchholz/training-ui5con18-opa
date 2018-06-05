@@ -18,6 +18,12 @@ sap.ui.define([
 		return "0MOCKSVR-TODO-MKII-DYNK-00000000".substr(0, 32 - sNewId.length) + sNewId;
 	}
 
+	function _setIfNotSet(oTodoItemSet, sPropertyName, vDefaultValue) {
+		if (!oTodoItemSet.hasOwnProperty(sPropertyName)) {
+			oTodoItemSet[sPropertyName] = vDefaultValue;
+		}
+	}
+
 	return {
 
 		init: function(oParameters) {
@@ -95,12 +101,6 @@ sap.ui.define([
 						oNewTodoItemSet[CONST.OData.entityProperties.todoItem.dueDate] = sDateNow;
 					}
 					aTodoItemSet.push(oNewTodoItemSet);
-				}
-				// Fill missing properties
-				function _setIfNotSet(oTodoItemSet, sPropertyName, vDefaultValue) {
-					if (!oTodoItemSet.hasOwnProperty(sPropertyName)) {
-						oTodoItemSet[sPropertyName] = vDefaultValue;
-					}
 				}
 				aTodoItemSet.forEach(function(oTodoItemSet) {
 					_setIfNotSet(oTodoItemSet, CONST.OData.entityProperties.todoItem.completionDate, null);
