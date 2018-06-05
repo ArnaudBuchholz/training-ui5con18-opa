@@ -5,14 +5,14 @@ sap.ui.require([
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/actions/EnterText"
 
-], function (Opa5, Common, Properties, Press, EnterText) {
+], function(Opa5, Common, Properties, Press, EnterText) {
 	"use strict";
 
-	function _getIShouldSeeTheField (sId, sName) {
-		return function () {
+	function _getIShouldSeeTheField(sId, sName) {
+		return function() {
 			return this.waitFor({
 				id: sId,
-				success: function () {
+				success: function() {
 					Opa5.assert.ok(true, "The " + sName + " field is displayed");
 				},
 				errorMessage: "The " + sName + " field is *not* displayed"
@@ -20,8 +20,8 @@ sap.ui.require([
 		};
 	}
 
-	function _getIShouldNotSeeTheField (sId, sName) {
-		return function () {
+	function _getIShouldNotSeeTheField(sId, sName) {
+		return function() {
 			return this.waitFor({
 				autoWait: false,
 				visible: false,
@@ -29,7 +29,7 @@ sap.ui.require([
 				matchers: [new Properties({
 					visible: false
 				})],
-				success: function () {
+				success: function() {
 					Opa5.assert.ok(true, "The " + sName + " field is *not* displayed");
 				},
 				errorMessage: "The " + sName + " field is displayed"
@@ -44,35 +44,35 @@ sap.ui.require([
 
 			actions: {
 
-				iClickSave: function () {
+				iClickSave: function() {
 					return this.waitFor({
 						id: "btnOK",
 						actions: [new Press()],
-						success: function () {
+						success: function() {
 							Opa5.assert.ok(true, "Clicked save in the edit dialog");
 						},
 						errorMessage: "Unable to click save in the edit dialog"
 					});
 				},
 
-				iClickClose: function () {
+				iClickClose: function() {
 					return this.waitFor({
 						id: "btnCancel",
 						actions: [new Press()],
-						success: function () {
+						success: function() {
 							Opa5.assert.ok(true, "Clicked cancel in the edit dialog");
 						},
 						errorMessage: "Unable to click cancel in the edit dialog"
 					});
 				},
 
-				iSetTheTitleTo: function (sTitle) {
+				iSetTheTitleTo: function(sTitle) {
 					return this.waitFor({
 						id: "title",
 						actions: [new EnterText({
 							text: sTitle
 						})],
-						success: function () {
+						success: function() {
 							Opa5.assert.ok(true, "The title has been set to '" + sTitle + "'");
 						},
 						errorMessage: "Unable to set the title"
@@ -83,14 +83,14 @@ sap.ui.require([
 
 			assertions: {
 
-				iShouldSeeTheDialog: function (sTitle) {
+				iShouldSeeTheDialog: function(sTitle) {
 					return this.waitFor({
 						searchOpenDialogs: true,
 						controlType: "sap.m.Dialog",
 						matchers: [new Properties({
 							title: sTitle
 						})],
-						success: function () {
+						success: function() {
 							Opa5.assert.ok(true, "The edit dialog is displayed");
 						},
 						errorMessage: "The edit dialog is not displayed"
