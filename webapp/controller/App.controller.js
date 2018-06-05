@@ -27,7 +27,8 @@ sap.ui.define([
 			key: "late",
 			get: function() {
 				return [new Filter(TODOITEM.dueDate, FilterOperator.LE, new Date()),
-						new Filter(TODOITEM.completed, FilterOperator.EQ, false)];
+					new Filter(TODOITEM.completed, FilterOperator.EQ, false)
+				];
 			}
 		}, {
 			key: "completed",
@@ -82,7 +83,7 @@ sap.ui.define([
 					success: function(oResult) {
 						oCountsModel.setProperty("/" + oFilter.key, oResult.__count || 0);
 					},
-					error: function () {
+					error: function() {
 						oCountsModel.setProperty("/" + oFilter.key, "-");
 					}
 				});
@@ -168,7 +169,7 @@ sap.ui.define([
 			});
 		},
 
-		_closeDialog: function () {
+		_closeDialog: function() {
 			var oDialog = this.getView().byId("todoItem");
 			oDialog.setVisible(false);
 			oDialog.setBusy(false);
