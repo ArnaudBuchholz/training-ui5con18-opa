@@ -1,7 +1,7 @@
 sap.ui.require([
 	"sap/ui/test/opaQunit",
 	"sap/ui/demo/todo/test/integration/pages/Filters"
-], function (opaTest, filters) {
+], function(opaTest, filters) {
 	"use strict";
 
 	var S_NEW_ITEM_TITLE = "my test",
@@ -9,7 +9,7 @@ sap.ui.require([
 
 	QUnit.module("Error");
 
-	opaTest("Error when creating a todo item", function (Given, When, Then) {
+	opaTest("Error when creating a todo item", function(Given, When, Then) {
 		// Arrangements
 		Given.iStartTheApp({
 			error: "new"
@@ -29,7 +29,7 @@ sap.ui.require([
 			.and.iTeardownTheApp();
 	});
 
-	opaTest("Error when fetching a filter", function (Given, When, Then) {
+	opaTest("Error when fetching a filter", function(Given, When, Then) {
 		// Arrangements
 		Given.iStartTheApp({
 			error: "filter"
@@ -44,7 +44,7 @@ sap.ui.require([
 			.and.iTeardownTheApp();
 	});
 
-	opaTest("Error when completing an item", function (Given, When, Then) {
+	opaTest("Error when completing an item", function(Given, When, Then) {
 		// Arrangements
 		Given.iStartTheApp();
 
