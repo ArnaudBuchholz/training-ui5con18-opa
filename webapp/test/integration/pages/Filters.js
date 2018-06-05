@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/actions/Press"
 
-], function (Opa5, Common, I18NText, Properties, Press) {
+], function(Opa5, Common, I18NText, Properties, Press) {
 	"use strict";
 
 	var _ALL = "all",
@@ -20,12 +20,12 @@ sap.ui.define([
 
 			actions: {
 
-				iClick: function (sFilterButtonCode) {
+				iClick: function(sFilterButtonCode) {
 					return this.waitFor({
 						viewName: "", // Since the buttons are created dynamically
 						id: "filterButton-" + sFilterButtonCode,
 						actions: [new Press()],
-						success: function () {
+						success: function() {
 							Opa5.assert.ok(true, "Clicked the filter button '" + sFilterButtonCode + "'");
 						},
 						errorMessage: "Not able to click the filter button '" + sFilterButtonCode + "'"
@@ -36,13 +36,13 @@ sap.ui.define([
 
 			assertions: {
 
-				iShouldSeeTheSelectedButton: function (sFilterButtonCode) {
+				iShouldSeeTheSelectedButton: function(sFilterButtonCode) {
 					return this.waitFor({
 						id: "filters",
 						matchers: [new Properties({
 							selectedKey: sFilterButtonCode
 						})],
-						success: function () {
+						success: function() {
 							Opa5.assert.ok(true, "The filter button '" + sFilterButtonCode + "' is the selected one");
 						},
 						errorMessage: "The filter button '" + sFilterButtonCode + "' is not selected"
@@ -50,7 +50,7 @@ sap.ui.define([
 
 				},
 
-				iShouldSeeTheButtonCount: function (sFilterButtonCode, vCount) {
+				iShouldSeeTheButtonCount: function(sFilterButtonCode, vCount) {
 					return this.waitFor({
 						viewName: "", // Since the buttons are created dynamically
 						id: "filterButton-" + sFilterButtonCode,
@@ -59,7 +59,7 @@ sap.ui.define([
 							key: "filterButton." + sFilterButtonCode,
 							parameters: [vCount]
 						})],
-						success: function () {
+						success: function() {
 							Opa5.assert.ok(true, "The filter button '" + sFilterButtonCode + "' shows the the record count " + vCount);
 						},
 						errorMessage: "The filter button '" + sFilterButtonCode + "' does not show the record count " + vCount
