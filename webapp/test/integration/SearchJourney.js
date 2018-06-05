@@ -10,7 +10,7 @@ sap.ui.require([
 		// Arrangements
 		Given.iStartTheApp(); // Use the default data set with Learn OpenUI5
 
-		//Actions
+		// Actions
 		When.onTheAppPage.iEnterTextForSearchAndPressEnter("OpenUI5");
 
 		// Assertions
@@ -25,7 +25,7 @@ sap.ui.require([
 		// Arrangements
 		Given.iStartTheApp();
 
-		//Actions
+		// Actions
 		When.onTheAppPage.iEnterTextForSearchAndPressEnter("there should not be an item for this search");
 
 		// Assertions
@@ -41,7 +41,7 @@ sap.ui.require([
 		// Arrangements
 		Given.iStartTheApp();
 
-		//Actions
+		// Actions
 		When.onTheAppPage.iEnterTextForSearchAndPressEnter("earn")
 			.and.iEnterTextForSearchAndPressEnter("");
 

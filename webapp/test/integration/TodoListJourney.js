@@ -12,7 +12,7 @@ sap.ui.define([
 		// Arrangements
 		Given.iStartTheApp();
 
-		//Actions
+		// Actions
 		When.onTheAppPage.iEnterTextForNewItemAndPressEnter(S_NEW_ITEM_TITLE);
 
 		// Assertions
@@ -24,7 +24,7 @@ sap.ui.define([
 		// Arrangements
 		Given.iStartTheApp();
 
-		//Actions
+		// Actions
 		When.onTheAppPage.iEnterTextForNewItemAndPressEnter(S_NEW_ITEM_TITLE);
 		When.onTheListOfItems.iSetTheItemToCompleted(S_NEW_ITEM_TITLE);
 
@@ -37,7 +37,7 @@ sap.ui.define([
 		// Arrangements
 		Given.iStartTheApp();
 
-		//Actions
+		// Actions
 		When.onTheAppPage.iEnterTextForNewItemAndPressEnter(S_NEW_ITEM_TITLE);
 		When.onTheListOfItems.iSetTheItemToCompleted(S_NEW_ITEM_TITLE);
 		When.onTheAppPage.iClearTheCompletedItems();
@@ -51,7 +51,7 @@ sap.ui.define([
 		// Arrangements
 		Given.iStartTheApp();
 
-		//Actions
+		// Actions
 		When.onTheAppPage.iEnterTextForNewItemAndPressEnter(S_NEW_ITEM_TITLE);
 		When.onTheListOfItems.iSetTheItemToCompleted(S_NEW_ITEM_TITLE);
 		Then.onTheListOfItems.iShouldSeeTheCompletedItem(S_NEW_ITEM_TITLE);
@@ -68,7 +68,7 @@ sap.ui.define([
 			empty: true
 		});
 
-		//Actions
+		// Actions
 		When.onTheAppPage.iEnterTextForNewItemAndPressEnter(S_NEW_ITEM_TITLE)
 			.and.iEnterTextForNewItemAndPressEnter(S_NEW_ITEM_TITLE + " 2")
 			.and.iEnterTextForNewItemAndPressEnter(S_NEW_ITEM_TITLE + " 3");

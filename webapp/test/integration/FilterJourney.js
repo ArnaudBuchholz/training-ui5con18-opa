@@ -12,7 +12,7 @@ sap.ui.require([
 			force: true
 		});
 
-		//Actions
+		// Actions
 
 		// Assertions
 		Then.onTheFilterButtons.iShouldSeeTheSelectedButton(filters.ALL)
@@ -41,7 +41,7 @@ sap.ui.require([
 			// Arrangements
 			Given.iStartTheApp();
 
-			//Actions
+			// Actions
 			When.onTheFilterButtons.iClick(oTestCase.button);
 
 			// Assertions
@@ -55,13 +55,13 @@ sap.ui.require([
 		// Arrangements
 		Given.iStartTheApp();
 
-		//Actions
+		// Actions
 		When.onTheFilterButtons.iClick(filters.COMPLETED);
 
 		// Assertions
 		Then.onTheListOfItems.iShouldSeeAGivenNumberOfItems(1);
 
-		//Actions
+		// Actions
 		When.onTheFilterButtons.iClick(filters.ALL);
 
 		// Assertions

@@ -15,13 +15,13 @@ sap.ui.require([
 			error: "new"
 		});
 
-		//Actions
+		// Actions
 		When.onTheAppPage.iEnterTextForNewItemAndPressEnter(S_NEW_ITEM_TITLE);
 
 		// Assertions
 		Then.onTheAppPage.iShouldSeeAnError();
 
-		//Actions
+		// Actions
 		When.onTheAppPage.iCloseTheError();
 
 		// Assertions
@@ -35,7 +35,7 @@ sap.ui.require([
 			error: "filter"
 		});
 
-		//Actions
+		// Actions
 
 		// Assertions
 		Then.onTheFilterButtons.iShouldSeeTheButtonCount(filters.ACTIVE, "-")
@@ -48,13 +48,13 @@ sap.ui.require([
 		// Arrangements
 		Given.iStartTheApp();
 
-		//Actions
+		// Actions
 		When.onTheListOfItems.iSetTheItemToCompleted(S_STOP_PROCRASTINATING);
 
 		// Assertions
 		Then.onTheAppPage.iShouldSeeAnError();
 
-		//Actions
+		// Actions
 		When.onTheAppPage.iCloseTheError();
 
 		// Assertions
