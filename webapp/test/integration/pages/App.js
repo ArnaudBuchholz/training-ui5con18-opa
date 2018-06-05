@@ -7,7 +7,7 @@ sap.ui.require([
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/I18NText"
 
-], function (Opa5, Common, AggregationLengthEquals, Properties, EnterText, Press, I18NText) {
+], function(Opa5, Common, AggregationLengthEquals, Properties, EnterText, Press, I18NText) {
 	"use strict";
 
 	var sAddToItemInputId = "addTodoItemInput",
@@ -22,8 +22,10 @@ sap.ui.require([
 				iEnterTextForNewItemAndPressEnter: function(sText) {
 					return this.waitFor({
 						id: sAddToItemInputId,
-						actions: [new EnterText({ text: sText })],
-						success: function () {
+						actions: [new EnterText({
+							text: sText
+						})],
+						success: function() {
 							Opa5.assert.ok(true, "Entered a new item '" + sText + "'");
 						},
 						errorMessage: "The text cannot be entered"
@@ -33,8 +35,10 @@ sap.ui.require([
 				iEnterTextForSearchAndPressEnter: function(sText) {
 					return this.waitFor({
 						id: sSearchTodoItemsInputId,
-						actions: [new EnterText({ text: sText })],
-						success: function () {
+						actions: [new EnterText({
+							text: sText
+						})],
+						success: function() {
 							Opa5.assert.ok(true, "Entered the search text '" + sText + "'");
 						},
 						errorMessage: "The text cannot be entered"
@@ -45,24 +49,24 @@ sap.ui.require([
 					return this.waitFor({
 						id: sClearCompletedId,
 						actions: [new Press()],
-						success: function () {
+						success: function() {
 							Opa5.assert.ok(true, "Pressed the button 'Clear completed'");
 						},
 						errorMessage: "The 'Clear completed' button cannot be pressed"
 					});
 				},
 
-				iCloseTheError: function () {
+				iCloseTheError: function() {
 					return this.waitFor({
 						searchOpenDialogs: true,
 						controlType: "sap.m.Dialog",
 						matchers: [new Properties({
 							icon: "sap-icon://message-error"
-						}), function (oDialog) {
+						}), function(oDialog) {
 							return oDialog.getButtons()[0];
 						}],
 						actions: [new Press()],
-						success: function () {
+						success: function() {
 							Opa5.assert.ok(true, "Closed the error message");
 						},
 						errorMessage: "Not able to close the error message"
@@ -73,14 +77,14 @@ sap.ui.require([
 
 			assertions: {
 
-				iShouldSeeAnError: function () {
+				iShouldSeeAnError: function() {
 					return this.waitFor({
 						searchOpenDialogs: true,
 						controlType: "sap.m.Dialog",
 						matchers: [new Properties({
 							icon: "sap-icon://message-error"
 						})],
-						success: function () {
+						success: function() {
 							Opa5.assert.ok(true, "An error message is displayed");
 						},
 						errorMessage: "No error message is displayed"
