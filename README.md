@@ -7,6 +7,9 @@
 * Uses OData Model to manipulate todo items
 * Relies on MockServer to simulate backend
 
+[![Travis-CI](https://travis-ci.org/ArnaudBuchholz/training-uicon18-opa.svg?branch=master)](https://travis-ci.org/ArnaudBuchholz/training-uicon18-opa#)
+
+
 ## Getting started
 * Install Node.js (from [nodejs.org](http://nodejs.org/)).
 * Install the Grunt CLI
