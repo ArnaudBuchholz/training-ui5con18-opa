@@ -1,14 +1,14 @@
 sap.ui.define([
 	"sap/ui/test/opaQunit",
 	"sap/ui/demo/todo/test/integration/pages/Filters"
-], function (opaTest, filters) {
+], function(opaTest, filters) {
 	"use strict";
 
 	QUnit.module("Todo List");
 
 	var S_NEW_ITEM_TITLE = "my test";
 
-	opaTest("should add an item", function (Given, When, Then) {
+	opaTest("should add an item", function(Given, When, Then) {
 		// Arrangements
 		Given.iStartTheApp();
 
@@ -20,7 +20,7 @@ sap.ui.define([
 			.and.iTeardownTheApp();
 	});
 
-	opaTest("should complete an item", function (Given, When, Then) {
+	opaTest("should complete an item", function(Given, When, Then) {
 		// Arrangements
 		Given.iStartTheApp();
 
@@ -33,7 +33,7 @@ sap.ui.define([
 			.and.iTeardownTheApp();
 	});
 
-	opaTest("should remove completed items", function (Given, When, Then) {
+	opaTest("should remove completed items", function(Given, When, Then) {
 		// Arrangements
 		Given.iStartTheApp();
 
@@ -47,7 +47,7 @@ sap.ui.define([
 			.and.iTeardownTheApp();
 	});
 
-	opaTest("should allow to set an item back to new", function (Given, When, Then) {
+	opaTest("should allow to set an item back to new", function(Given, When, Then) {
 		// Arrangements
 		Given.iStartTheApp();
 
@@ -62,7 +62,7 @@ sap.ui.define([
 			.and.iTeardownTheApp();
 	});
 
-	opaTest("should show correct count for completed items", function (Given, When, Then) {
+	opaTest("should show correct count for completed items", function(Given, When, Then) {
 		// Arrangements
 		Given.iStartTheApp({
 			empty: true
