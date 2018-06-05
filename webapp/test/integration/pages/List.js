@@ -5,25 +5,25 @@ sap.ui.require([
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/actions/Press"
 
-], function (Opa5, Common, AggregationLengthEquals, Properties, Press) {
+], function(Opa5, Common, AggregationLengthEquals, Properties, Press) {
 	"use strict";
 
-	function _pressObjectListItemPart (sSubPartId) {
+	function _pressObjectListItemPart(sSubPartId) {
 		var oPress = new Press();
 		//search within the ObjectListItem for the constrol ending with sSubPartId
 		oPress.controlAdapters["sap.m.ObjectListItem"] = sSubPartId;
 		return oPress;
 	}
 
-	function pressItemCheckbox () {
+	function pressItemCheckbox() {
 		return _pressObjectListItemPart("selectMulti");
 	}
 
-	function pressItemEdit () {
+	function pressItemEdit() {
 		return _pressObjectListItemPart("imgDet");
 	}
 
-	function iClickTheItemCheckbox (sTitle, bShouldBeSelected, sErrorMessage) {
+	function iClickTheItemCheckbox(sTitle, bShouldBeSelected, sErrorMessage) {
 		return this.waitFor({
 			controlType: "sap.m.ObjectListItem",
 			matchers: [new Properties({
@@ -31,14 +31,14 @@ sap.ui.require([
 				selected: bShouldBeSelected
 			})],
 			actions: [pressItemCheckbox()],
-			success: function () {
+			success: function() {
 				Opa5.assert.ok(true, "Clicked the checkbox of item '" + sTitle + "'");
 			},
 			errorMessage: sErrorMessage
 		});
 	}
 
-	function iShouldSeeTheItem (sTitle, bOptionalCompletedStatus) {
+	function iShouldSeeTheItem(sTitle, bOptionalCompletedStatus) {
 		var oProperties = {
 				title: sTitle
 			},
@@ -86,7 +86,7 @@ sap.ui.require([
 							title: sTitle
 						})],
 						actions: [pressItemEdit()],
-						success: function () {
+						success: function() {
 							Opa5.assert.ok(true, "Clicked the edit button of item '" + sTitle + "'");
 						},
 						errorMessage: "Item cannot be edited"
@@ -112,8 +112,8 @@ sap.ui.require([
 				iShouldNotSeeAnyItemTitled: function(sTitle) {
 					return this.waitFor({
 						controlType: "sap.m.ObjectListItem",
-						check: function (aItems) {
-							return aItems.every(function (oItem) {
+						check: function(aItems) {
+							return aItems.every(function(oItem) {
 								return oItem.getTitle() !== sTitle;
 							});
 						},
