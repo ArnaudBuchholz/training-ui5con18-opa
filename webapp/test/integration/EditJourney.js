@@ -1,6 +1,6 @@
 sap.ui.require([
 	"sap/ui/test/opaQunit"
-], function (opaTest) {
+], function(opaTest) {
 	"use strict";
 
 	var S_NEW_ITEM_TITLE = "my test",
@@ -8,7 +8,7 @@ sap.ui.require([
 
 	QUnit.module("Edit");
 
-	opaTest("Open a new item", function (Given, When, Then) {
+	opaTest("Open a new item", function(Given, When, Then) {
 		// Arrangements
 		Given.iStartTheApp();
 
@@ -24,7 +24,7 @@ sap.ui.require([
 			.and.iTeardownTheApp();
 	});
 
-	opaTest("Click save without changes", function (Given, When, Then) {
+	opaTest("Click save without changes", function(Given, When, Then) {
 		// Arrangements
 		Given.iStartTheApp();
 
@@ -38,7 +38,7 @@ sap.ui.require([
 			.and.iTeardownTheApp();
 	});
 
-	opaTest("Change the title of a new item", function (Given, When, Then) {
+	opaTest("Change the title of a new item", function(Given, When, Then) {
 		// Arrangements
 		Given.iStartTheApp();
 
@@ -53,7 +53,7 @@ sap.ui.require([
 			.and.iTeardownTheApp();
 	});
 
-	opaTest("Change the title of a new item but close the dialog", function (Given, When, Then) {
+	opaTest("Change the title of a new item but close the dialog", function(Given, When, Then) {
 		// Arrangements
 		Given.iStartTheApp();
 
@@ -69,7 +69,7 @@ sap.ui.require([
 			.and.iTeardownTheApp();
 	});
 
-	opaTest("Open a completed item", function (Given, When, Then) {
+	opaTest("Open a completed item", function(Given, When, Then) {
 		// Arrangements
 		Given.iStartTheApp();
 
