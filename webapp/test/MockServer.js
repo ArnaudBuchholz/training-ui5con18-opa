@@ -2,25 +2,25 @@ sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/demo/todo/const"
 
-], function (MockServer, CONST) {
+], function(MockServer, CONST) {
 	"use strict";
 
 	var STOP_PROCRASTINATING_GUID = "0MOCKSVR-TODO-MKII-MOCK-00000000",
 		_lastTodoItemId = 0,
 		_oMockServer;
 
-	function _getJSONDateReplacer (dValue) {
+	function _getJSONDateReplacer(dValue) {
 		return "/Date(" + dValue.getTime() + ")/";
 	}
 
-	function _getNewItemGuid () {
+	function _getNewItemGuid() {
 		var sNewId = (++_lastTodoItemId).toString();
-		return 	"0MOCKSVR-TODO-MKII-DYNK-00000000".substr(0, 32 - sNewId.length) + sNewId;
+		return "0MOCKSVR-TODO-MKII-DYNK-00000000".substr(0, 32 - sNewId.length) + sNewId;
 	}
 
 	return {
 
-		init: function (oParameters) {
+		init: function(oParameters) {
 			var sJsonFilesUrl = jQuery.sap.getModulePath("sap/ui/demo/todo/model"),
 				sManifestUrl = jQuery.sap.getModulePath("sap/ui/demo/todo/manifest", ".json"),
 				oManifest = jQuery.sap.syncGetJSON(sManifestUrl).data,
@@ -63,7 +63,7 @@ sap.ui.define([
 			if (oParameters.get("read-only") === "true") {
 				// Set all AppConfiguration options to false
 				var aAppConfigurationSet = _oMockServer.getEntitySetData(CONST.OData.entityNames.appConfigurationSet);
-				aAppConfigurationSet.forEach(function (oAppConfigurationSet) {
+				aAppConfigurationSet.forEach(function(oAppConfigurationSet) {
 					oAppConfigurationSet[CONST.OData.entityProperties.appConfiguration.enable] = false;
 				});
 				_oMockServer.setEntitySetData(CONST.OData.entityNames.appConfigurationSet, aAppConfigurationSet);
@@ -75,7 +75,7 @@ sap.ui.define([
 			} else if (oParameters.get("randomize") === "true") {
 				// Generate random items
 				var aTodoItemSet = _oMockServer.getEntitySetData(CONST.OData.entityNames.todoItemSet),
-					sDateMax = "/Date(" + new Date(2099,11,31).getTime() + ")/",
+					sDateMax = "/Date(" + new Date(2099, 11, 31).getTime() + ")/",
 					sDateNow = "/Date(" + (new Date().getTime() - 60000) + ")/";
 				for (var idx = 0; idx < 100; ++idx) {
 					var oNewTodoItemSet = {},
@@ -97,12 +97,12 @@ sap.ui.define([
 					aTodoItemSet.push(oNewTodoItemSet);
 				}
 				// Fill missing properties
-				function _setIfNotSet (oTodoItemSet, sPropertyName, vDefaultValue) {
+				function _setIfNotSet(oTodoItemSet, sPropertyName, vDefaultValue) {
 					if (!oTodoItemSet.hasOwnProperty(sPropertyName)) {
 						oTodoItemSet[sPropertyName] = vDefaultValue;
 					}
 				}
-				aTodoItemSet.forEach(function (oTodoItemSet) {
+				aTodoItemSet.forEach(function(oTodoItemSet) {
 					_setIfNotSet(oTodoItemSet, CONST.OData.entityProperties.todoItem.completionDate, null);
 					_setIfNotSet(oTodoItemSet, CONST.OData.entityProperties.todoItem.completed, false);
 					_setIfNotSet(oTodoItemSet, CONST.OData.entityProperties.todoItem.dueDate, sDateMax);
@@ -116,7 +116,7 @@ sap.ui.define([
 			aRequests.push({
 				method: "POST",
 				path: CONST.OData.entityNames.todoItemSet,
-				response: function (oXhr) {
+				response: function(oXhr) {
 					if (oParameters.get("error") === "new") {
 						oXhr.respond(400, {
 							"Content-Type": "text/plain;charset=utf-8"
@@ -136,7 +136,7 @@ sap.ui.define([
 			aRequests.push({
 				method: "MERGE",
 				path: CONST.OData.entityNames.todoItemSet + "\\(guid'([^']+)'\\)",
-				response: function (oXhr, sTodoItemGuid) {
+				response: function(oXhr, sTodoItemGuid) {
 					// Inject or remove completion date/time
 					var oBody = JSON.parse(oXhr.requestBody);
 					if (sTodoItemGuid === STOP_PROCRASTINATING_GUID) {
@@ -159,7 +159,7 @@ sap.ui.define([
 			aRequests.push({
 				method: "GET",
 				path: CONST.OData.entityNames.todoItemSet + "\\?.*\\$filter=.*",
-				response: function (oXhr) {
+				response: function(oXhr) {
 					if (oParameters.get("error") === "filter") {
 						oXhr.respond(400, {
 							"Content-Type": "text/plain;charset=utf-8"
@@ -174,9 +174,9 @@ sap.ui.define([
 			aRequests.push({
 				method: CONST.OData.functionImports.clearCompleted.method,
 				path: CONST.OData.functionImports.clearCompleted.name,
-				response: function (oXhr) {
+				response: function(oXhr) {
 					var aInitialTodoItemSet = _oMockServer.getEntitySetData(CONST.OData.entityNames.todoItemSet),
-						aClearedTodoItemSet = aInitialTodoItemSet.filter(function (oTodoItem) {
+						aClearedTodoItemSet = aInitialTodoItemSet.filter(function(oTodoItem) {
 							return !oTodoItem[CONST.OData.entityProperties.todoItem.completed];
 						}),
 						oReturnType = {},
