@@ -1,12 +1,12 @@
 sap.ui.require([
 	"sap/ui/test/opaQunit",
 	"sap/ui/demo/todo/test/integration/pages/Filters"
-], function (opaTest, filters) {
+], function(opaTest, filters) {
 	"use strict";
 
 	QUnit.module("Filter");
 
-	opaTest("the default filter should be all", function (Given, When, Then) {
+	opaTest("the default filter should be all", function(Given, When, Then) {
 		// Arrangements
 		Given.iStartTheApp({
 			force: true
@@ -36,8 +36,8 @@ sap.ui.require([
 		button: filters.COMPLETED,
 		expectedCount: 1
 
-	}].forEach(function (oTestCase) {
-		opaTest("should show correct items when filtering for '" + oTestCase.label + "' items", function (Given, When, Then) {
+	}].forEach(function(oTestCase) {
+		opaTest("should show correct items when filtering for '" + oTestCase.label + "' items", function(Given, When, Then) {
 			// Arrangements
 			Given.iStartTheApp();
 
@@ -51,7 +51,7 @@ sap.ui.require([
 		});
 	})
 
-	opaTest("should show correct items when filtering for 'Completed' items and switch back to 'All'", function (Given, When, Then) {
+	opaTest("should show correct items when filtering for 'Completed' items and switch back to 'All'", function(Given, When, Then) {
 		// Arrangements
 		Given.iStartTheApp();
 
@@ -66,7 +66,7 @@ sap.ui.require([
 
 		// Assertions
 		Then.onTheListOfItems.iShouldSeeAGivenNumberOfItems(4)
-			.and.iTeardownTheApp(/*force*/ true);
+			.and.iTeardownTheApp( /*force*/ true);
 	});
 
 });
