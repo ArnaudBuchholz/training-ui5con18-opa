@@ -129,7 +129,7 @@ module.exports = function(grunt) {
 			},
 			ci: {
 				singleRun: true,
-				browsers: ['Chrome'], // ['PhantomJS'],
+				browsers: ['ChromeHeadless'],
 				preprocessors: {
 					'{webapp,webapp/!(test)}/*.js': ['coverage']
 				},
