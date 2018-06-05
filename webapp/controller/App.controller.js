@@ -190,6 +190,9 @@ sap.ui.define([
 		},
 
 		onFormCancel: function(oEvent) {
+			var oModel = this.getView().getModel(),
+				oDialog = this.getView().byId("todoItem");
+			oModel.resetChanges([oDialog.getBindingContext().getPath()]);
 			this._closeDialog();
 		},
 
