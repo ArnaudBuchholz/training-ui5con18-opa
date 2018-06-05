@@ -4,8 +4,7 @@ sap.ui.require([
 ], function(opaTest, filters) {
 	"use strict";
 
-	var S_NEW_ITEM_TITLE = "my test",
-		S_STOP_PROCRASTINATING = "Stop procrastinating";
+	var S_NEW_ITEM_TITLE = "my test";
 
 	QUnit.module("Error");
 
