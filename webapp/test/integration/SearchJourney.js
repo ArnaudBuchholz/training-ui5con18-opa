@@ -1,12 +1,12 @@
 sap.ui.require([
 	"sap/ui/test/opaQunit",
 	"sap/ui/demo/todo/test/integration/pages/Filters"
-], function (opaTest, filters) {
+], function(opaTest, filters) {
 	"use strict";
 
 	QUnit.module("Search");
 
-	opaTest("should show correct item count after search (1)", function (Given, When, Then) {
+	opaTest("should show correct item count after search (1)", function(Given, When, Then) {
 		// Arrangements
 		Given.iStartTheApp(); // Use the default data set with Learn OpenUI5
 
@@ -21,7 +21,7 @@ sap.ui.require([
 			.and.iTeardownTheApp();
 	});
 
-	opaTest("should show correct item count after search (0)", function (Given, When, Then) {
+	opaTest("should show correct item count after search (0)", function(Given, When, Then) {
 		// Arrangements
 		Given.iStartTheApp();
 
@@ -36,7 +36,7 @@ sap.ui.require([
 			.and.iTeardownTheApp();
 	});
 
-	opaTest("should show correct item count after search and clearing the search", function (Given, When, Then) {
+	opaTest("should show correct item count after search and clearing the search", function(Given, When, Then) {
 
 		// Arrangements
 		Given.iStartTheApp();
