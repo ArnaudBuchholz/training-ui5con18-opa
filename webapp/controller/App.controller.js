@@ -166,6 +166,7 @@ sap.ui.define([
 						resolve();
 					}
 				});
+				that._refreshCounts();
 			});
 		},
 
@@ -205,7 +206,6 @@ sap.ui.define([
 			this._update(oListItem.getBindingContext().getPath(), oBody).then(function() {
 				oListItem.setBusy(false);
 			});
-			this._refreshCounts();
 		},
 
 		getIcon: function(oTodoItem) {
