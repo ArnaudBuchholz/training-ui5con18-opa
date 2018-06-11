@@ -48,7 +48,7 @@ sap.ui.define([
 
 			// load local mock data
 			_oMockServer.simulate(sMetadataUrl, {
-				sMockdataBaseUrl: sJsonFilesUrl,
+				sMockdataBaseUrl: sJsonFilesUrl
 			});
 
 			if (oParameters.get("sap-ui-debug") === "true") {
