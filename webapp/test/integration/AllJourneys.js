@@ -16,7 +16,6 @@ sap.ui.require([
 
 	Opa5.extendConfig({
 		arrangements: new Common(),
-		pollingInterval: 1,
 		autoWait: true,
 		viewName: "sap.ui.demo.todo.view.App" // Since we have only one view
 	});
