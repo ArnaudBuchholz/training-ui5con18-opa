@@ -17,14 +17,10 @@ sap.ui.require([
 		Then.onTheFilterButtons.iShouldSeeTheButtonCount(filters.ALL, 1)
 			.and.iShouldSeeTheButtonCount(filters.ACTIVE, 1)
 			// Don't include the Late test as it will be late in the future
-			.and.iShouldSeeTheButtonCount(filters.COMPLETED, 0)
-			.and.iTeardownTheApp();
+			.and.iShouldSeeTheButtonCount(filters.COMPLETED, 0);
 	});
 
 	opaTest("should show correct item count after search (0)", function(Given, When, Then) {
-		// Arrangements
-		Given.iStartTheApp();
-
 		// Actions
 		When.onTheAppPage.iEnterTextForSearchAndPressEnter("there should not be an item for this search");
 
@@ -32,15 +28,10 @@ sap.ui.require([
 		Then.onTheFilterButtons.iShouldSeeTheButtonCount(filters.ALL, 0)
 			.and.iShouldSeeTheButtonCount(filters.ACTIVE, 0)
 			.and.iShouldSeeTheButtonCount(filters.LATE, 0)
-			.and.iShouldSeeTheButtonCount(filters.COMPLETED, 0)
-			.and.iTeardownTheApp();
+			.and.iShouldSeeTheButtonCount(filters.COMPLETED, 0);
 	});
 
 	opaTest("should show correct item count after search and clearing the search", function(Given, When, Then) {
-
-		// Arrangements
-		Given.iStartTheApp();
-
 		// Actions
 		When.onTheAppPage.iEnterTextForSearchAndPressEnter("earn")
 			.and.iEnterTextForSearchAndPressEnter("");
