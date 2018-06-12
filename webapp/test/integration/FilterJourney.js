@@ -8,15 +8,12 @@ sap.ui.require([
 
 	opaTest("the default filter should be all", function(Given, When, Then) {
 		// Arrangements
-		Given.iStartTheApp({
-			force: true
-		});
+		Given.iStartTheApp();
 
 		// Actions
 
 		// Assertions
-		Then.onTheFilterButtons.iShouldSeeTheSelectedButton(filters.ALL)
-			.and.iTeardownTheApp();
+		Then.onTheFilterButtons.iShouldSeeTheSelectedButton(filters.ALL);
 	});
 
 	[{
@@ -38,23 +35,16 @@ sap.ui.require([
 
 	}].forEach(function(oTestCase) {
 		opaTest("should show correct items when filtering for '" + oTestCase.label + "' items", function(Given, When, Then) {
-			// Arrangements
-			Given.iStartTheApp();
-
 			// Actions
 			When.onTheFilterButtons.iClick(oTestCase.button);
 
 			// Assertions
 			Then.onTheFilterButtons.iShouldSeeTheButtonCount(oTestCase.button, oTestCase.expectedCount);
-			Then.onTheListOfItems.iShouldSeeAGivenNumberOfItems(oTestCase.expectedCount)
-				.and.iTeardownTheApp();
+			Then.onTheListOfItems.iShouldSeeAGivenNumberOfItems(oTestCase.expectedCount);
 		});
 	})
 
 	opaTest("should show correct items when filtering for 'Completed' items and switch back to 'All'", function(Given, When, Then) {
-		// Arrangements
-		Given.iStartTheApp();
-
 		// Actions
 		When.onTheFilterButtons.iClick(filters.COMPLETED);
 
