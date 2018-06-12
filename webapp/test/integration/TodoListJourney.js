@@ -16,30 +16,19 @@ sap.ui.define([
 		When.onTheAppPage.iEnterTextForNewItemAndPressEnter(S_NEW_ITEM_TITLE);
 
 		// Assertions
-		Then.onTheListOfItems.iShouldSeeTheNewItem(S_NEW_ITEM_TITLE)
-			.and.iTeardownTheApp();
+		Then.onTheListOfItems.iShouldSeeTheNewItem(S_NEW_ITEM_TITLE);
 	});
 
 	opaTest("should complete an item", function(Given, When, Then) {
-		// Arrangements
-		Given.iStartTheApp();
-
 		// Actions
-		When.onTheAppPage.iEnterTextForNewItemAndPressEnter(S_NEW_ITEM_TITLE);
 		When.onTheListOfItems.iSetTheItemToCompleted(S_NEW_ITEM_TITLE);
 
 		// Assertions
-		Then.onTheListOfItems.iShouldSeeTheCompletedItem(S_NEW_ITEM_TITLE)
-			.and.iTeardownTheApp();
+		Then.onTheListOfItems.iShouldSeeTheCompletedItem(S_NEW_ITEM_TITLE);
 	});
 
 	opaTest("should remove completed items", function(Given, When, Then) {
-		// Arrangements
-		Given.iStartTheApp();
-
 		// Actions
-		When.onTheAppPage.iEnterTextForNewItemAndPressEnter(S_NEW_ITEM_TITLE);
-		When.onTheListOfItems.iSetTheItemToCompleted(S_NEW_ITEM_TITLE);
 		When.onTheAppPage.iClearTheCompletedItems();
 
 		// Assertions
