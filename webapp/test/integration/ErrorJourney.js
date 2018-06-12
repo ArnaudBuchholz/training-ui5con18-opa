@@ -62,6 +62,4 @@ sap.ui.require([
 			.and.iTeardownTheApp();
 	});
 
-	QUnit.skip("Error when editing an item");
-
 });
