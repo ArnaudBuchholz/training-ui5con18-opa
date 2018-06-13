@@ -78,7 +78,7 @@ sap.ui.define([
 			if (oParameters.get("empty") === "true") {
 				_oMockServer.setEntitySetData(CONST.OData.entityNames.todoItemSet, []);
 
-			} else if (oParameters.get("randomize") !== "") {
+			} else if (oParameters.get("randomize")) {
 				// Generate random items
 				var aTodoItemSet = _oMockServer.getEntitySetData(CONST.OData.entityNames.todoItemSet),
 					sDateMax = "/Date(" + new Date(2099, 11, 31).getTime() + ")/",
