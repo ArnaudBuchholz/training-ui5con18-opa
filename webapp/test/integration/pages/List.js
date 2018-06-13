@@ -8,21 +8,6 @@ sap.ui.require([
 ], function(Opa5, Common, AggregationLengthEquals, Properties, Press) {
 	"use strict";
 
-	function _pressObjectListItemPart(sSubPartId) {
-		var oPress = new Press();
-		//search within the ObjectListItem for the constrol ending with sSubPartId
-		oPress.controlAdapters["sap.m.ObjectListItem"] = sSubPartId;
-		return oPress;
-	}
-
-	function pressItemCheckbox() {
-		return _pressObjectListItemPart("selectMulti");
-	}
-
-	function pressItemEdit() {
-		return _pressObjectListItemPart("imgDet");
-	}
-
 	function iClickTheItemCheckbox(sTitle, bShouldBeSelected, sErrorMessage) {
 		return this.waitFor({
 			controlType: "sap.m.ObjectListItem",
@@ -30,7 +15,9 @@ sap.ui.require([
 				title: sTitle,
 				selected: bShouldBeSelected
 			})],
-			actions: [pressItemCheckbox()],
+			actions: [new Press({
+				idSuffix: "selectMulti"
+			})],
 			success: function() {
 				Opa5.assert.ok(true, "Clicked the checkbox of item '" + sTitle + "'");
 			},
@@ -85,7 +72,9 @@ sap.ui.require([
 						matchers: [new Properties({
 							title: sTitle
 						})],
-						actions: [pressItemEdit()],
+						actions: [new Press({
+							idSuffix: "imgDet"
+						})],
 						success: function() {
 							Opa5.assert.ok(true, "Clicked the edit button of item '" + sTitle + "'");
 						},
