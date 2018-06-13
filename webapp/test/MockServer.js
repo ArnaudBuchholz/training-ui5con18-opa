@@ -78,12 +78,13 @@ sap.ui.define([
 			if (oParameters.get("empty") === "true") {
 				_oMockServer.setEntitySetData(CONST.OData.entityNames.todoItemSet, []);
 
-			} else if (oParameters.get("randomize") === "true") {
+			} else if (oParameters.get("randomize") !== "") {
 				// Generate random items
 				var aTodoItemSet = _oMockServer.getEntitySetData(CONST.OData.entityNames.todoItemSet),
 					sDateMax = "/Date(" + new Date(2099, 11, 31).getTime() + ")/",
-					sDateNow = "/Date(" + (new Date().getTime() - 60000) + ")/";
-				for (var idx = 0; idx < 100; ++idx) {
+					sDateNow = "/Date(" + (new Date().getTime() - 60000) + ")/",
+					iCount = parseInt(oParameters.get("randomize"), 10) || 100;
+				for (var idx = 0; idx < iCount; ++idx) {
 					var oNewTodoItemSet = {},
 						sGuid = _getNewItemGuid();
 					oNewTodoItemSet[CONST.OData.entityProperties.todoItem.guid] = sGuid;
