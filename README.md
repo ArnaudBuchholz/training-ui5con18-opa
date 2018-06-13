@@ -18,8 +18,8 @@
     ```
 * Clone the repository and navigate into it
     ```sh
-    git clone https://github.com/SAP/openui5-sample-app.git
-    cd openui5-sample-app
+    git clone https://github.com/ArnaudBuchholz/training-ui5con18-opa.git
+    cd training-ui5con18-opa
     ```
 * Install all npm dependencies (also installs all bower dependencies)
     ```sh
