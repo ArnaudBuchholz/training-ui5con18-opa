@@ -9,7 +9,7 @@
 * Fully tested with [OPA](https://openui5.hana.ondemand.com/#/api/sap.ui.test.Opa5)
 * [UI5Con presentation](http://arnaudbuchholz.github.io/decks/UI5Con'18%20A%20journey%20with%20OPA.html#/)
 
-[![Travis-CI](https://travis-ci.org/ArnaudBuchholz/training-uicon18-opa.svg?branch=master)](https://travis-ci.org/ArnaudBuchholz/training-uicon18-opa#)
+[![Travis-CI](https://travis-ci.org/ArnaudBuchholz/training-ui5con18-opa.svg?branch=master)](https://travis-ci.org/ArnaudBuchholz/training-ui5con18-opa#)
 
 ## Getting started
 * Install Node.js (from [nodejs.org](http://nodejs.org/)).
