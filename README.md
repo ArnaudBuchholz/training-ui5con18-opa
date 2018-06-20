@@ -40,3 +40,12 @@ Run `grunt test` to execute all tests and get a coverage report.
 
 ### Build
 Run `grunt build` to build a deployable version of your app to `/dist`.
+
+### Follow-up exercises
+Despite the 100% coverage, there are still issues in the application:
+* In the dialog, the date/time pickers could be bound to an invalid property, no test will fail
+* In the dialog, the "Due date" date/time picker is *not* validated. If one enters an invalid date, no error is shown.
+Worse, the dialog is not refreshed properly when re-opened.
+* In the dialog, when the server throws an error, the dialog is closed.
+But it would be better to keep the dialog opened to allow the user to change the value.
+For instance: what if the backend rejects empty titles?
