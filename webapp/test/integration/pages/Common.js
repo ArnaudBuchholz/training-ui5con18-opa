@@ -36,6 +36,30 @@ sap.ui.define([
 			}
 		},
 
+		iTakeAScreenshot: function () {
+			return this.waitFor({
+				success: function () {
+					var generated = false,
+						oComponent = document.querySelector(".sapUiComponentContainer");
+					if (!oComponent) {
+						oComponent = sap.ui.test.Opa5.getWindow().document.body;
+					}
+					html2canvas(oComponent).then(function (canvas) {
+					    document.body.appendChild(canvas);
+						generated = true;
+					});
+					return this.waitFor({
+						check: function () {
+							return generated;
+						},
+						success: function () {
+							debugger;
+						}
+					})
+				}
+			});
+		},
+
 		iTeardownTheApp: function() {
 			if (bInOpaPage) {
 				this.iTeardownMyAppFrame();
