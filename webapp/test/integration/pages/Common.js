@@ -45,7 +45,8 @@ sap.ui.define([
 						oComponent = sap.ui.test.Opa5.getWindow().document.body;
 					}
 					html2canvas(oComponent).then(function (canvas) {
-					    document.body.appendChild(canvas);
+						var sDataUrl = canvas.toDataURL('image/png');
+						window.open(sDataUrl, "_blank");
 						generated = true;
 					});
 					return this.waitFor({
