@@ -15,6 +15,8 @@ sap.ui.define([
 		// Actions
 		When.onTheAppPage.iEnterTextForNewItemAndPressEnter(S_NEW_ITEM_TITLE);
 
+		Given.iTakeAScreenshot();
+
 		// Assertions
 		Then.onTheListOfItems.iShouldSeeTheNewItem(S_NEW_ITEM_TITLE);
 	});
