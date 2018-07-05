@@ -22,7 +22,7 @@
     git clone https://github.com/ArnaudBuchholz/training-ui5con18-opa.git
     cd training-ui5con18-opa
     ```
-* Install all npm dependencies (also installs all bower dependencies)
+* Install all npm dependencies (also installs all bower dependencies) *you might need to have administrator rights*
     ```sh
     npm install
     ```
