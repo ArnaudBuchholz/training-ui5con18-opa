@@ -38,6 +38,8 @@ Run `grunt lint` to run static code checks on your project.
 
 Run `grunt test` to execute all tests and get a coverage report.
 
+Run `grunt serve` and open [http://localhost:8080/test/integration/opaTests.qunit.html](http://localhost:8080/test/integration/opaTests.qunit.html) to run the OPA tests in your browser.
+
 ### Build
 Run `grunt build` to build a deployable version of your app to `/dist`.
 
