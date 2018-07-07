@@ -15,7 +15,7 @@ sap.ui.define([
 		// Actions
 		When.onTheAppPage.iEnterTextForNewItemAndPressEnter(S_NEW_ITEM_TITLE);
 
-		Given.iTakeAScreenshot();
+		Given.iTakeAScreenshot("TodoListJourney.1");
 
 		// Assertions
 		Then.onTheListOfItems.iShouldSeeTheNewItem(S_NEW_ITEM_TITLE);
