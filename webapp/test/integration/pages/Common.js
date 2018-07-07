@@ -36,25 +36,43 @@ sap.ui.define([
 			}
 		},
 
-		iTakeAScreenshot: function () {
+		iTakeAScreenshot: function (sScreenshotID) {
 			return this.waitFor({
 				success: function () {
 					var generated = false,
-						oComponent = document.querySelector(".sapUiComponentContainer");
-					if (!oComponent) {
-						oComponent = sap.ui.test.Opa5.getWindow().document.body;
+						oWindow,
+						oAppRoot = document.querySelector(".sapUiComponentContainer"),
+						oPromise;
+					if (oAppRoot) {
+						oWindow = window;
+					} else {
+						oWindow = sap.ui.test.Opa5.getWindow();
+						oAppRoot = oWindow.document.body;
 					}
-					html2canvas(oComponent).then(function (canvas) {
-						var sDataUrl = canvas.toDataURL('image/png');
+					if (oWindow.html2canvas) {
+						oPromise = oWindow.html2canvas(oAppRoot);
+					} else {
+						oPromise = Promise.reject("html2canvas not found");
+					}
+					oPromise.then(function (canvas) {
+						var sDataUrl = canvas.toDataURL('image/png'),
+							sKey = sScreenshotID + "-" + (new Date()).getTime();
 						QUnit.push(
 							/*result*/ true,
-							/*actual*/ "actual",
-							/*expected*/ "expected",
-							/*message*/ "SCREENSHOT"
+							/*actual*/ "",
+							/*expected*/ "",
+							/*message*/ sKey
 						);
-						debugger;
-						var qUnitMessage = $("span.test-message:contains(SCREENSHOT)");
-						qUnitMessage.html("<img style=\"max-width: 50%\" src=\"" + sDataUrl + "\">");
+						var qUnitMessage = $("span.test-message:contains(" + sKey + ")");
+						qUnitMessage.html("<img title=\"" + sScreenshotID + "\" style=\"max-height: 40%; max-width: 40%\" src=\"" + sDataUrl + "\">");
+						generated = true;
+					}, function (reason) {
+						QUnit.push(
+							/*result*/ false,
+							/*actual*/ reason.toString(),
+							/*expected*/ "",
+							/*message*/ "Unable to take a screenshot"
+						);
 						generated = true;
 					});
 					return this.waitFor({
