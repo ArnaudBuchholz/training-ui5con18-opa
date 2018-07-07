@@ -46,7 +46,15 @@ sap.ui.define([
 					}
 					html2canvas(oComponent).then(function (canvas) {
 						var sDataUrl = canvas.toDataURL('image/png');
-						window.open(sDataUrl, "_blank");
+						QUnit.push(
+							/*result*/ true,
+							/*actual*/ "actual",
+							/*expected*/ "expected",
+							/*message*/ "SCREENSHOT"
+						);
+						debugger;
+						var qUnitMessage = $("span.test-message:contains(SCREENSHOT)");
+						qUnitMessage.html("<img style=\"max-width: 50%\" src=\"" + sDataUrl + "\">");
 						generated = true;
 					});
 					return this.waitFor({
@@ -54,7 +62,6 @@ sap.ui.define([
 							return generated;
 						},
 						success: function () {
-							debugger;
 						}
 					})
 				}
