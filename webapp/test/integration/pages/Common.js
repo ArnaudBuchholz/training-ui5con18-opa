@@ -63,9 +63,28 @@ sap.ui.define([
 							/*expected*/ "",
 							/*message*/ sKey
 						);
-						var qUnitMessage = $("span.test-message:contains(" + sKey + ")");
-						qUnitMessage.html("<img title=\"" + sScreenshotID + "\" style=\"max-height: 40%; max-width: 40%\" src=\"" + sDataUrl + "\">");
-						generated = true;
+						var qUnitMessage = $("span.test-message:contains(" + sKey + ")"),
+							img = function (sType, sSrc) {
+								var sId = sScreenshotID + "." + sType;
+								return "<img id=\"" + sId + "\" title=\"" + sId + "\" style=\"max-width: 80%\" src=\"" + sSrc + "\">";
+							},
+							aHtml = [
+								"<table>",
+									"<tr>",
+										"<td>", img("actual", sDataUrl), "</td>",
+										"<td>", img("reference", "/test-resources/" + sScreenshotID + ".png"), "</td>",
+										"<td>", img("diff", ""), "</td>",
+									"</tr>",
+								"</table>"
+							];
+						qUnitMessage.html(aHtml.join(""));
+						resemble(sDataUrl)
+		    				.compareTo("/test-resources/" + sScreenshotID + ".png")
+							.onComplete(function(data) {
+								console.log(data);
+								document.getElementById(sScreenshotID + "." + "diff").setAttribute("src", data.getImageDataUrl());
+								generated = true;
+						    });
 					}, function (reason) {
 						QUnit.push(
 							/*result*/ false,
