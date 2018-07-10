@@ -29,7 +29,8 @@ module.exports = function(grunt) {
 					'bower_components/openui5-sap.ui.layout/test-resources',
 					'bower_components/openui5-themelib_sap_belize/test-resources',
 					'node_modules/html2canvas/dist',
-					'bower_components/resemblejs'
+					'bower_components/resemblejs',
+					'webapp/test/integration/visuals'
 				],
 				cors: {
 					origin: 'http://localhost:<%= karma.options.port %>'
