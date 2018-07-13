@@ -66,6 +66,8 @@ sap.ui.define([
 		When.onTheListOfItems.iSetTheItemToCompleted(S_NEW_ITEM_TITLE)
 			.and.iSetTheItemToCompleted(S_NEW_ITEM_TITLE + " 3");
 
+		Given.iTakeAScreenshot("TodoListJourney.2");
+
 		// Assertions
 		Then.onTheFilterButtons.iShouldSeeTheButtonCount(filters.COMPLETED, 2)
 			.and.iTeardownTheApp();
