@@ -37,10 +37,10 @@ sap.ui.define([
 		},
 
 		iTakeAScreenshot: function (sScreenshotID) {
-			return this.waitFor({
+			var done = false;
+			this.waitFor({
 				success: function () {
-					var generated = false,
-						oWindow,
+					var oWindow,
 						oAppRoot = document.querySelector(".sapUiComponentContainer"),
 						oPromise;
 					if (oAppRoot) {
@@ -49,58 +49,60 @@ sap.ui.define([
 						oWindow = sap.ui.test.Opa5.getWindow();
 						oAppRoot = oWindow.document.body;
 					}
-					if (oWindow.html2canvas) {
-						oPromise = oWindow.html2canvas(oAppRoot);
-					} else {
-						oPromise = Promise.reject("html2canvas not found");
+					if (!oWindow.html2canvas) {
+						QUnit.push(false, "", "", "Unable to take a screenshot (html2canvas not detected)");
+						done = true;
+						return;
 					}
-					oPromise.then(function (canvas) {
-						var sDataUrl = canvas.toDataURL('image/png'),
-							sKey = sScreenshotID + "-" + (new Date()).getTime();
-						QUnit.push(
-							/*result*/ true,
-							/*actual*/ "",
-							/*expected*/ "",
-							/*message*/ sKey
-						);
-						var qUnitMessage = $("span.test-message:contains(" + sKey + ")"),
-							img = function (sType, sSrc) {
+					oWindow.html2canvas(oAppRoot)
+						.then(function (canvas) {
+							var sDataUrl = canvas.toDataURL('image/png');
+							return new Promise(function (resolve) {
+								resemble(sDataUrl)
+				    				.compareTo("/test-resources/" + sScreenshotID + ".png")
+									.onComplete(function(resembleOutput) {
+										resolve({
+											source: sDataUrl,
+											result: resembleOutput
+										});
+									});
+							});
+						})
+						.then(function (report) {
+							var sKey = sScreenshotID + "-" + (new Date()).getTime(),
+								bSucceeded = !report.result.error && report.result.rawMisMatchPercentage < 1,
+								aHtml;
+							QUnit.push(bSucceeded, "", "", sKey);
+							console.log(sScreenshotID, report);
+							function img (sType, sSrc) {
 								var sId = sScreenshotID + "." + sType;
 								return "<img id=\"" + sId + "\" title=\"" + sId + "\" style=\"max-width: 80%\" src=\"" + sSrc + "\">";
-							},
+							}
 							aHtml = [
 								"<table>",
 									"<tr>",
-										"<td>", img("actual", sDataUrl), "</td>",
+										"<td>", img("actual", report.source), "</td>",
 										"<td>", img("reference", "/test-resources/" + sScreenshotID + ".png"), "</td>",
-										"<td>", img("diff", ""), "</td>",
+										"<td>", img("diff", !report.result.error ? report.result.getImageDataUrl() : "" ), "</td>",
 									"</tr>",
 								"</table>"
 							];
-						qUnitMessage.html(aHtml.join(""));
-						resemble(sDataUrl)
-		    				.compareTo("/test-resources/" + sScreenshotID + ".png")
-							.onComplete(function(data) {
-								console.log(data);
-								document.getElementById(sScreenshotID + "." + "diff").setAttribute("src", data.getImageDataUrl());
-								generated = true;
-						    });
-					}, function (reason) {
-						QUnit.push(
-							/*result*/ false,
-							/*actual*/ reason.toString(),
-							/*expected*/ "",
-							/*message*/ "Unable to take a screenshot"
-						);
-						generated = true;
-					});
-					return this.waitFor({
-						check: function () {
-							return generated;
-						},
-						success: function () {
-						}
-					})
+							$("span.test-message:contains(" + sKey + ")").html(aHtml.join(""));
+						} , function (reason) {
+							QUnit.push(
+								/*result*/ false,
+								/*actual*/ reason.toString(),
+								/*expected*/ "",
+								/*message*/ "Unable to take a screenshot"
+							);
+						}).then(function () {
+							done = true;
+						});
+				}
+			});
+			return this.waitFor({
+				check: function () {
+					return done;
 				}
 			});
 		},
