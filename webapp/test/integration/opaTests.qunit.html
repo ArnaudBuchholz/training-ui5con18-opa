@@ -30,9 +30,53 @@
 			});
 		</script>
 
+		<style>
+
+iframe.opaFrame {
+	width: 1280px;
+	height: 1024px;
+	position: fixed;
+	top: -80px;
+	left: 0px;
+	bottom: unset;
+	right: unset;
+}
+
+.hidePreview iframe.opaFrame {
+	display: none;
+}
+
+		</style>
+
+		<script>
+
+			function waitForQUnitToolbar() {
+				var qUnitToolbar = document.getElementById("qunit-testrunner-toolbar");
+				if (qUnitToolbar) {
+					qUnitToolbar.appendChild(document.getElementById("showpreview-group"));
+					document.getElementById("showpreview").addEventListener("click", onShowPreview);
+				} else {
+					setTimeout(waitForQUnitToolbar, 100);
+				}
+			}
+
+			function onShowPreview() {
+				if (this.checked) {
+					document.body.className = "sapUiBody"
+				} else {
+					document.body.className = "sapUiBody hidePreview"
+				}
+			}
+
+		</script>
+
 	</head>
-	<body>
+	<body onload="waitForQUnitToolbar()">
 		<div id="qunit"></div>
 		<div id="qunit-fixture"></div>
+		<span id="showpreview-group" class="qunit-url-config">
+			<input id="showpreview" name="showpreview" type="checkbox" checked="checked" title="Application preview">
+			<label for="showpreview" title="Application preview">Application preview</label>
+		</span>
 	</body>
 </html>
