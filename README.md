@@ -7,7 +7,7 @@
 * Uses [OData Model](https://openui5.hana.ondemand.com/#/api/sap.ui.model.odata.v2.ODataModel) to manipulate todo items
 * Relies on [MockServer](https://openui5.hana.ondemand.com/#/api/sap.ui.core.util.MockServer) to simulate backend
 * Fully tested with [OPA](https://openui5.hana.ondemand.com/#/api/sap.ui.test.Opa5)
-* [UI5Con presentation](http://arnaudbuchholz.github.io/decks/UI5Con'18%20A%20journey%20with%20OPA.html#/)
+* [Presentation slides](http://arnaudbuchholz.github.io/decks/UI5Con'18%20A%20journey%20with%20OPA.html#/)
 * [UI5con@SAP 2018 - A journey with OPA](https://youtu.be/HiZq-kuIbt0)
 
 [![Travis-CI](https://travis-ci.org/ArnaudBuchholz/training-ui5con18-opa.svg?branch=master)](https://travis-ci.org/ArnaudBuchholz/training-ui5con18-opa#)
