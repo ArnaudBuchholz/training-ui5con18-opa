@@ -54,6 +54,22 @@ sap.ui.define([
 						done = true;
 						return;
 					}
+					// Patch HTML to maximize html2canvas (remove use of display: -webkit-box)
+					[].slice.call(oWindow.document.querySelectorAll(".sapMObjLTopRow")).forEach(function (oSapMObjLTopRow) {
+						[].slice.call(oSapMObjLTopRow.querySelectorAll("div")).forEach(function (oDiv) {
+							if (oDiv.getAttribute("style")) {
+								oDiv.removeAttribute("style");
+								var oSpan = oDiv.querySelector(".sapMTextLineClamp");
+								oSpan.removeAttribute("style");
+								oSpan.className = oSpan.className
+									.split(" ")
+									.filter(function (sName) {
+										return sName !== "sapMTextLineClamp";
+									})
+									.join(" ");
+							}
+						});
+					});
 					oWindow.html2canvas(oAppRoot)
 						.then(function (canvas) {
 							var sDataUrl = canvas.toDataURL('image/png');
@@ -69,10 +85,16 @@ sap.ui.define([
 							});
 						})
 						.then(function (report) {
-							var sKey = sScreenshotID + "-" + (new Date()).getTime(),
-								bSucceeded = !report.result.error && report.result.rawMisMatchPercentage < 1,
+							var PERCENTAGE_TRESHHOLD = 0.001,
+								sKey = sScreenshotID + "-" + (new Date()).getTime(),
+								bSucceeded = !report.result.error && report.result.rawMisMatchPercentage < PERCENTAGE_TRESHHOLD,
 								aHtml;
-							QUnit.push(bSucceeded, "", "", sKey);
+							QUnit.push(
+								bSucceeded,
+								"Mistmatch percentage: " + report.result.rawMisMatchPercentage,
+								"Mistmatch percentage: < " + PERCENTAGE_TRESHHOLD,
+								sKey
+							);
 							console.log(sScreenshotID, report);
 							function img (sType, sSrc) {
 								var sId = sScreenshotID + "." + sType;
