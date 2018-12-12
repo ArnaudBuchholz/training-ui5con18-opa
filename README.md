@@ -12,6 +12,10 @@
 
 [![Travis-CI](https://travis-ci.org/ArnaudBuchholz/training-ui5con18-opa.svg?branch=master)](https://travis-ci.org/ArnaudBuchholz/training-ui5con18-opa#)
 
+## Prerequisites
+- The **UI5 CLI** of the [UI5 Build and Development Tooling](https://github.com/SAP/ui5-tooling#installing-the-ui5-cli).
+    - For installation instructions please see: [Installing the UI5 CLI](https://github.com/SAP/ui5-tooling#installing-the-ui5-cli).
+
 ## Getting started
 * Install Node.js (from [nodejs.org](http://nodejs.org/)).
 * Install the Grunt CLI
@@ -28,21 +32,26 @@
     npm install
     ```
 
+* Start a local server and run the application (http://localhost:8080/index.html)
+    ```sh
+    npm start
+    ```
+
 ## Usage
 ### Server
-Run `grunt serve` to start a local server with your application at [http://localhost:8080](http://localhost:8080).
+Run `npm run serve` to start a local server with your application at [http://localhost:8080](http://localhost:8080).
 
-Run `grunt watch` to also execute your unit tests automatically after every change.
+Run `npm run watch` to also execute your unit tests automatically after every change.
 
 ### Code validation
-Run `grunt lint` to run static code checks on your project.
+Run `npm run lint` to run static code checks on your project.
 
-Run `grunt test` to execute all tests and get a coverage report.
+Run `npm  test` to execute all tests and get a coverage report.
 
-Run `grunt serve` and open [http://localhost:8080/test/integration/opaTests.qunit.html](http://localhost:8080/test/integration/opaTests.qunit.html) to run the OPA tests in your browser.
+Run `npm run serve` and open [http://localhost:8080/test/integration/opaTests.qunit.html](http://localhost:8080/test/integration/opaTests.qunit.html) to run the OPA tests in your browser.
 
 ### Build
-Run `grunt build` to build a deployable version of your app to `/dist`.
+Run `npm build` to build a deployable version of your app to `/dist`.
 
 ### Follow-up exercises
 Despite the 100% coverage, there are still issues in the application:
