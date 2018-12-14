@@ -1,4 +1,4 @@
-![OpenUI5 logo](http://openui5.org/images/OpenUI5_new_big_side.png)
+![OpenUI5 logo](http://arnaudbuchholz.github.io/decks/UI5Con'18%20A%20journey%20with%20OPA/OpenUI5_new_big_side.png)
 
 # training-uicon18-opa
 > [OpenUI5](https://github.com/SAP/openui5) sample app to demonstrate UI5's OPA (UICon'18)
