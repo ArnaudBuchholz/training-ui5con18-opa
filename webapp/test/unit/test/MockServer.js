@@ -10,10 +10,13 @@ sap.ui.define([
 	var TODOITEM = CONST.OData.entityProperties.todoItem;
 
 	QUnit.module("MockServer", {
-		beforeEach: function () {
+		beforeEach: function (assert) {
+			var done = assert.async();
 			this.oModel = new ODataModel({
 				serviceUrl: "/odata/TODO_SRV/"
 			});
+			// Wait before for metadata to be loaded before running tests
+			this.oModel.metadataLoaded().then(done);
 		},
 		afterEach: function () {}
 	});
@@ -81,7 +84,7 @@ sap.ui.define([
 			}.bind(this),
 			error: handleError(assert, done)
 		})
-	});;
+	});
 
 	QUnit.test("Creating a new item", function (assert) {
 		var done = assert.async(),
@@ -97,6 +100,36 @@ sap.ui.define([
 				done();
 			},
 			error: handleError(assert, done)
+		});
+	});
+
+	QUnit.test("Simulating an error", function (assert) {
+		var done = assert.async();
+		var mKeyFields = {};
+		mKeyFields[TODOITEM.guid] = "0MOCKSVR-TODO-MKII-MOCK-00000000";
+		var sItemPath = "/" + this.oModel.createKey(CONST.OData.entityNames.todoItemSet, mKeyFields);
+		// Try to set the item to completed
+		var oBody = {};
+		oBody[TODOITEM.completed] = true;
+		this.oModel.update(sItemPath, oBody, {
+			merge: true, // Use MERGE
+			success: function () {
+				assert.ok(false, "There should be an error");
+				done();
+			},
+			error: function (oReason) {
+				assert.ok(true, "The update failed as expected");
+				assert.equal(oReason.responseText, "I'll start tomorrow !", "The right error message is returned");
+				// Read the item again to check how it was updated
+				this.oModel.read(sItemPath, {
+					success: function (oTodoItem) {
+						assert.equal(oTodoItem[TODOITEM.completed], false, "Item is not completed");
+						assert.equal(oTodoItem[TODOITEM.completionDate], null, "Item has not completion date");
+						done();
+					},
+					error: handleError(assert, done)
+				});
+			}.bind(this)
 		});
 	});
 
