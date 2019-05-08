@@ -41,7 +41,7 @@ sap.ui.define([
 		}
 	}
 
-	QUnit.test("The server exposes some items", function (assert) {
+	QUnit.test("Exposes predefined items", function (assert) {
 		var done = assert.async();
 		this.oModel.read("/" + CONST.OData.entityNames.todoItemSet, {
 			success: function (oData) {
@@ -52,7 +52,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("The server exposes more than 100 items", function (assert) {
+	QUnit.test("Exposes more than 100 items", function (assert) {
 		var done = assert.async();
 		this.oModel.read("/" + CONST.OData.entityNames.todoItemSet, {
 			success: function (oData) {
@@ -63,7 +63,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Get and update first item", function (assert) {
+	QUnit.test("Handles update of item", function (assert) {
 		var done = assert.async();
 		var mKeyFields = {};
 		mKeyFields[TODOITEM.guid] = "0MOCKSVR-TODO-MKII-MOCK-00000002";
@@ -97,7 +97,7 @@ sap.ui.define([
 		})
 	});
 
-	QUnit.test("Creating a new item", function (assert) {
+	QUnit.test("Handles creation of a new item", function (assert) {
 		var done = assert.async(),
 			dNow = new Date(),
 			oBody = {};
@@ -114,7 +114,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Simulating an error", function (assert) {
+	QUnit.test("Simulates an error", function (assert) {
 		var done = assert.async();
 		var mKeyFields = {};
 		mKeyFields[TODOITEM.guid] = "0MOCKSVR-TODO-MKII-MOCK-00000000";
@@ -144,7 +144,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Implement ClearCompleted function import", function (assert) {
+	QUnit.test("Implements ClearCompleted function import", function (assert) {
 		var done = assert.async();
 		this.oModel.callFunction("/" + CONST.OData.functionImports.clearCompleted.name, {
 			method: CONST.OData.functionImports.clearCompleted.method,
