@@ -1,0 +1,19 @@
+[{
+  "label": "Exposes predefined items",
+  "folder": "step1"
+}, {
+  "label": "Exposes more than 100 items",
+  "folder": "step2"
+}, {
+  "label": "Handles update of item",
+  "folder": "step3"
+}, {
+  "label": "Handles creation of a new item",
+  "folder": "step4"
+}, {
+  "label": "Simulates an error",
+  "folder": "step5"
+}, {
+  "label": "Implements ClearCompleted function import",
+  "folder": "step5"
+}]
