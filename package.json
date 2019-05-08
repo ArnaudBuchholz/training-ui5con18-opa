@@ -12,7 +12,7 @@
     "watch": "start-server-and-test start http://localhost:8080 karma",
     "test": "npm run lint && rimraf coverage && start-server-and-test serve http://localhost:8080 karma-ci",
     "build": "rimraf dist && ui5 build --a",
-    "ui5con19": "node ./workshop/setup ui5con19-mockserver"    
+    "ui5con19": "node ./workshop/setup ui5con19-mockserver"
   },
   "dependencies": {
     "@openui5/sap.m": "^1.65.1",
@@ -22,7 +22,9 @@
   },
   "devDependencies": {
     "@ui5/cli": "^1.4.0",
+    "colors": "^1.3.3",
     "eslint": "^5.10.0",
+    "inquirer": "^6.3.1",
     "karma": "^3.1.3",
     "karma-chrome-launcher": "^2.2.0",
     "karma-coverage": "^1.1.2",
