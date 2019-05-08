@@ -53,8 +53,9 @@ sap.ui.define([
 
 			// Generate random items
 			var aTodoItemSet = _oMockServer.getEntitySetData(CONST.OData.entityNames.todoItemSet),
-				sDateMax = _getJSONDateReplacer(new Date(2099, 11, 31).getTime()),
-				sDateNow = _getJSONDateReplacer(new Date().getTime() - 60000);
+				sDateMax = _getJSONDateReplacer(new Date(2099, 11, 31)),
+				sDateNow = new Date(),
+				sDateNowMinusOneHour = _getJSONDateReplacer(new Date(sDateNow - 60000));
 			for (var idx = 0; idx < 100; ++idx) {
 				var oNewTodoItemSet = {},
 					sGuid = _getNewItemGuid();
@@ -66,11 +67,11 @@ sap.ui.define([
 					type: "TODO_SRV.TodoItem"
 				}
 				if (idx % 2) {
-					oNewTodoItemSet[CONST.OData.entityProperties.todoItem.completionDate] = sDateNow;
+					oNewTodoItemSet[CONST.OData.entityProperties.todoItem.completionDate] = sDateNowMinusOneHour;
 					oNewTodoItemSet[CONST.OData.entityProperties.todoItem.completed] = true;
 				}
 				if (idx % 5 === 0) {
-					oNewTodoItemSet[CONST.OData.entityProperties.todoItem.dueDate] = sDateNow;
+					oNewTodoItemSet[CONST.OData.entityProperties.todoItem.dueDate] = sDateNowMinusOneHour;
 				}
 				aTodoItemSet.push(oNewTodoItemSet);
 			}
