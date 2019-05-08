@@ -52,6 +52,17 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("The server exposes more than 100 items", function (assert) {
+		var done = assert.async();
+		this.oModel.read("/" + CONST.OData.entityNames.todoItemSet, {
+			success: function (oData) {
+				assert.ok(oData.results.length > 100, "Found more than 100 items");
+				done();
+			},
+			error: handleError(assert, done)
+		});
+	});
+
 	QUnit.test("Get and update first item", function (assert) {
 		var done = assert.async();
 		var mKeyFields = {};
