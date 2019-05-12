@@ -45,7 +45,51 @@ sap.ui.define([
 		var done = assert.async();
 		this.oModel.read("/" + CONST.OData.entityNames.todoItemSet, {
 			success: function (oData) {
-				assert.notEqual(oData.results.length, 0, "Found some items");
+				assert.equal(oData.results.length, 4, "Found some items");
+				// The order is not relevant but those 4 items should be There
+				[{
+					"Guid": "0MOCKSVR-TODO-MKII-MOCK-00000001",
+					"Title": "Start this app",
+					"DueDate": "/Date(1526389176552)/",
+					"Completed": true,
+					"CompletionDate": "/Date(1526389176552)/"
+				}, {
+					"Title": "Learn OpenUI5",
+					"Guid": "0MOCKSVR-TODO-MKII-MOCK-00000002",
+					"DueDate": "/Date(1641013199999)/",
+					"Completed": false,
+					"CompletionDate": null
+				}, {
+					"Guid": "0MOCKSVR-TODO-MKII-MOCK-00000003",
+					"Title": "Finish UICon'18 presentation",
+					"DueDate": "/Date(1526918400000)/",
+					"Completed": false,
+					"CompletionDate": null
+				}, {
+					"Guid": "0MOCKSVR-TODO-MKII-MOCK-00000000",
+					"Title": "Stop procrastinating",
+					"DueDate": "/Date(1526918400000)/",
+					"Completed": false,
+					"CompletionDate": null
+				}].forEach(function (oExpectedItem) {
+					function getTime (sODataDate) {
+						return /Date\(([0-9]+)\)/.exec(sODataDate)[1];
+					}
+					var oMatchingItem = oData.results.filter(function (oCandidate) {
+						return oCandidate[TODOITEM.guid] === oExpectedItem.Guid;
+					})[0];
+					assert.ok(oMatchingItem, "Found matching item for " + oExpectedItem.Guid);
+					if (oMatchingItem) {
+						assert.equal(oMatchingItem[TODOITEM.title], oExpectedItem.Title, "Title is correct");
+						assert.equal(oMatchingItem[TODOITEM.dueDate].getTime(), getTime(oExpectedItem.DueDate), "DueDate is correct");
+						assert.strictEqual(oMatchingItem[TODOITEM.completed], oExpectedItem.Completed, "Completed is correct");
+						if (oExpectedItem.Completed) {
+							assert.equal(oMatchingItem[TODOITEM.completionDate].getTime(), getTime(oExpectedItem.CompletionDate), "CompletionDate is correct");
+						} else {
+							assert.strictEqual(oMatchingItem[TODOITEM.completionDate], null, "CompletionDate is correct");
+						}
+					}
+				});
 				done();
 			},
 			error: handleError(assert, done)
@@ -106,7 +150,7 @@ sap.ui.define([
 		this.oModel.create("/" + CONST.OData.entityNames.todoItemSet, oBody, {
 			success: function (oCreateEntry) {
 				assert.notEqual(oCreateEntry[TODOITEM.guid], "", "Guid was allocated");
-				assert.equal(oCreateEntry[TODOITEM.completed], false, "Item is not completed");
+				assert.strictEqual(oCreateEntry[TODOITEM.completed], false, "Item is not completed");
 				assert.equal(oCreateEntry[TODOITEM.dueDate].getTime(), dNow.getTime(), "Item has the proper due date");
 				done();
 			},
