@@ -50,9 +50,9 @@ sap.ui.define([
 					dtItemDueDate = dtMax;
 				}
 				if (idx % 2) {
-					aTodoItemSet.push(_getNewItem(sItemTitle, dtItemDueDate, dtNowMinusOneHour));
+					aTodoItemSet.push(getNewItem(sItemTitle, dtItemDueDate, dtNowMinusOneHour));
 				} else {
-					aTodoItemSet.push(_getNewItem(sItemTitle, dtItemDueDate));
+					aTodoItemSet.push(getNewItem(sItemTitle, dtItemDueDate));
 				}
 			}
 			_oMockServer.setEntitySetData(CONST.OData.entityNames.todoItemSet, aTodoItemSet);
