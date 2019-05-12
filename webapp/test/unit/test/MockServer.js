@@ -45,7 +45,7 @@ sap.ui.define([
 		var done = assert.async();
 		this.oModel.read("/" + CONST.OData.entityNames.todoItemSet, {
 			success: function (oData) {
-				assert.equal(oData.results.length, 4, "Found some items");
+				assert.ok(oData.results.length >= 4, "Found some items");
 				// The order is not relevant but those 4 items should be There
 				[{
 					"Guid": "0MOCKSVR-TODO-MKII-MOCK-00000001",
