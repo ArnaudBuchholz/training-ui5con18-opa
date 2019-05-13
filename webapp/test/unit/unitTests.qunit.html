@@ -25,7 +25,13 @@
 					"sap/ui/demo/todo/test/MockServer",
 					"sap/ui/demo/todo/test/unit/allTests"
 				], function(MockServer) {
-					MockServer.init(jQuery.sap.getUriParameters());
+					MockServer.init({
+						get: function(name) {
+							if (name === "randomize") {
+								return "100";
+							}
+						}
+					});
 					QUnit.start();
 				});
 			});
