@@ -116,7 +116,7 @@ sap.ui.define([
 		this.oModel.read(sItemPath, {
 			success: function (oTodoItem) {
 				assert.equal(oTodoItem[TODOITEM.title], "Learn OpenUI5", "Found item labelled 'Learn OpenUI5'");
-				assert.equal(oTodoItem[TODOITEM.completed], false, "Item is not completed");
+				assert.strictEqual(oTodoItem[TODOITEM.completed], false, "Item is not completed");
 				assert.equal(oTodoItem[TODOITEM.completionDate], null, "Item has not completion date");
 				// Set it to completed
 				var oBody = {};
