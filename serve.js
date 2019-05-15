@@ -33,6 +33,7 @@ gpf.http.get(`${UI5BaseUrl}neo-app.json`)
         })
         require('node-ui5/serve')({
           port: 8080,
+          window,
           mappings: [{
             // ui5 resource access
             match: /\/resources\/(.*)/,
@@ -41,6 +42,10 @@ gpf.http.get(`${UI5BaseUrl}neo-app.json`)
             // ui5 test-resource access
             match: /\/test-resources\/(.*)/,
             url: `${UI5BaseUrl}${version.path}/test-resources/$1`
+          }, {
+            // mock server mapping
+            match: /^(\/odata\/.*)/,
+            mock: '$1'
           }, {
             // default access to index.html
             match: /^\/$/,
