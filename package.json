@@ -33,6 +33,7 @@
     "karma-coverage": "^1.1.2",
     "karma-openui5": "^0.2.3",
     "karma-qunit": "^2.1.0",
+    "mocha": "^6.1.4",
     "node-ui5": "^2.0.3",
     "qunit": "^2.8.0",
     "rimraf": "^2.6.2",
