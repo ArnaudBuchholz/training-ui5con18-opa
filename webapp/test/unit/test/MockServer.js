@@ -48,25 +48,25 @@ sap.ui.define([
 				assert.ok(oData.results.length >= 4, "Found some items");
 				// The order is not relevant but those 4 items should be There
 				[{
-					"Guid": "0MOCKSVR-TODO-MKII-MOCK-00000001",
+					"Guid": "0MOCKSVR-TODO-MKII-MOCK-000000000001",
 					"Title": "Start this app",
 					"DueDate": "/Date(1526389176552)/",
 					"Completed": true,
 					"CompletionDate": "/Date(1526389176552)/"
 				}, {
 					"Title": "Learn OpenUI5",
-					"Guid": "0MOCKSVR-TODO-MKII-MOCK-00000002",
+					"Guid": "0MOCKSVR-TODO-MKII-MOCK-000000000002",
 					"DueDate": "/Date(1641013199999)/",
 					"Completed": false,
 					"CompletionDate": null
 				}, {
-					"Guid": "0MOCKSVR-TODO-MKII-MOCK-00000003",
+					"Guid": "0MOCKSVR-TODO-MKII-MOCK-000000000003",
 					"Title": "Finish UICon'18 presentation",
 					"DueDate": "/Date(1526918400000)/",
 					"Completed": false,
 					"CompletionDate": null
 				}, {
-					"Guid": "0MOCKSVR-TODO-MKII-MOCK-00000000",
+					"Guid": "0MOCKSVR-TODO-MKII-MOCK-000000000000",
 					"Title": "Stop procrastinating",
 					"DueDate": "/Date(1526918400000)/",
 					"Completed": false,
@@ -110,7 +110,7 @@ sap.ui.define([
 	QUnit.test("Handles update of item", function (assert) {
 		var done = assert.async();
 		var mKeyFields = {};
-		mKeyFields[TODOITEM.guid] = "0MOCKSVR-TODO-MKII-MOCK-00000002";
+		mKeyFields[TODOITEM.guid] = "0MOCKSVR-TODO-MKII-MOCK-000000000002";
 		var sItemPath = "/" + this.oModel.createKey(CONST.OData.entityNames.todoItemSet, mKeyFields);
 		// Read item and check properties
 		this.oModel.read(sItemPath, {
@@ -161,7 +161,7 @@ sap.ui.define([
 	QUnit.test("Simulates an error", function (assert) {
 		var done = assert.async();
 		var mKeyFields = {};
-		mKeyFields[TODOITEM.guid] = "0MOCKSVR-TODO-MKII-MOCK-00000000";
+		mKeyFields[TODOITEM.guid] = "0MOCKSVR-TODO-MKII-MOCK-000000000000";
 		var sItemPath = "/" + this.oModel.createKey(CONST.OData.entityNames.todoItemSet, mKeyFields);
 		// Try to set the item to completed
 		var oBody = {};
