@@ -15,7 +15,7 @@ require('node-ui5')
       console.log('Reading $metadata')
       await model.metadataLoaded()
       console.log('Reading TODO items')
-      const { results } = (await model.readAsync('/TodoItemSet'))
+      const { results } = await model.readAsync('/TodoItemSet')
       console.log(`Found ${results.length} todo items`)
       results.slice(0, 10).forEach(item => {
         console.log(item.Guid.gray + ' ' + item.Title.white)
