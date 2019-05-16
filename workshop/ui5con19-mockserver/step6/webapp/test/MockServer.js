@@ -6,7 +6,7 @@ sap.ui.define([
 ], function(MockServer, CONST, getNewItem) {
 	"use strict";
 
-	var STOP_PROCRASTINATING_GUID = "0MOCKSVR-TODO-MKII-MOCK-00000000",
+	var STOP_PROCRASTINATING_GUID = "0MOCKSVR-TODO-MKII-MOCK-000000000000",
 		_oMockServer;
 
 	return {
