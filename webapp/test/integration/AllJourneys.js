@@ -17,7 +17,8 @@ sap.ui.require([
 	Opa5.extendConfig({
 		arrangements: new Common(),
 		autoWait: true,
-		viewName: "sap.ui.demo.todo.view.App" // Since we have only one view
+		viewName: "sap.ui.demo.todo.view.App", // Since we have only one view
+		pollingInterval: 50 // Aggressive one to speed up demo
 	});
 
 });
