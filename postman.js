@@ -3,13 +3,13 @@ const assert = require('assert')
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0 // Ignore certificate errors
 
 describe('Demonstration of node-ui5', function () {
-  this.timeout(10000) // node-ui5 is quite slow to boot
+  this.timeout(5000) // node-ui5 is quite slow to boot
 
   let oModel
 
   before(function (done) {
     require('node-ui5/factory')({
-      verbose: true,
+      fastButIncomplete: true,
       exposeAsGlobals: true
     }).then(() => {
       sap.ui.require([
@@ -28,43 +28,40 @@ describe('Demonstration of node-ui5', function () {
   it('is loaded', () => { assert(oModel) })
 
   describe('Validating $metadata', () => {
-    describe('MarketingPlan entity', () => {
-      describe('Name property', () => {
-        it('is required', () => { assert(oModel.getProperty('/#MarketingPlan/Name/@nullable') === 'false') })
-        it('is has a maximum length of 125', () => { assert(oModel.getProperty('/#MarketingPlan/Name/@maxLength') === '125') })
-        it('is has a label', () => { assert(oModel.getProperty('/#MarketingPlan/Name/@sap:label') === 'Name') })
+    describe('TodoItem entity', () => {
+      describe('Title property', () => {
+        it('is required', () => { assert(oModel.getProperty('/#TodoItem/Title/@nullable') === 'false') })
+        it('is has a maximum length of 200', () => { assert(oModel.getProperty('/#TodoItem/Title/@maxLength') === '200') })
+        it('is has a label', () => { assert(oModel.getProperty('/#TodoItem/Title/@sap:label') === 'Title') })
       })
     })
   })
 
-  describe('Get app configuration', () => {
-    before(() => oModel.readAsync("/AppConfigurationSet('CUAN_MARKETING_PLAN')"))
+  describe('Check app configuration', () => {
+    before(() => oModel.readAsync("/AppConfigurationSet('ItemEditing')"))
 
-    it('is not read only', () => { assert(!oModel.getProperty("/AppConfigurationSet('CUAN_MARKETING_PLAN')/IsReadOnly")) })
-    it('allows program creation', () => { assert(oModel.getProperty("/AppConfigurationSet('CUAN_MARKETING_PLAN')/IsProgramCreatable")) })
-    it('allows campaign creation', () => { assert(oModel.getProperty("/AppConfigurationSet('CUAN_MARKETING_PLAN')/IsCampaignCreatable")) })
-    it('exposes a display currency', () => { assert(oModel.getProperty("/AppConfigurationSet('CUAN_MARKETING_PLAN')/DisplayCurrency")) })
+    it('is true', () => { assert(oModel.getProperty("/AppConfigurationSet('ItemEditing')/Enable")) })
   })
 
-  describe('Get currencies', () => {
-    before(() => oModel.readAsync('/Currencies'))
+  describe('Get known Todo items', () => {
+    before(() => oModel.readAsync('/TodoItemSet'))
 
-    it('contains CAD', () => { assert(oModel.getObject("/Currencies('CAD')")) })
-    it('contains EUR', () => { assert(oModel.getObject("/Currencies('EUR')")) })
-    it('contains USD', () => { assert(oModel.getObject("/Currencies('USD')")) })
+    it('contains "Start this app"', () => { assert(oModel.getObject("/TodoItemSet(guid'0MOCKSVR-TODO-MKII-MOCK-000000000001')")) })
+    it('contains "Learn OpenUI5"', () => { assert(oModel.getObject("/TodoItemSet(guid'0MOCKSVR-TODO-MKII-MOCK-000000000002')")) })
+    it('contains "Stop procrastinating"', () => { assert(oModel.getObject("/TodoItemSet(guid'0MOCKSVR-TODO-MKII-MOCK-000000000000')")) })
   })
 
-  describe('Get currencies & media types in one batch', () => {
-    let aCurrencies
-    let aMediaTypes
+  describe('Get two entity sets in one batch', () => {
+    let aAppConfigurations
+    let aTodoItems
 
     before(() => Promise.all([
-      oModel.readAsync('/Currencies').then(oData => { aCurrencies = oData.results }),
-      oModel.readAsync('/MediaTypes').then(oData => { aMediaTypes = oData.results })
+      oModel.readAsync('/AppConfigurationSet').then(oData => { aAppConfigurations = oData.results }),
+      oModel.readAsync('/TodoItemSet').then(oData => { aTodoItems = oData.results })
     ]))
 
-    it('exposes currencies', () => { assert(aCurrencies.length) })
-    it('exposes media types', () => { assert(aMediaTypes.length) })
+    it('exposes app configuration', () => { assert(aAppConfigurations.length) })
+    it('exposes todo items', () => { assert(aTodoItems.length) })
   })
 
 })
