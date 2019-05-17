@@ -31,8 +31,8 @@ describe('Demonstration of node-ui5', function () {
     describe('TodoItem entity', () => {
       describe('Title property', () => {
         it('is required', () => { assert(oModel.getProperty('/#TodoItem/Title/@nullable') === 'false') })
-        it('is has a maximum length of 200', () => { assert(oModel.getProperty('/#TodoItem/Title/@maxLength') === '200') })
-        it('is has a label', () => { assert(oModel.getProperty('/#TodoItem/Title/@sap:label') === 'Title') })
+        it('has a maximum length of 200', () => { assert(oModel.getProperty('/#TodoItem/Title/@maxLength') === '200') })
+        it('has a label', () => { assert(oModel.getProperty('/#TodoItem/Title/@sap:label') === 'Title') })
       })
     })
   })
