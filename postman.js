@@ -2,7 +2,7 @@ const assert = require('assert')
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0 // Ignore certificate errors
 
-describe('Demonstration of node-ui5', function () {
+describe('Demonstration of node-ui5 to test ODATA', function () {
   this.timeout(5000) // node-ui5 is quite slow to boot
 
   let oModel
