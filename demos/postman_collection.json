@@ -1,0 +1,224 @@
+{
+	"info": {
+		"_postman_id": "443a9369-447b-43d6-92f3-f3275410bcf5",
+		"name": "ui5con'19",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Metadata",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "55afd40b-dd7c-42d5-8044-8a5ae648750e",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"var metadata = xml2Json(responseBody);",
+							"tests[\"XML parsing is OK\"] = !!metadata;",
+							"var schema = metadata['edmx:Edmx']['edmx:DataServices']['Schema']",
+							"tests[\"Schema node found\"] = !!schema;",
+							"console.log(schema['EntityType'])",
+							"var todoItemEntity = schema['EntityType'].filter(function (entityType) {",
+							"    return entityType.$.Name === 'TodoItem'",
+							"})[0];",
+							"tests[\"TodoItem entity type found\"] = !!todoItemEntity;",
+							"var todoItemTitleProperty = todoItemEntity.Property.filter(function (property) {",
+							"    return property.$.Name === 'Title'",
+							"})[0];",
+							"tests[\"TodoItem Title property found\"] = !!todoItemTitleProperty;",
+							"tests[\"TodoItem Title is required\"] = todoItemTitleProperty.$.Nullable === 'false';",
+							"tests[\"TodoItem Title has a maximum length of 200\"] = todoItemTitleProperty.$.MaxLength === '200';",
+							"tests[\"TodoItem Title has a label\"] = todoItemTitleProperty.$['sap:label'] === 'Title';",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/odata/TODO_SRV/$metadata",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"odata",
+						"TODO_SRV",
+						"$metadata"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get app configuration",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e59100cd-886f-49ec-aae3-84801fbbb47d",
+						"exec": [
+							"var response = JSON.parse(responseBody);",
+							"tests[\"Is enabled\"] = response.d[0].Enable === true;",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "sap-contextid-accept",
+						"value": "header"
+					},
+					{
+						"key": "Accept",
+						"value": "multipart/mixed"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "en",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:8080/odata/TODO_SRV/AppConfigurationSet('ItemEditing')?$format=json",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"odata",
+						"TODO_SRV",
+						"AppConfigurationSet('ItemEditing')"
+					],
+					"query": [
+						{
+							"key": "$format",
+							"value": "json"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get todo items",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "88789f97-0bb0-43c6-a90b-7d8b37b23c4d",
+						"exec": [
+							"var response = JSON.parse(responseBody);",
+							"var results = response.d.results;",
+							"",
+							"function searchTodoItemByGUID (guid) {",
+							"    return results.filter(function (todoItem) {",
+							"        return todoItem.Guid === guid;",
+							"    })[0];",
+							"}",
+							"",
+							"tests[\"contains \\\"Start this app\\\"\"] = !!searchTodoItemByGUID(\"0MOCKSVR-TODO-MKII-MOCK-000000000001\");",
+							"tests[\"contains \\\"Learn OpenUI5\\\"\"] = !!searchTodoItemByGUID(\"0MOCKSVR-TODO-MKII-MOCK-000000000002\");",
+							"tests[\"contains \\\"Stop procrastinating\\\"\"] = !!searchTodoItemByGUID(\"0MOCKSVR-TODO-MKII-MOCK-000000000000\");",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "sap-contextid-accept",
+						"value": "header"
+					},
+					{
+						"key": "Accept",
+						"value": "multipart/mixed"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "en",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:8080/odata/TODO_SRV/TodoItemSet?$format=json",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"odata",
+						"TODO_SRV",
+						"TodoItemSet"
+					],
+					"query": [
+						{
+							"key": "$format",
+							"value": "json"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get app configuration & todo items",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "55afd40b-dd7c-42d5-8044-8a5ae648750e",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "multipart/mixed",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "multipart/mixed;boundary=batch_6a5a-9659-7c4c",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "\r\n--batch_6a5a-9659-7c4c\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\n\r\n\r\nGET AppConfigurationSet HTTP/1.1\r\nsap-cancel-on-close: true\r\nsap-contextid-accept: header\r\nAccept: application/json\r\nAccept-Language: en\r\nDataServiceVersion: 2.0\r\nMaxDataServiceVersion: 2.0\r\n\r\n\r\n--batch_6a5a-9659-7c4c\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\n\r\n\r\nGET TodoItemSet HTTP/1.1\r\nsap-cancel-on-close: true\r\nsap-contextid-accept: header\r\nAccept: application/json\r\nAccept-Language: en\r\nDataServiceVersion: 2.0\r\nMaxDataServiceVersion: 2.0\r\n\r\n\r\n--batch_6a5a-9659-7c4c--"
+				},
+				"url": {
+					"raw": "localhost:8080/odata/TODO_SRV/$batch",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"odata",
+						"TODO_SRV",
+						"$batch"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
