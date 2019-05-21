@@ -36,7 +36,7 @@ gpf.http.get(`${UI5BaseUrl}neo-app.json`)
           port: 8080,
           window,
           mappings: [{
-            // http/https proxy
+            // http/https proxy to flatten system landscape
             match: /^\/proxy\/(https?)\/(.*)/,
             url: '$1://$2',
             'unsecure-cookies': true
