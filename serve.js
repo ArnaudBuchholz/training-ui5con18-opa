@@ -21,6 +21,7 @@ gpf.http.get(`${UI5BaseUrl}neo-app.json`)
     require('node-ui5/factory')({
       verbose: true,
       bootstrapLocation: `${UI5BaseUrl}${version.path}/resources/sap-ui-core.js`,
+      fastButIncompleteSimulation: true,
       resourceroots: {
         'sap.ui.demo.todo': path.join(__dirname, 'webapp')
       }
