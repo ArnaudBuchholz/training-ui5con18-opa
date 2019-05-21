@@ -6,7 +6,7 @@
   "scripts": {
     "start": "ui5 serve -o index.html",
     "serve": "ui5 serve",
-    "lint": "eslint webapp workshop",
+    "lint": "eslint demos webapp workshop",
     "karma": "karma start",
     "karma-ci": "karma start karma-ci.conf.js",
     "watch": "start-server-and-test start http://localhost:8080 karma",
