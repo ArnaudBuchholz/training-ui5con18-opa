@@ -35,7 +35,7 @@
     "karma-qunit": "^2.1.0",
     "mocha": "^6.1.4",
     "node-qunit": "^1.0.0",
-    "node-ui5": "^2.0.3",
+    "node-ui5": "^2.0.4",
     "qunit": "^2.9.2",
     "rimraf": "^2.6.2",
     "sinon": "^7.2.2",
