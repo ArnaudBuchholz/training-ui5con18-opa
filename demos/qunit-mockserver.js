@@ -1,12 +1,6 @@
 'use strict'
 
 const testrunner = require('node-qunit')
-testrunner.setup({
-  log: {
-    summary: true,
-    testing: true
-  }
-})
 
 testrunner.run({
     code: './qunit-bootui5.js',
