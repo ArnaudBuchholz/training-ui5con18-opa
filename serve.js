@@ -36,6 +36,11 @@ gpf.http.get(`${UI5BaseUrl}neo-app.json`)
           port: 8080,
           window,
           mappings: [{
+            // http/https proxy
+            match: /^\/proxy\/(https?)\/(.*)/,
+            url: '$1://$2',
+            'unsecure-cookies': true
+          }, {
             // ui5 resource access
             match: /\/resources\/(.*)/,
             url: `${UI5BaseUrl}${version.path}/resources/$1`
@@ -48,11 +53,15 @@ gpf.http.get(`${UI5BaseUrl}neo-app.json`)
             match: /^(\/odata\/.*)/,
             mock: '$1'
           }, {
-            // default access to index.html
+            // Access to demos folder
+            match: /^\/demos\/(.*)/,
+            file: path.join(__dirname, 'demos', '$1')
+          }, {
+            // Default default access to webapp/index.html
             match: /^\/$/,
             file: path.join(__dirname, 'webapp/index.html')
           }, {
-            // mapping to file access
+            // Default mapping to file access in webapp
             match: /(.*)/,
             file: path.join(__dirname, 'webapp', '$1')
           }]
