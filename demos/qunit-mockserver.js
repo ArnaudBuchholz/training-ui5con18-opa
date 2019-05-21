@@ -2,11 +2,10 @@
 
 const testrunner = require('node-qunit')
 testrunner.setup({
-    log: {
-        summary: true,
-        testing: true
-    },
-    maxBlockDuration: 5000
+  log: {
+    summary: true,
+    testing: true
+  }
 })
 
 testrunner.run({
