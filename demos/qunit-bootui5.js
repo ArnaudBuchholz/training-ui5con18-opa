@@ -3,7 +3,7 @@ require('colors')
 const path = require('path')
 console.log('Loading UI5...'.gray)
 require('node-ui5/factory')({
-  exposeAsGlobals: true,
+  exposeAsGlobals: true, // window & sap will be global
   fastButIncompleteSimulation: true,
   // verbose: true,
   resourceroots: {
@@ -11,8 +11,12 @@ require('node-ui5/factory')({
   },
   synchronousBoot: true // QUnit does not support async code to be tested
 })
-  .then(() => {
-    console.log('UI5 ready.'.gray)
-  }, reason => {
-    console.error(reason.toString())
+  .catch(reason => {
+    console.error(reason.toString().red)
   })
+window['qunit-config'] = {
+  host: 'http://localhost:8080',
+  user: 'USER_NAME',
+  password: 'PASSWORD'
+}
+console.log('UI5 ready.'.gray)
