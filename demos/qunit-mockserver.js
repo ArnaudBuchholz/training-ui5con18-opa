@@ -1,18 +1,17 @@
 'use strict'
 
-const path = require('path')
-
 const testrunner = require('node-qunit')
 testrunner.setup({
     log: {
         summary: true,
         testing: true
-    }
+    },
+    maxBlockDuration: 5000
 })
 
 testrunner.run({
-    code: path.join(__dirname, "/qunit-bootui5.js"),
-    tests: path.join(__dirname, "../webapp/test/unit/test/MockServer.js")
+    code: './qunit-bootui5.js',
+    tests: '../webapp/test/unit/test/MockServer.js'
 }, function(err, report) {
     if (err) {
       console.error(err)
