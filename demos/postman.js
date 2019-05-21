@@ -1,3 +1,6 @@
+/* eslint max-nested-callbacks: [2, 5] */
+'use strict'
+
 const assert = require('assert')
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0 // Ignore certificate errors
