@@ -2,18 +2,26 @@ sap.ui.define([
 	"sap/ui/demo/todo/const",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator"
+	"sap/ui/model/FilterOperator",
+	"jquery.sap.global"
 
-], function (CONST, ODataModel, Filter, FilterOperator) {
+], function (CONST, ODataModel, Filter, FilterOperator, jQuery) {
 	"use strict";
 
-	var TODOITEM = CONST.OData.entityProperties.todoItem;
+	var TODOITEM = CONST.OData.entityProperties.todoItem,
+		QUNIT_CONFIG = jQuery.extend({
+			host: '',
+			user: '',
+			password: ''
+		}, window['qunit-config'] || {});
 
 	QUnit.module("MockServer", {
 		beforeEach: function (assert) {
 			var done = assert.async();
 			this.oModel = new ODataModel({
-				serviceUrl: "/odata/TODO_SRV/"
+				serviceUrl: QUNIT_CONFIG.host + "/odata/TODO_SRV/",
+				user: QUNIT_CONFIG.user,
+				password: QUNIT_CONFIG.password
 			});
 			// Wait before for metadata to be loaded before running tests
 			this.oModel.metadataLoaded().then(done);
