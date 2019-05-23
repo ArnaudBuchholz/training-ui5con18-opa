@@ -21,6 +21,12 @@
 				},
 				"sap.m": {
 					"lazy": false
+				},
+				"sap.ui.layout": {
+					"lazy": false
+				},
+				"sap.ui.unified": {
+					"lazy": false
 				}
 			}
 		},
