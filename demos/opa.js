@@ -27,6 +27,36 @@ sap.ui.require([
           Opa5.assert.ok(true, 'The cart contains ' + iCount + ' items')
         }
       })
+    },
+    iShouldSeeTheCheckoutWizard: function () {
+      return this.waitFor({
+        id: 'container-cart---checkoutView--shoppingCartWizard',
+        success: function () {
+          Opa5.assert.ok(true, 'The checkout wizard is displayed')
+        }
+      })
+    },
+    iShouldSeeTheCheckoutCartItems: function (aExpectedItems) {
+      return this.waitFor({
+        id: 'container-cart---checkoutView--entryList',
+        matchers: [function (oList) {
+          return oList.getItems().every(function (oObjectListItem, iIndex) {
+            var oBoundObject
+            try {
+              oBoundObject = oObjectListItem.getBinding('title').getContext().getObject()
+            } catch (e) {
+              return false
+            }
+            var mExpectedProductProperties = aExpectedItems[iIndex]
+            return Object.keys(mExpectedProductProperties).every(function (sPropertyName) {
+              return oBoundObject[sPropertyName] === mExpectedProductProperties[sPropertyName]
+            })
+          })
+        }],
+        success: function () {
+          Opa5.assert.ok(true, 'The checkout cart contains ' + aExpectedItems.length + ' items')
+        }
+      })
     }
   });
 
@@ -82,27 +112,39 @@ sap.ui.require([
         }
       })
     },
-    iClickAddToCart: function () {
+    _iClickTranslatedButton: function (sKey, sMessage) {
       return this.waitFor({
         controlType: 'sap.m.Button',
         matchers: [new I18NText({
           propertyName: 'text',
-          key: 'addToCartShort'
+          key: sKey
         })],
         actions: new Press(),
         success: function (oObjectListItem) {
-          Opa5.assert.ok(true, 'Added product to cart')
+          Opa5.assert.ok(true, sMessage)
+        }
+      })
+    },
+    iClickAddToCart: function () {
+      return this._iClickTranslatedButton('addToCartShort', 'Added product to cart')
+    },
+    _iClickButtonById: function (sId, sMessage) {
+      return this.waitFor({
+        id: sId,
+        actions: new Press(),
+        success: function () {
+          Opa5.assert.ok(true, sMessage)
         }
       })
     },
     iClickCategoryBack: function () {
-      return this.waitFor({
-        id: 'container-cart---category--page-navButton',
-        actions: new Press(),
-        success: function (oObjectListItem) {
-          Opa5.assert.ok(true, 'Clicked back on the category product list')
-        }
-      })
+      return this._iClickButtonById('container-cart---category--page-navButton', 'Clicked back on the category product list')
+    },
+    iClickCartProceed: function () {
+      return this._iClickTranslatedButton('cartProceedButtonText', 'Clicked proceed')
+    },
+    iClickCheckoutWizardNext: function () {
+      return this._iClickButtonById('container-cart---checkoutView--contentsStep-nextButton', 'Clicked the checkout wizard next')
     }
   })
 
@@ -125,7 +167,7 @@ sap.ui.require([
     When.iToggleCart()
   })
 
-  opaTest('Adding DVD player', function (Given, When, Then) {
+  opaTest('Adds DVD player', function (Given, When, Then) {
     When.iSearch('DVD')
     When.iClickProduct({ ProductId: 'HT-2001' })
       .and.iClickAddToCart()
@@ -136,7 +178,7 @@ sap.ui.require([
       .and.iSearch()
   })
 
-  opaTest('Adding CD/DVD sleeves', function (Given, When, Then) {
+  opaTest('Adds CD/DVD sleeves', function (Given, When, Then) {
     When.iSearch('sleeves')
     When.iClickProduct({ ProductId: 'HT-2025' })
       .and.iClickAddToCart()
@@ -147,10 +189,22 @@ sap.ui.require([
       .and.iSearch()
   })
 
+  opaTest('Submit the cart', function (Given, When, Then) {
+    When.iToggleCart()
+      .and.iClickCartProceed()
+    Then.iShouldSeeTheCheckoutWizard()
+      .and.iShouldSeeTheCheckoutCartItems([{
+        ProductId: 'HT-2001'
+      }, {
+        ProductId: 'HT-2025'
+      }])
+  })
+
+  opaTest('Payment Type', function (Given, When, Then) {
+    When.iClickCheckoutWizardNext()
+  })
+
   /*
-    Open cart again
-    Click proceed
-    Step 2
     Cash on delivery
     Step 3
     First name: John
