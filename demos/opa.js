@@ -57,6 +57,17 @@ sap.ui.require([
           Opa5.assert.ok(true, 'The checkout cart contains ' + aExpectedItems.length + ' items')
         }
       })
+    },
+    iSeeOrderConfirmationMessage: function () {
+      return this.waitFor({
+        controlType: 'sap.m.FormattedText',
+        matchers: [function (oFormattedText) {
+          return oFormattedText.getHtmlText().indexOf('Your order number: ') !== -1
+        }],
+        success: function () {
+          Opa5.assert.ok(true, 'The order is confirmed')
+        }
+      })
     }
   });
 
@@ -143,8 +154,74 @@ sap.ui.require([
     iClickCartProceed: function () {
       return this._iClickTranslatedButton('cartProceedButtonText', 'Clicked proceed')
     },
-    iClickCheckoutWizardNext: function () {
+    iClickCheckoutWizardContentNext: function () {
       return this._iClickButtonById('container-cart---checkoutView--contentsStep-nextButton', 'Clicked the checkout wizard next')
+    },
+    iClickPayViaCashOnDelivery: function () {
+      return this._iClickButtonById('container-cart---checkoutView--payViaCOD-button', 'Clicked the \'Cash on Delivery\' option')
+    },
+    iClickCheckoutWizardPaymentNext: function () {
+      return this._iClickButtonById('container-cart---checkoutView--paymentTypeStep-nextButton', 'Clicked the checkout wizard next')
+    },
+    _iSetInputValue: function (sId, sValue, sMessage) {
+      return this.waitFor({
+        id: sId,
+        actions: new EnterText({
+          text: sValue
+        }),
+        success: function () {
+          Opa5.assert.ok(true, sMessage)
+        }
+      })
+    },
+    iSetCashOnDeliveryName: function (sValue) {
+      return this._iSetInputValue('container-cart---checkoutView--cashOnDeliveryName', sValue, 'Set name to \'' + sValue + '\'')
+    },
+    iSetCashOnDeliveryLastName: function (sValue) {
+      return this._iSetInputValue('container-cart---checkoutView--cashOnDeliveryLastName', sValue, 'Set last name to \'' + sValue + '\'')
+    },
+    iSetCashOnDeliveryPhoneNumber: function (sValue) {
+      return this._iSetInputValue('container-cart---checkoutView--cashOnDeliveryPhoneNumber', sValue, 'Set phone number to \'' + sValue + '\'')
+    },
+    iSetCashOnDeliveryEmail: function (sValue) {
+      return this._iSetInputValue('container-cart---checkoutView--cashOnDeliveryEmail', sValue, 'Set email to \'' + sValue + '\'')
+    },
+    iClickCheckoutWizardCODNext: function () {
+      return this._iClickButtonById('container-cart---checkoutView--cashOnDeliveryStep-nextButton', 'Clicked the checkout wizard next')
+    },
+    iSetInvoiceAddressAddress: function (sValue) {
+      return this._iSetInputValue('container-cart---checkoutView--invoiceAddressAddress', sValue, 'Set invoice address to \'' + sValue + '\'')
+    },
+    iSetInvoiceAddressCity: function (sValue) {
+      return this._iSetInputValue('container-cart---checkoutView--invoiceAddressCity', sValue, 'Set invoice city to \'' + sValue + '\'')
+    },
+    iSetInvoiceAddressZip: function (sValue) {
+      return this._iSetInputValue('container-cart---checkoutView--invoiceAddressZip', sValue, 'Set invoice zip to \'' + sValue + '\'')
+    },
+    iSetInvoiceAddressCountry: function (sValue) {
+      return this._iSetInputValue('container-cart---checkoutView--invoiceAddressCountry', sValue, 'Set invoice country to \'' + sValue + '\'')
+    },
+    iClickCheckoutWizardInvoiceNext: function () {
+      return this._iClickButtonById('container-cart---checkoutView--invoiceStep-nextButton', 'Clicked the checkout wizard next')
+    },
+    iClickCheckoutWizardDeliveryNext: function () {
+      return this._iClickButtonById('container-cart---checkoutView--deliveryTypeStep-nextButton', 'Clicked the checkout wizard next')
+    },
+    iClickCheckoutWizardSubmit: function () {
+      return this._iClickButtonById('container-cart---checkoutView--submitOrder', 'Clicked the checkout wizard submit')
+    },
+    iClickConfirmYes: function () {
+      return this.waitFor({
+        controlType: 'sap.m.Button',
+        searchOpenDialogs: true,
+        matchers: [function (oButton) {
+          return oButton.getText() === 'Yes'
+        }],
+        actions: new Press(),
+        success: function () {
+          Opa5.assert.ok(true, "Clicked Yes to confirm")
+        }
+      })
     }
   })
 
@@ -200,34 +277,39 @@ sap.ui.require([
       }])
   })
 
-  opaTest('Payment Type', function (Given, When, Then) {
-    When.iClickCheckoutWizardNext()
+  opaTest('Step 2: Payment type', function (Given, When, Then) {
+    When.iClickCheckoutWizardContentNext()
+      .and.iClickPayViaCashOnDelivery()
   })
 
-  /*
-    Cash on delivery
-    Step 3
-    First name: John
-    Last name: Doe
-    Phone Number: 5551234567
-    Email: john.doe@anonymous.com
-    Step 4
-    Address: Street name
-    City: City
-    Zip Code: 1234
-    Country: Country
-    Step 5
-    Order Summary
-    Submit
-    Yes
+  opaTest('Step 3: Details for cash on delivery', function (Given, When, Then) {
+    When.iClickCheckoutWizardPaymentNext()
+      .and.iSetCashOnDeliveryName('John')
+      .and.iSetCashOnDeliveryLastName('Doe')
+      .and.iSetCashOnDeliveryPhoneNumber('5551234567')
+      .and.iSetCashOnDeliveryEmail('john.doe@anonymous.com')
+  })
 
-    Check Your order number: 20171941
+  opaTest('Step 4: Invoice address', function (Given, When, Then) {
+    When.iClickCheckoutWizardCODNext()
+      .and.iSetInvoiceAddressAddress('Street name')
+      .and.iSetInvoiceAddressCity('City')
+      .and.iSetInvoiceAddressZip('1234')
+      .and.iSetInvoiceAddressCountry('Country')
+  })
 
-    Return to shop
-    Cart is empty
-  */
+  opaTest('Step 5: Delivery type', function (Given, When, Then) {
+    When.iClickCheckoutWizardInvoiceNext()
+    // No change
+  })
 
-  // Then.iTeardownMyAppFrame()
+  opaTest('Step 6: Order summary', function (Given, When, Then) {
+    When.iClickCheckoutWizardDeliveryNext()
+      .and.iClickCheckoutWizardSubmit()
+      .and.iClickConfirmYes()
+    Then.iSeeOrderConfirmationMessage()
+      .and.iTeardownMyAppFrame()
+  })
 
   QUnit.start()
 })
