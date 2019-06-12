@@ -241,34 +241,30 @@ sap.ui.require([
     })
     When.iToggleCart()
     Then.theCartLengthEquals(0)
-    When.iToggleCart()
   })
 
   opaTest('Adds DVD player', function (Given, When, Then) {
-    When.iSearch('DVD')
-    When.iClickProduct({ ProductId: 'HT-2001' })
+    When.iToggleCart()
+      .and.iSearch('DVD')
+      .and.iClickProduct({ ProductId: 'HT-2001' })
       .and.iClickAddToCart()
       .and.iToggleCart()
     Then.theCartLengthEquals(1)
-    When.iToggleCart()
-      .and.iClickCategoryBack()
-      .and.iSearch()
   })
 
   opaTest('Adds CD/DVD sleeves', function (Given, When, Then) {
-    When.iSearch('sleeves')
-    When.iClickProduct({ ProductId: 'HT-2025' })
-      .and.iClickAddToCart()
-      .and.iToggleCart()
-    Then.theCartLengthEquals(2)
     When.iToggleCart()
       .and.iClickCategoryBack()
       .and.iSearch()
+      .and.iSearch('sleeves')
+      .and.iClickProduct({ ProductId: 'HT-2025' })
+      .and.iClickAddToCart()
+      .and.iToggleCart()
+    Then.theCartLengthEquals(2)
   })
 
   opaTest('Submit the cart', function (Given, When, Then) {
-    When.iToggleCart()
-      .and.iClickCartProceed()
+    When.iClickCartProceed()
     Then.iShouldSeeTheCheckoutWizard()
       .and.iShouldSeeTheCheckoutCartItems([{
         ProductId: 'HT-2001'
