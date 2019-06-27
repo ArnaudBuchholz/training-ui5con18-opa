@@ -228,13 +228,14 @@ sap.ui.require([
   Opa5.extendConfig({
     autoWait: true,
     assertions: new MyAssertions(),
+    timeout: 60, // Since the app may not be cached
     actions: new MyActions()
   })
 
   opaTest('The Shopping Cart must be initially empty', function (Given, When, Then) {
     localStorage.clear()
     Given.iStartMyAppInAFrame({
-      source: '/proxy/https/openui5.hana.ondemand.com/1.66.1/test-resources/sap/m/demokit/cart/webapp/index.html',
+      source: '/proxy/https/openui5.hana.ondemand.com/1.67.1/test-resources/sap/m/demokit/cart/webapp/index.html',
       autoWait: true,
       width: 1024,
       height: 768
