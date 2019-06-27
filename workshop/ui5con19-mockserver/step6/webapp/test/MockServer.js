@@ -101,13 +101,13 @@ sap.ui.define([
 				path: CONST.OData.functionImports.clearCompleted.name,
 				response: function(oXhr) {
 					var aInitialTodoItemSet = _oMockServer.getEntitySetData(CONST.OData.entityNames.todoItemSet),
-						aClearedTodoItemSet = aInitialTodoItemSet.filter(function(oTodoItem) {
+						aNotCompletedTodoItemSet = aInitialTodoItemSet.filter(function(oTodoItem) {
 							return !oTodoItem[CONST.OData.entityProperties.todoItem.completed];
 						}),
 						oReturnType = {},
 						oResult = {};
-					_oMockServer.setEntitySetData(CONST.OData.entityNames.todoItemSet, aClearedTodoItemSet);
-					oReturnType[CONST.OData.functionImports.clearCompleted.returnType.count] = aInitialTodoItemSet.length - aClearedTodoItemSet.length;
+					_oMockServer.setEntitySetData(CONST.OData.entityNames.todoItemSet, aNotCompletedTodoItemSet);
+					oReturnType[CONST.OData.functionImports.clearCompleted.returnType.count] = aInitialTodoItemSet.length - aNotCompletedTodoItemSet.length;
 					oResult[CONST.OData.functionImports.clearCompleted.name] = oReturnType;
 					oXhr.respond(200, {
 						"Content-Type": "application/json;charset=utf-8"
