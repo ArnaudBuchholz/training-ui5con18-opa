@@ -17,10 +17,10 @@
     "setup-ui5con19": "node ./workshop/setup ui5con19-mockserver"
   },
   "dependencies": {
-    "@openui5/sap.m": "^1.65.1",
-    "@openui5/sap.ui.core": "^1.65.1",
-    "@openui5/sap.ui.layout": "^1.65.1",
-    "@openui5/themelib_sap_belize": "^1.65.1"
+    "@openui5/sap.m": "^1.67.1",
+    "@openui5/sap.ui.core": "^1.67.1",
+    "@openui5/sap.ui.layout": "^1.67.1",
+    "@openui5/themelib_sap_belize": "^1.67.1"
   },
   "devDependencies": {
     "@ui5/cli": "^1.4.0",
