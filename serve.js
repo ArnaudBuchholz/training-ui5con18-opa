@@ -4,10 +4,29 @@ const gpf = require('gpf-js')
 const inquirer = require('inquirer')
 const path = require('path')
 const UI5BaseUrl = 'https://openui5.hana.ondemand.com/'
+const { promisify } = require('util')
+const readFileAsync = promisify(require('fs').readFile)
 
 gpf.http.get(`${UI5BaseUrl}neo-app.json`)
   .then(response => JSON.parse(response.responseText))
   .then(neoApp => neoApp.routes)
+  .then(versions => readFileAsync('./dist/resources/sap-ui-version.json')
+    .then(localSapUiVersionJSON => JSON.parse(localSapUiVersionJSON))
+    .then(localSapUiVersion => {
+      versions.unshift({
+          description: `Local UI5 ${localSapUiVersion.libraries[0].version}`,
+          location: './dist/resources/sap-ui-core.js'
+      })
+      return versions
+    })
+    .catch(() => versions)
+  )
+  .then(versions => versions.map(version => {
+      return {
+          description: version.description,
+          location: version.location || `${UI5BaseUrl}${version.path}/resources/sap-ui-core.js`
+      }
+  }))
   .then(versions =>
     inquirer.prompt([{
       name: 'version',
@@ -18,9 +37,9 @@ gpf.http.get(`${UI5BaseUrl}neo-app.json`)
     .then(answer => versions.filter(version => version.description === answer.version)[0])
   )
   .then(version => {
-    require('node-ui5/factory')({
+    require('../node-ui5/factory')({
       verbose: true,
-      bootstrapLocation: `${UI5BaseUrl}${version.path}/resources/sap-ui-core.js`,
+      bootstrapLocation: version.location,
       fastButIncompleteSimulation: true,
       resourceroots: {
         'sap.ui.demo.todo': path.join(__dirname, 'webapp')
