@@ -41,9 +41,7 @@ check({
   }, {
     match: '/_/addTestPages',
     custom: async (request, response) => {
-const pages = await body(request)
-console.log(pages)
-      instance.testPages = JSON.parse(pages)
+      instance.testPages = JSON.parse(await body(request))
       const id = request.headers.referer.match(/__id__=(\d+)/)[1]
       browse.close(id)
       ack(response)
@@ -68,10 +66,12 @@ console.log(pages)
 
 function browse (relativeUrl) {
   if (!browse._instances) {
-    browse._processes = {}
+    browse._instances = {}
     browse.close = id => {
-      browse._processes[id].kill("SIGKILL")
-      delete browse._processes[id]
+      const instance = browse._instances[id]
+      instance.process.kill("SIGKILL")
+      instance.done()
+      delete browse._instances[id]
     }
   }
 
@@ -86,11 +86,7 @@ function browse (relativeUrl) {
   const promise = new Promise(resolve => {
     done = resolve
   })
-  process.on('close', () => {
-    console.log('Closed.')
-    done()
-  })
-  browse._processes[id] = process
+  browse._instances[id] = { process, done }
   return promise
 }
 
