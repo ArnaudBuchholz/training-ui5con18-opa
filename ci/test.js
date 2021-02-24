@@ -3,18 +3,25 @@
 const { Request, Response, body, check, log, serve } = require('reserve')
 const { spawn } = require('child_process')
 const { randomInt } = require('crypto')
+const { join } = require('path')
+const rel = (...path) => join(__dirname, ...path)
+const { promisify } = require('util')
+const rmdirAsync = promisify(require('fs').rmdir)
+const writeFileAsync = promisify(require('fs').writeFile)
 
 const instance = {
   port: 8099,
   ui5: "https://ui5.sap.com/1.87.0",
   command: "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
-  options: "${url} --no-sandbox --disable-gpu --remote-debugging-port=9222 --headless",
-  parallel: 2
+  options: "${url} --no-sandbox --disable-gpu --remote-debugging-port=9222", // --headless",
+  parallel: 2,
+  coverage: true,
+  keepAlive: false
 }
 
 process.argv.forEach(arg => {
   const valueParsers = {
-    boolean: value => value === true,
+    boolean: value => value === 'true',
     number: value => parseInt(value, 10),
     default: value => value
   }
@@ -29,8 +36,23 @@ process.argv.forEach(arg => {
   }
 })
 
+function nyc (...args) {
+  const process = spawn('node', [rel('../node_modules/nyc/bin/nyc.js'), ...args], {
+    detached: true,
+    stdio: 'inherit'
+  })
+  let done
+  const promise = new Promise(resolve => { done = resolve })
+  process.on('close', done)
+  return promise
+}
+
+function getPageName (id) {
+  return instance._mapIdToPage[id]
+}
+
 function getPageResult (id) {
-  return instance._pageResults[instance._mapIdToPage[id]]
+  return instance._pageResults[getPageName(id)]
 }
 
 function endpoint (implementation) {
@@ -47,75 +69,95 @@ function endpoint (implementation) {
   }
 }
 
-check({
-  port: instance.port,
-  mappings: [{
-    // Substitute qunit-redirect to extract test pages
-    match: '/resources/sap/ui/qunit/qunit-redirect.js',
-    file: './qunit-redirect.js'
-  }, {
-    // Endpoint to receive test pages
-    match: '/_/addTestPages',
-    custom: endpoint((id, data) => {
-      instance._testPages = data
-      execute.kill(id)
-    })
-  }, {
-    // UI5 qunit.js source
-    match: '/_/qunit(-2)?.js',
-    url: `${instance.ui5}/resources/sap/ui/thirdparty/qunit$1.js`
-  }, {
-    // QUnit hooks
-    match: '/_/qunit-hooks.js',
-    file: './qunit-hooks.js'
-  }, {
-    // Concatenate qunit.js source with hooks
-    match: /\/thirdparty\/(qunit(?:-2)?\.js)/,
-    custom: async function (request, response, scriptName) {
-      const ui5Request = new Request('GET', `/_/${scriptName}`)
-      const ui5Response = new Response()
-      const hooksRequest = new Request('GET', '/_/qunit-hooks.js')
-      const hooksResponse = new Response()
-      await Promise.all([
-        this.configuration.dispatch(ui5Request, ui5Response),
-        this.configuration.dispatch(hooksRequest, hooksResponse)
-      ])
-      const hooksLength = parseInt(hooksResponse.headers['content-length'], 10)
-      const ui5Length = parseInt(ui5Response.headers['content-length'], 10)
-      response.writeHead(ui5Response.statusCode, {
-        ...ui5Response.headers,
-        'content-length': ui5Length + hooksLength,
-        'cache-control': 'no-store' // for debugging purpose
-      })
-      response.write(ui5Response.toString())
-      response.end(hooksResponse.toString())
+Promise.resolve()
+  .then(() => {
+    if (instance.coverage) {
+      console.log('Instrumenting...')
+      return rmdirAsync(rel('nyc'), { recursive: true })
+        .then(() => nyc('instrument', rel('../webapp'), rel('nyc/webapp'), '--nycrc-path', rel('nyc.json')))
     }
-  }, {
-    // Endpoint to receive QUnit test result
-    match: '/_/QUnit/testDone',
-    custom: endpoint((id, data) => {
-      getPageResult(id).tests.push(data)
-    })
-  }, {
-    // Endpoint to receive QUnit end
-    match: '/_/QUnit/done',
-    custom: endpoint((id, data) => {
-      getPageResult(id).report = data
-      execute.kill(id)
-    })
-  }, {
-    // UI5 resources
-    match: /\/(test-)?resources\/(.*)/,
-    headers: {
-      location: `${instance.ui5}/$1resources/$2`
-    },
-    status: 302
-  }, {
-    // Project mapping
-    match: /^\/(.*)/,
-    file: "../webapp/$1"
-  }]
-})
+  })
+  .then(() => check({
+    port: instance.port,
+    mappings: [{
+      // Substitute qunit-redirect to extract test pages
+      match: '/resources/sap/ui/qunit/qunit-redirect.js',
+      file: rel('qunit-redirect.js')
+    }, {
+      // Endpoint to receive test pages
+      match: '/_/addTestPages',
+      custom: endpoint((id, data) => {
+        instance._testPages = data
+        execute.kill(id)
+      })
+    }, {
+      // UI5 qunit.js source
+      match: '/_/qunit(-2)?.js',
+      url: `${instance.ui5}/resources/sap/ui/thirdparty/qunit$1.js`
+    }, {
+      // QUnit hooks
+      match: '/_/qunit-hooks.js',
+      file: rel('qunit-hooks.js')
+    }, {
+      // Concatenate qunit.js source with hooks
+      match: /\/thirdparty\/(qunit(?:-2)?\.js)/,
+      custom: async function (request, response, scriptName) {
+        const ui5Request = new Request('GET', `/_/${scriptName}`)
+        const ui5Response = new Response()
+        const hooksRequest = new Request('GET', '/_/qunit-hooks.js')
+        const hooksResponse = new Response()
+        await Promise.all([
+          this.configuration.dispatch(ui5Request, ui5Response),
+          this.configuration.dispatch(hooksRequest, hooksResponse)
+        ])
+        const hooksLength = parseInt(hooksResponse.headers['content-length'], 10)
+        const ui5Length = parseInt(ui5Response.headers['content-length'], 10)
+        response.writeHead(ui5Response.statusCode, {
+          ...ui5Response.headers,
+          'content-length': ui5Length + hooksLength,
+          'cache-control': 'no-store' // for debugging purpose
+        })
+        response.write(ui5Response.toString())
+        response.end(hooksResponse.toString())
+      }
+    }, {
+      // Endpoint to receive QUnit test result
+      match: '/_/QUnit/testDone',
+      custom: endpoint((id, data) => {
+        getPageResult(id).tests.push(data)
+      })
+    }, {
+      // Endpoint to receive QUnit end
+      match: '/_/QUnit/done',
+      custom: endpoint((id, data) => {
+        getPageResult(id).report = data
+        execute.kill(id)
+      })
+    }, {
+      // Endpoint to receive coverage
+      match: '/_/nyc/coverage',
+      custom: endpoint((id, data) => {
+        return writeFileAsync(rel('nyc', `${id}.json`), JSON.stringify(data))
+      })
+    }, {
+      // UI5 resources
+      match: /\/(test-)?resources\/(.*)/,
+      headers: {
+        location: `${instance.ui5}/$1resources/$2`
+      },
+      status: 302
+    }, {
+      // Project mapping (coverage case)
+      match: /^\/(.*\.js)$/,
+      'if-match': (request, url, match) => instance.coverage ? match : false,
+      file: rel('nyc/webapp/$1'),
+      'ignore-if-not-found': true,
+    }, {
+      // Project mapping
+      match: /^\/(.*)/,
+      file: rel('../webapp/$1')
+    }]
+  }))
   .then(configuration => {
     log(serve(configuration))
       .on('ready', ({ url }) => {
@@ -145,7 +187,10 @@ function execute (relativeUrl) {
 
   const id = randomInt(0xFFFFFFFF)
 
-  const url = `http://localhost:${instance.port}${relativeUrl}__id__=${id}`
+  let url = `http://localhost:${instance.port}${relativeUrl}__id__=${id}`
+  if (instance.keepAlive) {
+    url += '&__keepAlive__'
+  }
   console.log(`Opening ${url}`)
   const process = spawn(instance.command, instance.options.split(' ').map(param => param === '${url}' ? url : param), {
     detached: true
@@ -209,5 +254,9 @@ async function generateReport () {
     failed += results.report.failed
   })
 
-  process.exit(failed)
+  if (keepAlive) {
+    console.log('Keeping alive.')
+  } else {
+    process.exit(failed)
+  }
 }
