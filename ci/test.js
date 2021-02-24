@@ -6,8 +6,13 @@ const { randomInt } = require('crypto')
 const { join } = require('path')
 const rel = (...path) => join(__dirname, ...path)
 const { promisify } = require('util')
-const rmdirAsync = promisify(require('fs').rmdir)
-const writeFileAsync = promisify(require('fs').writeFile)
+const { createReadStream, readdir, readFile, rmdir, stat, writeFile } = require('fs')
+const rmdirAsync = promisify(rmdir)
+const writeFileAsync = promisify(writeFile)
+const readdirAsync = promisify(readdir)
+const readFileAsync = promisify(readFile)
+const statAsync = promisify(stat)
+const { Readable } = require('stream')
 
 const instance = {
   port: 8099,
@@ -147,11 +152,29 @@ Promise.resolve()
       },
       status: 302
     }, {
-      // Project mapping (coverage case)
+      // Project mapping (coverage case, also replace coverage global scope on the fly)
       match: /^\/(.*\.js)$/,
       'if-match': (request, url, match) => instance.coverage ? match : false,
       file: rel('nyc/webapp/$1'),
       'ignore-if-not-found': true,
+      'custom-file-system': (function () {
+        // Use a custom file system to inject the proper coverage global context
+        const covSearch = 'var global=new Function("return this")();'
+        const covReplace = 'var global=window.top;'
+        return {
+          stat: path => statAsync(path)
+            .then(stats => {
+              stats.size -= covSearch.length + covReplace.length
+            }),
+          readdir: readdirAsync,
+          createReadStream: async (path, options) => {
+            const buffer = (await readFileAsync(path))
+              .toString()
+              .replace(covSearch, covReplace)
+            return Readable.from(buffer)
+          }
+        }
+      }())
     }, {
       // Project mapping
       match: /^\/(.*)/,
