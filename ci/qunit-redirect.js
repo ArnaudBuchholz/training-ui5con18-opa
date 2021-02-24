@@ -16,5 +16,6 @@
     var xhr = new XMLHttpRequest()
     xhr.open('POST', '/_/addTestPages', false)
     xhr.send(JSON.stringify(pages))
+    window.close()
   })
 }())
