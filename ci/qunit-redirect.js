@@ -16,6 +16,8 @@
     var xhr = new XMLHttpRequest()
     xhr.open('POST', '/_/addTestPages', false)
     xhr.send(JSON.stringify(pages))
-    window.close()
+    if (!location.toString().includes('__keepAlive__')) {
+      window.close()
+    }
   })
 }())
