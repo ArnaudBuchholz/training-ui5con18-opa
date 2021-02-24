@@ -58,3 +58,7 @@ typings/
 .env
 
 dist/
+
+# instanbul coverage
+ci/nyc/
+ci/reports/
