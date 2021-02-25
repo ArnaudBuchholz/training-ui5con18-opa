@@ -19,10 +19,10 @@
     if (!testCount) {
       return
     }
-    post('QUnit/done', report)
     if (window.__coverage__) {
       post('nyc/coverage', window.__coverage__)
     }
+    post('QUnit/done', report)
     if (!location.toString().includes('__keepAlive__')) {
       window.close()
     }
