@@ -18,10 +18,11 @@ const job = {
   port: 8099,
   ui5: "https://ui5.sap.com/1.87.0",
   command: "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
-  options: "${url} --no-sandbox --disable-gpu --remote-debugging-port=9222", // --headless",
+  options: "${url} --no-sandbox --disable-gpu --remote-debugging-port=9222 --headless",
   parallel: 2,
   coverage: true,
-  keepAlive: false
+  keepAlive: false,
+  logServer: false
 }
 
 process.argv.forEach(arg => {
@@ -181,7 +182,11 @@ Promise.resolve()
     }]
   }))
   .then(configuration => {
-    log(serve(configuration))
+    const server = serve(configuration)
+    if (job.logServer) {
+      log(server)
+    }
+    server
       .on('ready', ({ url }) => {
         extractPages()
       })
@@ -213,7 +218,7 @@ function execute (relativeUrl) {
   if (job.keepAlive) {
     url += '&__keepAlive__'
   }
-  console.log(`Opening ${url}`)
+  console.log(url)
   const process = spawn(job.command, job.options.split(' ').map(param => param === '${url}' ? url : param), {
     detached: true
   })
