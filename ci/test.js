@@ -6,7 +6,7 @@ const { randomInt } = require('crypto')
 const { join } = require('path')
 const rel = (...path) => join(__dirname, ...path)
 const { promisify } = require('util')
-const { createReadStream, readdir, readFile, rmdir, stat, writeFile } = require('fs')
+const { readdir, readFile, rmdir, stat, writeFile } = require('fs')
 const rmdirAsync = promisify(rmdir)
 const writeFileAsync = promisify(writeFile)
 const readdirAsync = promisify(readdir)
@@ -14,7 +14,7 @@ const readFileAsync = promisify(readFile)
 const statAsync = promisify(stat)
 const { Readable } = require('stream')
 
-const instance = {
+const job = {
   port: 8099,
   ui5: "https://ui5.sap.com/1.87.0",
   command: "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
@@ -34,16 +34,15 @@ process.argv.forEach(arg => {
   const parsed = /-(\w+):(.*)/.exec(arg)
   if (parsed) {
     const name = parsed[1]
-    if (Object.prototype.hasOwnProperty.call(instance, name)) {
-      const valueParser = valueParsers[typeof instance[name]] || valueParsers.default
-      instance[name] = valueParser(parsed[2])
+    if (Object.prototype.hasOwnProperty.call(job, name)) {
+      const valueParser = valueParsers[typeof job[name]] || valueParsers.default
+      job[name] = valueParser(parsed[2])
     }
   }
 })
 
 function nyc (...args) {
   const process = spawn('node', [rel('../node_modules/nyc/bin/nyc.js'), ...args], {
-    detached: true,
     stdio: 'inherit'
   })
   let done
@@ -52,13 +51,8 @@ function nyc (...args) {
   return promise
 }
 
-function getPageName (id) {
-  return instance._mapIdToPage[id]
-}
-
-function getPageResult (id) {
-  return instance._pageResults[getPageName(id)]
-}
+const getPageName = id => job._mapIdToPage[id]
+const getPageResult = id => job._pageResults[getPageName(id)]
 
 function endpoint (implementation) {
   return async function (request, response) {
@@ -76,14 +70,14 @@ function endpoint (implementation) {
 
 Promise.resolve()
   .then(() => {
-    if (instance.coverage) {
+    if (job.coverage) {
       console.log('Instrumenting...')
       return rmdirAsync(rel('nyc'), { recursive: true })
         .then(() => nyc('instrument', rel('../webapp'), rel('nyc/webapp'), '--nycrc-path', rel('nyc.json')))
     }
   })
   .then(() => check({
-    port: instance.port,
+    port: job.port,
     mappings: [{
       // Substitute qunit-redirect to extract test pages
       match: '/resources/sap/ui/qunit/qunit-redirect.js',
@@ -92,13 +86,13 @@ Promise.resolve()
       // Endpoint to receive test pages
       match: '/_/addTestPages',
       custom: endpoint((id, data) => {
-        instance._testPages = data
+        job._testPages = data
         execute.kill(id)
       })
     }, {
       // UI5 qunit.js source
       match: '/_/qunit(-2)?.js',
-      url: `${instance.ui5}/resources/sap/ui/thirdparty/qunit$1.js`
+      url: `${job.ui5}/resources/sap/ui/thirdparty/qunit$1.js`
     }, {
       // QUnit hooks
       match: '/_/qunit-hooks.js',
@@ -135,26 +129,30 @@ Promise.resolve()
       // Endpoint to receive QUnit end
       match: '/_/QUnit/done',
       custom: endpoint((id, data) => {
-        getPageResult(id).report = data
-        execute.kill(id)
+        const page = getPageResult(id)
+        page.report = data
+        page.wait.then(() => execute.kill(id))
       })
     }, {
       // Endpoint to receive coverage
       match: '/_/nyc/coverage',
       custom: endpoint((id, data) => {
-        return writeFileAsync(rel('nyc', `${id}.json`), JSON.stringify(data))
+        const page = getPageResult(id)
+        const promise = writeFileAsync(rel('nyc', `${id}.json`), JSON.stringify(data))
+        page.wait = page.wait.then(promise)
+        return promise
       })
     }, {
       // UI5 resources
       match: /\/(test-)?resources\/(.*)/,
       headers: {
-        location: `${instance.ui5}/$1resources/$2`
+        location: `${job.ui5}/$1resources/$2`
       },
       status: 302
     }, {
       // Project mapping (coverage case, also replace coverage global scope on the fly)
       match: /^\/(.*\.js)$/,
-      'if-match': (request, url, match) => instance.coverage ? match : false,
+      'if-match': (request, url, match) => job.coverage ? match : false,
       file: rel('nyc/webapp/$1'),
       'ignore-if-not-found': true,
       'custom-file-system': (function () {
@@ -165,9 +163,10 @@ Promise.resolve()
           stat: path => statAsync(path)
             .then(stats => {
               stats.size -= covSearch.length + covReplace.length
+              return stats
             }),
           readdir: readdirAsync,
-          createReadStream: async (path, options) => {
+          createReadStream: async (path) => {
             const buffer = (await readFileAsync(path))
               .toString()
               .replace(covSearch, covReplace)
@@ -192,9 +191,9 @@ function execute (relativeUrl) {
   if (!execute._instances) {
     execute._instances = {}
     execute.kill = id => {
-      const instance = execute._instances[id]
-      instance.process.kill("SIGKILL")
-      instance.done()
+      const job = execute._instances[id]
+      job.process.kill("SIGKILL")
+      job.done()
       delete execute._instances[id]
     }
   }
@@ -210,12 +209,12 @@ function execute (relativeUrl) {
 
   const id = randomInt(0xFFFFFFFF)
 
-  let url = `http://localhost:${instance.port}${relativeUrl}__id__=${id}`
-  if (instance.keepAlive) {
+  let url = `http://localhost:${job.port}${relativeUrl}__id__=${id}`
+  if (job.keepAlive) {
     url += '&__keepAlive__'
   }
   console.log(`Opening ${url}`)
-  const process = spawn(instance.command, instance.options.split(' ').map(param => param === '${url}' ? url : param), {
+  const process = spawn(job.command, job.options.split(' ').map(param => param === '${url}' ? url : param), {
     detached: true
   })
   let done
@@ -229,30 +228,32 @@ function execute (relativeUrl) {
 
 async function extractPages () {
   await execute('test/testsuite.qunit.html')
-  console.log(instance._testPages)
-  instance._runningPages = []
-  instance._mapIdToPage = {}
-  instance._pageResults = {}
-  for (let i = 0; i < instance.parallel; ++i) {
+  console.log(job._testPages)
+  job._runningPages = []
+  job._mapIdToPage = {}
+  job._pageResults = {}
+  for (let i = 0; i < job.parallel; ++i) {
     runPage()
   }
 }
 
 async function runPage () {
-  if (instance._runningPages.length === instance._testPages.length) {
-    if (!instance._waitingForEnd) {
-      instance._waitingForEnd = true
-      Promise.all(instance._runningPages).then(generateReport)
+  if (job._runningPages.length === job._testPages.length) {
+    if (!job._waitingForEnd) {
+      job._waitingForEnd = true
+      Promise.all(job._runningPages).then(generateReport)
     }
     return
   }
-  const index = instance._runningPages.length
-  const page = instance._testPages[index]
+  const index = job._runningPages.length
+  const page = job._testPages[index]
   const promise = execute(page)
-  instance._runningPages.push(promise)
-  instance._mapIdToPage[promise.id] = page
-  instance._pageResults[page] = {
-    tests: []
+  job._runningPages.push(promise)
+  job._mapIdToPage[promise.id] = page
+  job._pageResults[page] = {
+    tests: [],
+    id: promise.id,
+    wait: Promise.resolve()
   }
   promise.then(runPage)
 }
@@ -262,22 +263,42 @@ async function generateReport () {
 
   // Simple report
   let failed = 0
-  instance._testPages.forEach(page => {
+  const coverageFiles = []
+  for (const page of job._testPages) {
     console.log(page)
-    const results = instance._pageResults[page]
-    console.table(results.tests.map(result => {
-      return {
-        name: result.name,
-        passed: result.passed,
-        failed: result.failed,
-        total: result.total
-      }
-    }))
-    console.log(results.report)
-    failed += results.report.failed
-  })
+    const results = job._pageResults[page]
+    if (results) {
+      console.table(results.tests.map(result => {
+        return {
+          name: result.name,
+          passed: result.passed,
+          failed: result.failed,
+          total: result.total
+        }
+      }))
+      console.log(results.report)
+      failed += results.report.failed
 
-  if (keepAlive) {
+      if (job.coverage) {
+        const coverageFile = rel(`nyc/${results.id}.json`)
+        const coverageStat = await statAsync(coverageFile)
+        if (coverageStat) {
+          coverageFiles.push(coverageFile)
+        } else {
+          console.log('coverage file is missing')
+        }
+      }
+    } else {
+      console.log('(skipped)')
+    }
+  }
+
+  if (job.coverage && coverageFiles.length) {
+    await nyc('merge', rel('nyc/'), rel('nyc/coverage.json'))
+    await nyc('report', '--reporter=lcov', '--temp-dir', rel('nyc'), '--report-dir', rel('nyc/report'))
+  }
+
+  if (job.keepAlive) {
     console.log('Keeping alive.')
   } else {
     process.exit(failed)
