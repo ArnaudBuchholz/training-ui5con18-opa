@@ -1,0 +1,13 @@
+{
+  "port": 8080,
+  "mappings": [{
+    "match": "/(test-)?resources/(.*)",
+    "url": "https://openui5.hana.ondemand.com/1.87.0/$1resources/$2"
+  }, {
+    "match": "^/(\\?.*)?$",
+    "file": "./webapp/index.html"
+  }, {
+    "match": "^/(.*)",
+    "file": "./webapp/$1"
+  }]
+}
