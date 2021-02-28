@@ -13,12 +13,15 @@ const readdirAsync = promisify(readdir)
 const readFileAsync = promisify(readFile)
 const statAsync = promisify(stat)
 const { Readable } = require('stream')
+const isWindows = (/^win/).test(process.platform)
+const winChrome = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
+const linuxChrome = 'google-chrome-stable'
 
 const job = {
   port: 8099,
-  ui5: "https://ui5.sap.com/1.87.0",
-  command: "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
-  options: "${url} --no-sandbox --disable-gpu --remote-debugging-port=9222 --headless",
+  ui5: 'https://ui5.sap.com/1.87.0',
+  command: isWindows ? winChrome : linuxChrome,
+  options: '${url} --no-sandbox --disable-gpu --remote-debugging-port=9222 --headless',
   parallel: 2,
   coverage: true,
   keepAlive: false,
@@ -197,7 +200,7 @@ function execute (relativeUrl) {
     execute._instances = {}
     execute.kill = id => {
       const job = execute._instances[id]
-      job.process.kill("SIGKILL")
+      job.process.kill('SIGKILL')
       job.done()
       delete execute._instances[id]
     }
