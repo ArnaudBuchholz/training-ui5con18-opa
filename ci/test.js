@@ -18,8 +18,8 @@ const winChrome = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.
 const linuxChrome = 'google-chrome-stable'
 
 const job = {
-  port: 8099,
-  ui5: 'https://ui5.sap.com/1.87.0',
+  port: 0, // let REserve allocate one
+  ui5: 'https://openui5.hana.ondemand.com/1.87.0',
   command: isWindows ? winChrome : linuxChrome,
   options: '${url} --no-sandbox --disable-gpu --remote-debugging-port=9222 --headless',
   parallel: 2,
@@ -190,7 +190,8 @@ Promise.resolve()
       log(server)
     }
     server
-      .on('ready', ({ url }) => {
+      .on('ready', ({ url, port }) => {
+        job.port = port
         extractPages()
       })
   })
