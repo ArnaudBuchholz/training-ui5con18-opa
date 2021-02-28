@@ -14,7 +14,8 @@
     "build": "rimraf dist && ui5 build --a",
     "ui5con19": "start-server-and-test serve-qunit-mockserver http://localhost:8080 setup-ui5con19",
     "serve-qunit-mockserver": "ui5 serve -o test/unit/unitTests.qunit.html?module=MockServer",
-    "setup-ui5con19": "node ./workshop/setup ui5con19-mockserver"
+    "setup-ui5con19": "node ./workshop/setup ui5con19-mockserver",
+    "reserve": "reserve"
   },
   "dependencies": {
     "@openui5/sap.m": "^1.67.1",
