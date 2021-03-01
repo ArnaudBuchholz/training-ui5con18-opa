@@ -24,12 +24,15 @@ sap.ui.require([
 		dataType: "json",
 		url: "./AllJourneys.json"
 	}).data
-	.filter(function(name) {
-		return !sJourney || sJourney === name;
-	})
-	.map(function(name) {
-		return "sap/ui/demo/todo/test/integration/" + name;
-	});
+		.filter(function(name) {
+			return !sJourney || sJourney === name;
+		});
 
-	sap.ui.require(aJourneys);
+	if (aJourneys.length === 1) {
+		document.title = document.title += " (" + aJourneys[0] + ")";
+	}
+
+	sap.ui.require(aJourneys.map(function(name) {
+		return "sap/ui/demo/todo/test/integration/" + name;
+	}));
 });
