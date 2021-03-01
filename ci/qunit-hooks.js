@@ -2,8 +2,6 @@
 (function () {
   'use strict'
 
-  var testCount = 0
-
   function post (url, data) {
     var xhr = new XMLHttpRequest()
     xhr.open('POST', '/_/' + url, false)
@@ -11,14 +9,10 @@
   }
 
   QUnit.testDone(function (report) {
-    ++testCount
     post('QUnit/testDone', report)
   })
 
   QUnit.done(function (report) {
-    if (!testCount) {
-      return
-    }
     if (window.__coverage__) {
       post('nyc/coverage', window.__coverage__)
     }
