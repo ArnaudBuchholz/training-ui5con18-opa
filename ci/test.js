@@ -37,10 +37,10 @@ process.argv.forEach(arg => {
 
   const parsed = /-(\w+):(.*)/.exec(arg)
   if (parsed) {
-    const name = parsed[1]
+    const [, name, value] = parsed
     if (Object.prototype.hasOwnProperty.call(job, name)) {
       const valueParser = valueParsers[typeof job[name]] || valueParsers.default
-      job[name] = valueParser(parsed[2])
+      job[name] = valueParser(value)
     }
   }
 })
@@ -67,6 +67,8 @@ function endpoint (implementation) {
     try {
       await implementation.call(this, id, data)
     } catch (e) {
+      console.error(`Exception when processing ${request.url} with id ${id}`)
+      console.error(data)
       console.error(e)
     }
   }
@@ -91,7 +93,7 @@ Promise.resolve()
       match: '/_/addTestPages',
       custom: endpoint((id, data) => {
         job._testPages = data
-        execute.kill(id)
+        stop(id)
       })
     }, {
       // UI5 qunit.js source
@@ -135,7 +137,7 @@ Promise.resolve()
       custom: endpoint((id, data) => {
         const page = getPageResult(id)
         page.report = data
-        page.wait.then(() => execute.kill(id))
+        page.wait.then(() => stop(id))
       })
     }, {
       // Endpoint to receive coverage
@@ -196,17 +198,9 @@ Promise.resolve()
       })
   })
 
-function execute (relativeUrl) {
-  if (!execute._instances) {
-    execute._instances = {}
-    execute.kill = id => {
-      const job = execute._instances[id]
-      job.process.kill('SIGKILL')
-      job.done()
-      delete execute._instances[id]
-    }
-  }
+const instances = {}
 
+function start (relativeUrl) {
   if (!relativeUrl.startsWith('/')) {
     relativeUrl = '/' + relativeUrl
   }
@@ -223,20 +217,29 @@ function execute (relativeUrl) {
     url += '&__keepAlive__'
   }
   console.log(url)
-  const process = spawn(job.command, job.options.split(' ').map(param => param === '${url}' ? url : param), {
-    detached: true
-  })
+  const process = spawn(job.command, job.options.split(' ')
+    .map(param => param
+      .replace('${url}', url)
+      .replace('${id}', id)
+    ), { detached: true })
   let done
   const promise = new Promise(resolve => {
     done = resolve
   })
-  execute._instances[id] = { process, done }
+  instances[id] = { process, done }
   promise.id = id
   return promise
 }
 
+function stop (id) {
+  const { process, done } = instances[id]
+  delete instances[id]
+  process.kill('SIGKILL')
+  done()
+}
+
 async function extractPages () {
-  await execute('test/testsuite.qunit.html')
+  await start('test/testsuite.qunit.html')
   console.log(job._testPages)
   job._runningPages = []
   job._mapIdToPage = {}
@@ -256,7 +259,7 @@ async function runPage () {
   }
   const index = job._runningPages.length
   const page = job._testPages[index]
-  const promise = execute(page)
+  const promise = start(page)
   job._runningPages.push(promise)
   job._mapIdToPage[promise.id] = page
   job._pageResults[page] = {
