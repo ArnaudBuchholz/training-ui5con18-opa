@@ -55,9 +55,6 @@ function nyc (...args) {
   return promise
 }
 
-const getPageName = id => job._mapIdToPage[id]
-const getPageResult = id => job._pageResults[getPageName(id)]
-
 function endpoint (implementation) {
   return async function (request, response) {
     response.writeHead(200)
@@ -92,7 +89,7 @@ Promise.resolve()
       // Endpoint to receive test pages
       match: '/_/addTestPages',
       custom: endpoint((id, data) => {
-        job._testPages = data
+        job.testPageUrls = data
         stop(id)
       })
     }, {
@@ -129,13 +126,13 @@ Promise.resolve()
       // Endpoint to receive QUnit test result
       match: '/_/QUnit/testDone',
       custom: endpoint((id, data) => {
-        getPageResult(id).tests.push(data)
+        job.testPagesById[id].tests.push(data)
       })
     }, {
       // Endpoint to receive QUnit end
       match: '/_/QUnit/done',
       custom: endpoint((id, data) => {
-        const page = getPageResult(id)
+        const page = job.testPagesById[id]
         page.report = data
         page.wait.then(() => stop(id))
       })
@@ -143,7 +140,7 @@ Promise.resolve()
       // Endpoint to receive coverage
       match: '/_/nyc/coverage',
       custom: endpoint((id, data) => {
-        const page = getPageResult(id)
+        const page = job.testPagesById[id]
         const promise = writeFileAsync(rel('nyc', `${id}.json`), JSON.stringify(data))
         page.wait = page.wait.then(promise)
         return promise
@@ -194,11 +191,11 @@ Promise.resolve()
     server
       .on('ready', ({ url, port }) => {
         job.port = port
-        extractPages()
+        extractTestPages()
       })
   })
 
-const instances = {}
+job.browsers = {}
 
 function start (relativeUrl) {
   if (!relativeUrl.startsWith('/')) {
@@ -226,48 +223,54 @@ function start (relativeUrl) {
   const promise = new Promise(resolve => {
     done = resolve
   })
-  instances[id] = { process, done }
+  job.browsers[id] = { process, done }
   promise.id = id
   return promise
 }
 
 function stop (id) {
-  const { process, done } = instances[id]
-  delete instances[id]
+  const { process, done } = job.browsers[id]
+  delete job.browsers[id]
   process.kill('SIGKILL')
   done()
 }
 
-async function extractPages () {
+async function extractTestPages () {
   await start('test/testsuite.qunit.html')
-  console.log(job._testPages)
-  job._runningPages = []
-  job._mapIdToPage = {}
-  job._pageResults = {}
+  console.log(job.testPageUrls)
+  job.testPagesStarted = 0
+  job.testPagesCompleted = 0
+  job.testPagesById = {}
+  job.testPagesByUrl = {}
   for (let i = 0; i < job.parallel; ++i) {
-    runPage()
+    runTestPage()
   }
 }
 
-async function runPage () {
-  if (job._runningPages.length === job._testPages.length) {
-    if (!job._waitingForEnd) {
-      job._waitingForEnd = true
-      Promise.all(job._runningPages).then(generateReport)
-    }
+async function runTestPage () {
+  const { length } = job.testPageUrls
+  if (job.testPagesCompleted === length) {
+    return generateReport()
+  }
+  if (job.testPagesStarted === length) {
     return
   }
-  const index = job._runningPages.length
-  const page = job._testPages[index]
-  const promise = start(page)
-  job._runningPages.push(promise)
-  job._mapIdToPage[promise.id] = page
-  job._pageResults[page] = {
-    tests: [],
+
+  const index = job.testPagesStarted++
+  const testPageUrl = job.testPageUrls[index]
+  const promise = start(testPageUrl)
+  const page = {
     id: promise.id,
+    url: testPageUrl,
+    tests: [],
     wait: Promise.resolve()
   }
-  promise.then(runPage)
+  job.testPagesById[page.id] = page
+  job.testPagesByUrl[page.url] = page
+
+  await promise
+  ++job.testPagesCompleted
+  runTestPage()
 }
 
 async function generateReport () {
@@ -276,9 +279,9 @@ async function generateReport () {
   // Simple report
   let failed = 0
   const coverageFiles = []
-  for (const page of job._testPages) {
+  for (const page of job.testPageUrls) {
     console.log(page)
-    const results = job._pageResults[page]
+    const results = job.testPagesByUrl[page]
     if (results) {
       console.table(results.tests.map(result => {
         return {
