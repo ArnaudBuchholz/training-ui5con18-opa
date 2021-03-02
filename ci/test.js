@@ -1,12 +1,13 @@
 'use strict'
 
-const { Request, Response, body, check, log, serve } = require('reserve')
+const { capture, Request, Response, body, check, log, serve } = require('reserve')
 const { spawn } = require('child_process')
 const { randomInt } = require('crypto')
-const { join } = require('path')
+const { join, dirname } = require('path')
 const rel = (...path) => join(__dirname, ...path)
 const { promisify } = require('util')
-const { readdir, readFile, rmdir, stat, writeFile } = require('fs')
+const { createWriteStream, mkdir, readdir, readFile, rmdir, stat, writeFile } = require('fs')
+const mkdirAsync = promisify(mkdir)
 const rmdirAsync = promisify(rmdir)
 const writeFileAsync = promisify(writeFile)
 const readdirAsync = promisify(readdir)
@@ -20,10 +21,11 @@ const linuxChrome = 'google-chrome-stable'
 const job = {
   port: 0, // let REserve allocate one
   ui5: 'https://openui5.hana.ondemand.com/1.87.0',
-  command: isWindows ? winChrome : linuxChrome,
-  options: '${url} --no-sandbox --disable-gpu --remote-debugging-port=9222 --headless',
+  command: 'node', // isWindows ? winChrome : linuxChrome,
+  options: rel('chromium.js') + ' ${url}', // '${url} --no-sandbox --disable-gpu --remote-debugging-port=9222 --headless',
   parallel: 2,
   coverage: true,
+  noCache: false,
   keepAlive: false,
   logServer: false
 }
@@ -70,6 +72,9 @@ function endpoint (implementation) {
     }
   }
 }
+
+const [, ui5Name, ui5Version] = /((?:open)ui5).*(\d+\.\d+\.\d+)$/.exec(job.ui5)
+const ui5cache = rel('cache', ui5Name, ui5Version)
 
 Promise.resolve()
   .then(() => {
@@ -146,12 +151,31 @@ Promise.resolve()
         return promise
       })
     }, {
+      // UI5 cache
+      match: /\/((?:test-)?resources\/.*)/,
+      'if-match': (request, url, match) => job.noCache ? false : match,
+      file: `${ui5cache}/$1`,
+      'ignore-if-not-found': true
+    }, {
+      // UI5 caching
+      method: 'GET',
+      match: /\/((?:test-)?resources\/.*)/,
+      'if-match': (request, url, match) => job.noCache ? false : match,
+      custom: async (request, response, path) => {
+        const cachePath = join(ui5cache, path)
+        const cacheFolder = dirname(cachePath)
+        await mkdirAsync(cacheFolder, { recursive: true })
+        const file = createWriteStream(cachePath)
+        capture(response, file)
+          .catch(reason => {
+            console.error(`Unable to cache ${cachePath}`, reason)
+          })
+      }
+    }, {
       // UI5 resources
-      match: /\/(test-)?resources\/(.*)/,
-      headers: {
-        location: `${job.ui5}/$1resources/$2`
-      },
-      status: 302
+      method: ['GET', 'HEAD'],
+      match: /\/((?:test-)?resources\/.*)/,
+      url: `${job.ui5}/$1`
     }, {
       // Project mapping (coverage case, also replace coverage global scope on the fly)
       match: /^\/(.*\.js)$/,
