@@ -59,6 +59,7 @@ typings/
 
 dist/
 
-# instanbul coverage
+# Continuous integration experiment
 ci/nyc/
 ci/reports/
+ci/cache/
