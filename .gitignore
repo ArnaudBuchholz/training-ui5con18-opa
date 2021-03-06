@@ -60,6 +60,4 @@ typings/
 dist/
 
 # Continuous integration experiment
-ci/nyc/
-ci/reports/
-ci/cache/
+report/
