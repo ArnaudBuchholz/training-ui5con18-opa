@@ -32,7 +32,6 @@
     "karma": "^6.1.2",
     "karma-chrome-launcher": "^3.1.0",
     "karma-coverage": "^2.0.3",
-    "karma-qunit": "^4.1.2",
     "karma-ui5": "^2.3.3",
     "lodash": "^4.17.21",
     "mocha": "^8.3.1",
