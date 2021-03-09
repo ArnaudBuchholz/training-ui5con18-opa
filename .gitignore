@@ -61,3 +61,4 @@ dist/
 
 # Continuous integration experiment
 report/
+.ui5/
