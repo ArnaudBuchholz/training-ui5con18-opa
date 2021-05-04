@@ -1,5 +1,5 @@
 'use strict'
-/* global QUnit, sap, localStorage */
+/* global QUnit */
 QUnit.config.autostart = false
 sap.ui.require([
   'sap/ui/test/Opa5',
