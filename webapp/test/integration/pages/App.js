@@ -14,6 +14,12 @@ sap.ui.require([
 		sSearchTodoItemsInputId = "searchTodoItemsInput",
 		sClearCompletedId = "clearCompleted";
 
+	function isErrorDialog (oControl) {
+		var sIconName = oControl.getIcon();
+		return sIconName === "sap-icon://message-error" ||
+			sIconName === "sap-icon://error";
+	}
+
 	Opa5.createPageObjects({
 		onTheAppPage: {
 			baseClass: Common,
@@ -60,11 +66,12 @@ sap.ui.require([
 					return this.waitFor({
 						searchOpenDialogs: true,
 						controlType: "sap.m.Dialog",
-						matchers: [new Properties({
-							icon: "sap-icon://message-error"
-						}), function(oDialog) {
-							return oDialog.getButtons()[0];
-						}],
+						matchers: [
+							isErrorDialog,
+							function(oDialog) {
+								return oDialog.getButtons()[0];
+							}
+						],
 						actions: [new Press()],
 						success: function() {
 							Opa5.assert.ok(true, "Closed the error message");
@@ -81,9 +88,7 @@ sap.ui.require([
 					return this.waitFor({
 						searchOpenDialogs: true,
 						controlType: "sap.m.Dialog",
-						matchers: [new Properties({
-							icon: "sap-icon://message-error"
-						})],
+						matchers: [ isErrorDialog ],
 						success: function() {
 							Opa5.assert.ok(true, "An error message is displayed");
 						},
