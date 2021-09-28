@@ -1,9 +1,12 @@
+jQuery.sap.require("sap.ui.thirdparty.qunit");
+jQuery.sap.require("sap.ui.qunit.qunit-junit");
+jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+QUnit.config.hidepassed = true;
+QUnit.config.autostart = false;
+
 sap.ui.require([
 	"sap/ui/test/Opa5",
 	"sap/ui/demo/todo/test/integration/pages/Common",
-	"sap/ui/thirdparty/qunit-2",
-	"sap/ui/qunit/qunit-junit",
-	"sap/ui/qunit/qunit-coverage",
 	"sap/ui/demo/todo/test/integration/pages/App",
 	"sap/ui/demo/todo/test/integration/pages/List",
 	"sap/ui/demo/todo/test/integration/pages/Filters",
@@ -15,6 +18,8 @@ sap.ui.require([
 		arrangements: new Common(),
 		autoWait: true,
 		viewName: "sap.ui.demo.todo.view.App", // Since we have only one view
+		timeout: 15,
+		debugTimeout: 15,
 		pollingInterval: 50 // Aggressive one to speed up demo
 	});
 
@@ -34,5 +39,8 @@ sap.ui.require([
 
 	sap.ui.require(aJourneys.map(function(name) {
 		return "sap/ui/demo/todo/test/integration/" + name;
-	}));
+	}), function () {
+		QUnit.config.testTimeout = 300 * 1000;
+		QUnit.start();
+	});
 });
