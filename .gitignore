@@ -65,3 +65,6 @@ report/
 
 # debug commands
 *.cmd
+# stryker temp files
+.stryker-tmp
+reports/
