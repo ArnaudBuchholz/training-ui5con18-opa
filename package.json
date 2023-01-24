@@ -1,6 +1,6 @@
 {
   "name": "training-uicon18-opa",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Sample app to demonstrate UI5's OPA (UICon'18)",
   "private": true,
   "scripts": {
@@ -11,7 +11,7 @@
     "karma-ci": "karma start karma-ci.conf.js",
     "watch": "start-server-and-test start http://localhost:8080 karma",
     "test": "npm run lint && rimraf coverage && start-server-and-test serve http://localhost:8080 karma-ci",
-    "test-2": "ui5-test-runner -port:8080 -ui5:https://ui5.sap.com/1.87.0/ -cache:.ui5",
+    "test:utr": "ui5-test-runner -port:8080 -ui5:https://ui5.sap.com/1.87.0/ -cache:.ui5",
     "build": "rimraf dist && ui5 build --a",
     "ui5con19": "start-server-and-test serve-qunit-mockserver http://localhost:8080 setup-ui5con19",
     "serve-qunit-mockserver": "ui5 serve -o test/unit/unitTests.qunit.html?module=MockServer",
@@ -19,32 +19,32 @@
     "reserve": "reserve"
   },
   "dependencies": {
-    "@openui5/sap.m": "^1.96.0",
-    "@openui5/sap.ui.core": "^1.96.0",
-    "@openui5/sap.ui.layout": "^1.96.0",
-    "@openui5/themelib_sap_belize": "^1.96.0"
+    "@openui5/sap.m": "^1.110.0",
+    "@openui5/sap.ui.core": "^1.110.0",
+    "@openui5/sap.ui.layout": "^1.110.0",
+    "@openui5/themelib_sap_belize": "^1.110.0"
   },
   "devDependencies": {
-    "@stryker-mutator/core": "^5.4.1",
-    "@stryker-mutator/karma-runner": "^5.4.1",
-    "@ui5/cli": "^2.14.0",
+    "@stryker-mutator/core": "^6.3.1",
+    "@stryker-mutator/karma-runner": "^6.3.1",
+    "@ui5/cli": "^2.14.17",
     "colors": "^1.4.0",
-    "eslint": "^8.2.0",
+    "eslint": "^8.32.0",
     "gpf-js": "^1.0.0",
-    "inquirer": "^8.2.0",
-    "karma": "^6.3.8",
-    "karma-chrome-launcher": "^3.1.0",
-    "karma-coverage": "^2.0.3",
-    "karma-ui5": "^2.3.4",
+    "inquirer": "^9.1.4",
+    "karma": "^6.4.1",
+    "karma-chrome-launcher": "^3.1.1",
+    "karma-coverage": "^2.2.0",
+    "karma-ui5": "^2.4.0",
     "lodash": "^4.17.21",
-    "mocha": "^9.1.3",
+    "mocha": "^10.2.0",
     "node-qunit": "^2.0.0",
     "node-ui5": "^2.0.4",
-    "qunit": "^2.17.2",
-    "reserve": "^1.12.1",
-    "rimraf": "^3.0.2",
-    "sinon": "^12.0.1",
-    "start-server-and-test": "^1.14.0",
-    "ui5-test-runner": "^1.1.2"
+    "qunit": "^2.19.4",
+    "reserve": "^1.15.2",
+    "rimraf": "^4.1.2",
+    "sinon": "^15.0.1",
+    "start-server-and-test": "^1.15.3",
+    "ui5-test-runner": "^1.1.5"
   }
 }
