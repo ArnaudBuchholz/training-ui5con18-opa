@@ -3,13 +3,16 @@
 	"Title": "Start this app",
 	"DueDate": "/Date(1526389176552)/",
 	"Completed": true,
-	"CompletionDate": "/Date(1526389176552)/"
+	"CompletionDate": "/Date(1526389176552)/",
+	"$due": -5,
+	"$completed": -1
 }, {
 	"Title": "Learn OpenUI5",
 	"Guid": "0MOCKSVR-TODO-MKII-MOCK-000000000002",
 	"DueDate": "/Date(1641013199999)/",
 	"Completed": false,
-	"CompletionDate": null
+	"CompletionDate": null,
+	"$due": 180
 }, {
 	"Guid": "0MOCKSVR-TODO-MKII-MOCK-000000000003",
 	"Title": "Finish UICon'18 presentation",
@@ -21,5 +24,6 @@
 	"Title": "Stop procrastinating",
 	"DueDate": "/Date(1526918400000)/",
 	"Completed": false,
-	"CompletionDate": null
+	"CompletionDate": null,
+	"$due": -365
 }]
