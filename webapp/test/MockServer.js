@@ -65,7 +65,7 @@ sap.ui.define([
 
 			} else if (oParameters.get("randomize")) {
 				// Generate random items
-				var aTodoItemSet = _oMockServer.getEntitySetData(CONST.OData.entityNames.todoItemSet),
+				var aTodoItemRandomSet = _oMockServer.getEntitySetData(CONST.OData.entityNames.todoItemSet),
 					dtMax = new Date(2099, 11, 31),
 					dtNow = new Date(),
 					dtNowMinusOneHour = new Date(dtNow - 60000);
@@ -78,13 +78,27 @@ sap.ui.define([
 						dtItemDueDate = dtMax;
 					}
 					if (idx % 2) {
-						aTodoItemSet.push(getNewItem(sItemTitle, dtItemDueDate, dtNowMinusOneHour));
+						aTodoItemRandomSet.push(getNewItem(sItemTitle, dtItemDueDate, dtNowMinusOneHour));
 					} else {
-						aTodoItemSet.push(getNewItem(sItemTitle, dtItemDueDate));
+						aTodoItemRandomSet.push(getNewItem(sItemTitle, dtItemDueDate));
 					}
 				}
-				_oMockServer.setEntitySetData(CONST.OData.entityNames.todoItemSet, aTodoItemSet);
+				_oMockServer.setEntitySetData(CONST.OData.entityNames.todoItemSet, aTodoItemRandomSet);
 			}
+			// Adjust dates to work whenever the tests are run
+			var DAY_IN_MS = 24 * 60 * 60 * 1000;
+			var aTodoItemSet = _oMockServer.getEntitySetData(CONST.OData.entityNames.todoItemSet);
+			aTodoItemSet.forEach(function (oTodoItemSet) {
+				var $due = oTodoItemSet.$due
+				if ($due) {
+					oTodoItemSet[CONST.OData.entityProperties.todoItem.dueDate] = "/Date(" + (Date.now() + $due * DAY_IN_MS) + ")/";
+				}
+				var $completed = oTodoItemSet.$completed
+				if ($completed) {
+					oTodoItemSet[CONST.OData.entityProperties.todoItem.completionDate] = "/Date(" + (Date.now() + $completed * DAY_IN_MS) + ")/";
+				}
+			});
+			_oMockServer.setEntitySetData(CONST.OData.entityNames.todoItemSet, aTodoItemSet);
 
 			var aRequests = _oMockServer.getRequests();
 
