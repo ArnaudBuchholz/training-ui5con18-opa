@@ -1,44 +1,19 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<title>OpenUI5 Todo App (Mark II)</title>
-
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta charset="UTF-8">
-
-	<script id="sap-ui-bootstrap" type="text/javascript"
-		src="resources/sap-ui-core.js"
-		data-sap-ui-theme="sap_belize"
-		data-sap-ui-libs="sap.m"
-		data-sap-ui-bindingSyntax="complex"
-		data-sap-ui-compatVersion="edge"
-		data-sap-ui-preload="async"
-		data-sap-ui-resourceroots='{"sap.ui.demo.todo": "./"}'>
-	</script>
-	<script>
-		sap.ui.getCore().attachInit(function() {
-			sap.ui.require([
-				"sap/ui/core/Component",
-				"sap/ui/core/ComponentContainer",
-				"sap/ui/demo/todo/test/MockServer"
-
-			], function(Component, ComponentContainer, MockServer) {
-				if (-1 === location.search.indexOf("no-mock")) {
-					MockServer.init(jQuery.sap.getUriParameters());
-				}
-				sap.ui.component({
-					id: "todo",
-					name: "sap.ui.demo.todo",
-					async: true
-				}).then(function(oComponent) {
-					new ComponentContainer({
-						component: oComponent
-					}).placeAt("root");
-				});
-			});
-		});
-	</script>
-
-</head>
-<body class="sapUiBody" id="root" role="application"></body>
+  <head>
+    <title>OpenUI5 Todo App (Mark II)</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="UTF-8">
+    <script id="sap-ui-bootstrap" type="text/javascript"
+      src="resources/sap-ui-core.js"
+      data-sap-ui-theme="sap_belize"
+      data-sap-ui-libs="sap.m"
+      data-sap-ui-bindingSyntax="complex"
+      data-sap-ui-compatVersion="edge"
+      data-sap-ui-preload="async"
+      data-sap-ui-resourceroots='{"sap.ui.demo.todo": "./"}'
+	  data-sap-ui-oninit="module:sap/ui/demo/todo/init"
+	></script>
+  </head>
+  <body class="sapUiBody" id="root" role="application"></body>
 </html>
