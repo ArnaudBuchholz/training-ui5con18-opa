@@ -4,7 +4,7 @@ sap.ui.require([
   "sap/ui/demo/todo/test/MockServer"
 ], function(Component, ComponentContainer, MockServer) {
   "use strict";
-
+  /* istanbul ignore next */ // Not productive code
   if (-1 === location.search.indexOf("no-mock")) {
     MockServer.init(jQuery.sap.getUriParameters());
   }
