@@ -1,5 +1,5 @@
 {
-  "name": "training-uicon18-opa",
+  "name": "training-ui5con18-opa",
   "version": "1.0.0",
   "description": "Sample app to demonstrate UI5's OPA (UICon'18)",
   "private": true,
@@ -11,7 +11,6 @@
     "karma-ci": "karma start karma-ci.conf.js",
     "watch": "start-server-and-test start http://localhost:8080 karma",
     "test": "npm run lint && rimraf coverage && start-server-and-test serve http://localhost:8080 karma-ci",
-    "test:utr": "ui5-test-runner -port:8080 -ui5:https://ui5.sap.com/1.87.0/ -cache:.ui5",
     "build": "rimraf dist && ui5 build --a",
     "ui5con19": "start-server-and-test serve-qunit-mockserver http://localhost:8080 setup-ui5con19",
     "serve-qunit-mockserver": "ui5 serve -o test/unit/unitTests.qunit.html?module=MockServer",
@@ -44,7 +43,6 @@
     "reserve": "^1.15.2",
     "rimraf": "^4.1.2",
     "sinon": "^15.0.1",
-    "start-server-and-test": "^1.15.3",
-    "ui5-test-runner": "^1.1.5"
+    "start-server-and-test": "^1.15.3"
   }
 }
