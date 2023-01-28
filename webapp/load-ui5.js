@@ -40,10 +40,10 @@
   document.write('></script>');
   var handlers = {
     ".js": function (include) {
-      document.write("<script src=\"" + relPath + "resources/" + include + "\"></script>");
+      document.write("<script src=\"" + ui5base + "resources/" + include + "\"></script>");
     },
     ".css": function (include) {
-      document.write("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + relPath + "resources/" + include + "\"></link>");
+      document.write("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + ui5base + "resources/" + include + "\"></link>");
     }
   }
   if (includes) {
