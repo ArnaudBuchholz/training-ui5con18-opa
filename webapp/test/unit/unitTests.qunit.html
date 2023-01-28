@@ -1,46 +1,20 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Unit tests for Todo List</title>
-		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
-		<meta charset="utf-8">
-
-		<script id="sap-ui-bootstrap"
-			src="../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_belize"
-			data-sap-ui-bindingSyntax="complex"
-			data-sap-ui-compatVersion="edge"
-			data-sap-ui-preload="async"
-			data-sap-ui-libs="sap.m"
-			data-sap-ui-resourceroots='{"sap.ui.demo.todo": "../../"}'>
-		</script>
-
-		<script src="../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script src="../../resources/sap/ui/qunit/qunit-css.js"></script>
-
-		<script>
-			QUnit.config.autostart = false;
-			QUnit.config.reorder = false;
-			sap.ui.getCore().attachInit(function() {
-				sap.ui.require([
-					"sap/ui/demo/todo/test/MockServer",
-					"sap/ui/demo/todo/test/unit/allTests"
-				], function(MockServer) {
-					MockServer.init({
-						get: function(name) {
-							if (name === "randomize") {
-								return "100";
-							}
-						}
-					});
-					QUnit.start();
-				});
-			});
-		</script>
-
-	</head>
-	<body>
-		<div id="qunit"></div>
-		<div id="qunit-fixture"></div>
-	</body>
+  <head>
+    <title>Unit tests for Todo List</title>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta charset="utf-8">
+    <script
+      src="../../load-ui5.js"
+      data-includes="
+        sap/ui/thirdparty/qunit.js,
+        sap/ui/qunit/qunit-css.js
+      "
+    ></script>
+    <script src="allTests.js"></script>
+  </head>
+  <body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+  </body>
 </html>
