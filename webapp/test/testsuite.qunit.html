@@ -1,30 +1,12 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>QUnit TestSuite for OpenUI5 Todo App</title>
-		<script src="../resources/sap/ui/qunit/qunit-redirect.js"></script>
-		<script>
-
-		/**
-		 * Add test pages to this test suite function.
-		 */
-		function suite() {
-			var oSuite = new parent.jsUnitTestSuite(),
-				sContextPath = location.pathname.substring(0, location.pathname.lastIndexOf("/") + 1);
-
-			oSuite.addTestPage(sContextPath + "unit/unitTests.qunit.html");
-
-			var xhr = new XMLHttpRequest();
-			xhr.open("GET", "integration/AllJourneys.json", false);
-			xhr.send(null);
-			JSON.parse(xhr.responseText).forEach(function (name) {
-				oSuite.addTestPage(sContextPath + "integration/opaTests.qunit.html?journey=" + name);
-			});
-
-			return oSuite;
-		}
-		</script>
-	</head>
-	<body>
-	</body>
+  <head>
+    <title>QUnit TestSuite for OpenUI5 Todo App</title>
+    <script
+      src="../load-ui5.js"
+	  data-only-includes="true"
+      data-includes="sap/ui/qunit/qunit-redirect.js"
+    ></script>
+    <script src="testsuite.qunit.js"></script>
+  </head>
 </html>
