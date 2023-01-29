@@ -12,6 +12,24 @@
 
 [![Travis-CI](https://travis-ci.org/ArnaudBuchholz/training-ui5con18-opa.svg?branch=master)](https://travis-ci.org/ArnaudBuchholz/training-ui5con18-opa#)
 
+### 2019: Use UI5 to test your ODATA service
+
+_The pyramid of test shows a clear distinction between unit testing (the base) and integration testing (the level right above unit testing). The SAP Fiori development scheme distinguishes the UI (based on UI5) and the backend which exposes entities through OData services._
+
+_When it comes to UI testing, UI5 offers OPA to validate its behavior. Regarding backend, there are many tools (Postman, JMeter, Fiddler, curl...) that can trigger OData call and analyze the results. However, they are rather low-level and simulating complex scenarios (such as ETag or $batch requests) requires extra effort._
+
+_Actually, it is now possible to blur the lines by leveraging UI5 helpers to automate OData validation._
+
+_This presentation will introduce node-ui5 (https://www.npmjs.com/package/node-ui5), a NodeJS package that embeds the phenomenal cosmic powers of OpenUI5 inside the itty-bitty living space of a NodeJS command line._
+
+* [Slides](https://arnaudbuchholz.github.io/decks/UI5Con'19%20Advanced%20Testing%20with%20UI5#/)
+* [Recording](https://youtu.be/TB5bpvJo-zc)
+
+**NOTE:** to run all samples, ___do not___ execute `npm start` but the following command instead:
+```sh
+node serve
+```
+
 ## Prerequisites
 - The **UI5 CLI** of the [UI5 Build and Development Tooling](https://github.com/SAP/ui5-tooling#installing-the-ui5-cli).
     - For installation instructions please see: [Installing the UI5 CLI](https://github.com/SAP/ui5-tooling#installing-the-ui5-cli).
