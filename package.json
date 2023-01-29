@@ -15,7 +15,8 @@
     "ui5con19": "start-server-and-test serve-qunit-mockserver http://localhost:8080 setup-ui5con19",
     "serve-qunit-mockserver": "ui5 serve -o test/unit/unitTests.qunit.html?module=MockServer",
     "setup-ui5con19": "node ./workshop/setup ui5con19-mockserver",
-    "reserve": "reserve"
+    "reserve": "reserve",
+    "ui5-version": "node ui5-version"
   },
   "dependencies": {
     "@openui5/sap.m": "^1.110.0",
