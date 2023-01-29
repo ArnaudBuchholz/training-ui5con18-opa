@@ -2,6 +2,7 @@
   "use strict";
   var oninit = document.currentScript.dataset.oninit;
   var includes = document.currentScript.dataset.includes;
+  var onlyIncludes = document.currentScript.dataset.onlyIncludes === "true";
   var relPath = "";
   var pathnames = location.pathname.split('/');
   pathnames.pop(); // page url
@@ -33,11 +34,13 @@
     }),
     "data-sap-ui-oninit": oninit
   };
-  document.write('<script ');
-  Object.keys(attributes).forEach(function (name) {
-    document.write(name + "='" + attributes[name] + "'");
-  });
-  document.write('></script>');
+  if (!onlyIncludes) {
+    document.write('<script ');
+    Object.keys(attributes).forEach(function (name) {
+      document.write(name + "='" + attributes[name] + "'");
+    });
+    document.write('></script>');
+  }
   var handlers = {
     ".js": function (include) {
       document.write("<script src=\"" + ui5base + "resources/" + include + "\"></script>");
