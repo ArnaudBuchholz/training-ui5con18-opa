@@ -15,7 +15,7 @@
   var ui5base = "";
   /* istanbul ignore next */ // Switch for github publishing
   if (location.toString().startsWith('https://')) {
-    ui5base = "https://ui5.sap.com/1.109.0/";
+    ui5base = "https://ui5.sap.com/1.110.0/";
   } else {
     ui5base = relPath;
   }
