@@ -35,18 +35,19 @@
     "data-sap-ui-oninit": oninit
   };
   if (!onlyIncludes) {
-    document.write('<script ');
-    Object.keys(attributes).forEach(function (name) {
-      document.write(name + "='" + attributes[name] + "'");
+    var ui5ScriptParts = Object.keys(attributes).map(function (name) {
+      return name + "='" + attributes[name] + "'";
     });
-    document.write('></script>');
+    ui5ScriptParts.unshift("<script ")
+    ui5ScriptParts.push("><", "/script>\n")
+    document.write(ui5ScriptParts.join(""));
   }
   var handlers = {
     ".js": function (include) {
-      document.write("<script src=\"" + ui5base + "resources/" + include + "\"></script>");
+      document.write("<script src=\"" + ui5base + "resources/" + include + "\"><" + "/script>\n");
     },
     ".css": function (include) {
-      document.write("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + ui5base + "resources/" + include + "\"></link>");
+      document.write("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + ui5base + "resources/" + include + "\"><" + "/link>\n");
     }
   }
   if (includes) {
