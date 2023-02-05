@@ -6,9 +6,13 @@
     <meta charset="utf-8">
     <script
       src="../../load-ui5.js"
-      data-includes="sap/ui/thirdparty/qunit-2.css"
+      data-oninit="module:sap/ui/demo/todo/test/integration/init"
+      data-includes="
+        sap/ui/thirdparty/qunit-2.js,
+        sap/ui/thirdparty/qunit-2.css
+      "
     ></script>
-    <script src="AllJourneys.js"></script>
+    <script src="../qunit.autostart.js"></script>
   </head>
   <body>
     <div id="qunit"></div>
