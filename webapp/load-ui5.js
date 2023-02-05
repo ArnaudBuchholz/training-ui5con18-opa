@@ -36,7 +36,7 @@
     append("script", {
       id: "sap-ui-bootstrap",
       type: "text/javascript",
-      src: ui5base + "resources/sap-ui-core-dbg.js",
+      src: ui5base + "resources/sap-ui-core.js",
       "data-sap-ui-theme": "sap_belize",
       "data-sap-ui-libs": "sap.m",
       "data-sap-ui-bindingSyntax": "complex",
