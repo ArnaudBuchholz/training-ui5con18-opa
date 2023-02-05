@@ -1,9 +1,3 @@
-jQuery.sap.require("sap.ui.thirdparty.qunit");
-jQuery.sap.require("sap.ui.qunit.qunit-junit");
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-QUnit.config.hidepassed = true;
-QUnit.config.autostart = false;
-
 sap.ui.require([
 	"sap/ui/test/Opa5",
 	"sap/ui/demo/todo/test/integration/pages/Common",
@@ -14,13 +8,15 @@ sap.ui.require([
 ], function(Opa5, Common) {
 	"use strict";
 
+	QUnit.config.hidepassed = true;
+
 	Opa5.extendConfig({
 		arrangements: new Common(),
 		autoWait: true,
 		viewName: "sap.ui.demo.todo.view.App", // Since we have only one view
 		timeout: 15,
 		debugTimeout: 15,
-		pollingInterval: 50 // Aggressive one to speed up demo
+		pollingInterval: 250 // Aggressive one to speed up demo
 	});
 
 	var sJourney = jQuery.sap.getUriParameters().get("journey");
