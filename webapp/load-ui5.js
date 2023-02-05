@@ -23,20 +23,20 @@
     ui5base = relPath;
   }
 
-  function write (tagName, attributes) {
-    var parts = Object.keys(attributes).map(function (name) {
-      return name + "='" + attributes[name] + "'";
+  var parts = [];
+  function append (tagName, attributes) {
+    parts.push("<", tagName, " ");
+    Object.keys(attributes).map(function (name) {
+      parts.push(name, "='", attributes[name], "'");
     });
-    parts.unshift("<", tagName, " ");
     parts.push("><", "/" + tagName + ">\n");
-    document.write(parts.join(""));
   }
 
   if (!onlyIncludes) {
-    write("script", {
+    append("script", {
       id: "sap-ui-bootstrap",
       type: "text/javascript",
-      src: ui5base + "resources/sap-ui-core.js",
+      src: ui5base + "resources/sap-ui-core-dbg.js",
       "data-sap-ui-theme": "sap_belize",
       "data-sap-ui-libs": "sap.m",
       "data-sap-ui-bindingSyntax": "complex",
@@ -51,10 +51,10 @@
 
   var handlers = {
     ".js": function (include) {
-      write("script", { src: ui5base + "resources/" + include });
+      append("script", { src: ui5base + "resources/" + include });
     },
     ".css": function (include) {
-      write("link", { rel: "stylesheet", type: "text/css", href: ui5base + "resources/" + include });
+      append("link", { rel: "stylesheet", type: "text/css", href: ui5base + "resources/" + include });
     }
   }
   if (includes) {
@@ -66,5 +66,10 @@
       .forEach(function (include) {
         handlers[include.match(/\.\w+$/)[0]](include)
       });
+    if (includes.match(/qunit(-2)?\.js/)) {
+      append("script", { src: "../qunit.autostart.js" });
+    }
   }
+
+  document.write(parts.join(""));
 }());
