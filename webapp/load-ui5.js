@@ -41,7 +41,7 @@
       "data-sap-ui-libs": "sap.m",
       "data-sap-ui-bindingSyntax": "complex",
       "data-sap-ui-compatVersion": "edge",
-      "data-sap-ui-preload": "async",
+      "data-sap-ui-async": "true",
       "data-sap-ui-resourceroots": JSON.stringify({
         "sap.ui.demo.todo": relPath
       }),
