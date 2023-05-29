@@ -1,4 +1,4 @@
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/test/opaQunit",
 	"sap/ui/demo/todo/test/integration/pages/Filters"
 ], function(opaTest, filters) {
