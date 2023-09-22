@@ -28,7 +28,7 @@
     "@stryker-mutator/core": "^7.1.1",
     "@stryker-mutator/karma-runner": "^7.1.1",
     "@ui5/cli": "^3.6.0",
-    "@ui5/middleware-code-coverage": "^1.0.3",
+    "@ui5/middleware-code-coverage": "^1.1.0",
     "colors": "^1.4.0",
     "eslint": "^8.49.0",
     "gpf-js": "^1.0.0",
@@ -44,7 +44,7 @@
     "reserve": "^1.15.3",
     "rimraf": "^5.0.1",
     "sinon": "^16.0.0",
-    "start-server-and-test": "^2.0.0"
+    "start-server-and-test": "^2.0.1"
   },
   "optionalDependencies": {
     "node-ui5": "^2.0.4"
