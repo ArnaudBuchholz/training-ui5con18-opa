@@ -4,6 +4,7 @@
   "description": "Sample app to demonstrate UI5's OPA (UICon'18)",
   "private": true,
   "scripts": {
+    "clean": "rimraf dist & rimraf report & rimraf .nyc_output & rimraf coverage",
     "start": "ui5 serve -o index.html",
     "serve": "ui5 serve",
     "lint": "eslint demos webapp workshop",
