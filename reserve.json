@@ -2,7 +2,7 @@
   "port": 8080,
   "mappings": [{
     "match": "/(test-)?resources/(.*)",
-    "url": "https://ui5.sap.com/1.118.0/$1resources/$2"
+    "url": "https://ui5.sap.com/1.120.6/$1resources/$2"
   }, {
     "match": "^/(\\?.*)?$",
     "file": "./webapp/index.html"

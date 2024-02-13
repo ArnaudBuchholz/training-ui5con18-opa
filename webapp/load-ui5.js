@@ -17,8 +17,8 @@
   }
   var ui5base = "";
   /* istanbul ignore next */ // Switch for online publishing
-  if (location.toString().startsWith('https://')) {
-    ui5base = "https://ui5.sap.com/1.118.0/";
+  if (location.toString().match(/^https?:\/\//)) {
+    ui5base = "https://ui5.sap.com/1.120.6/";
   } else {
     ui5base = relPath;
   }

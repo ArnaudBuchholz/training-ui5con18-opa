@@ -20,32 +20,32 @@
     "ui5-version": "node ui5-version"
   },
   "dependencies": {
-    "@openui5/sap.m": "^1.118.0",
-    "@openui5/sap.ui.core": "^1.118.0",
-    "@openui5/sap.ui.layout": "^1.118.0",
-    "@openui5/themelib_sap_belize": "^1.118.0"
+    "@openui5/sap.m": "^1.120.6",
+    "@openui5/sap.ui.core": "^1.120.6",
+    "@openui5/sap.ui.layout": "^1.120.6",
+    "@openui5/themelib_sap_belize": "^1.120.6"
   },
   "devDependencies": {
-    "@stryker-mutator/core": "^7.1.1",
-    "@stryker-mutator/karma-runner": "^7.1.1",
-    "@ui5/cli": "^3.6.0",
-    "@ui5/middleware-code-coverage": "^1.1.0",
+    "@stryker-mutator/core": "^8.2.3",
+    "@stryker-mutator/karma-runner": "^8.2.3",
+    "@ui5/cli": "^3.9.1",
+    "@ui5/middleware-code-coverage": "^1.1.1",
     "colors": "^1.4.0",
-    "eslint": "^8.49.0",
+    "eslint": "^8.56.0",
     "gpf-js": "^1.0.0",
-    "inquirer": "^9.2.11",
+    "inquirer": "^9.2.14",
     "karma": "^6.4.2",
     "karma-chrome-launcher": "^3.2.0",
     "karma-coverage": "^2.2.1",
-    "karma-ui5": "^3.0.3",
+    "karma-ui5": "^3.0.4",
     "lodash": "^4.17.21",
-    "mocha": "^10.2.0",
+    "mocha": "^10.3.0",
     "node-qunit": "^2.0.0",
-    "qunit": "^2.19.4",
-    "reserve": "^1.15.3",
-    "rimraf": "^5.0.1",
-    "sinon": "^16.0.0",
-    "start-server-and-test": "^2.0.1"
+    "qunit": "^2.20.0",
+    "reserve": "^1.15.6",
+    "rimraf": "^5.0.5",
+    "sinon": "^17.0.1",
+    "start-server-and-test": "^2.0.3"
   },
   "optionalDependencies": {
     "node-ui5": "^2.0.4"
