@@ -66,7 +66,7 @@
       .forEach(function (include) {
         handlers[include.match(/\.\w+$/)[0]](include)
       });
-    if (includes.match(/qunit(-2)?\.js/)) {
+    if (includes.match(/qunit(-2)?\.js/) && !location.toString().match(/loose/)) {
       append("script", { src: "../qunit.autostart.js" });
     }
   }

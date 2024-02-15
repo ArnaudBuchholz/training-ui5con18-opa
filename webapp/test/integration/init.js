@@ -37,6 +37,8 @@ sap.ui.require([
 		return "sap/ui/demo/todo/test/integration/" + name;
 	}), function () {
 		QUnit.config.testTimeout = 300 * 1000;
-		QUnit.start();
+		if (!QUnit.config.autostart) {
+			QUnit.start();
+		}
 	});
 });

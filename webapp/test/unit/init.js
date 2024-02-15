@@ -17,9 +17,13 @@ sap.ui.require([
 		"sap/ui/demo/todo/test/unit/controller/App.controller"
 	];
 	if (typeof window.__karma__ === "undefined") {
-		aTests.push("sap/ui/demo/todo/test/unit/test/MockServer")
+		aTests.push("sap/ui/demo/todo/test/unit/test/MockServer");
 	}
 	sap.ui.require(aTests, function () {
-		QUnit.start();
+		if (!QUnit.config.autostart) {
+			QUnit.start();
+		} else {
+			console.log('⚠️ because autostart was not prevented, order is not guaranteed. Tests may fail.');
+		}
 	});
 });
