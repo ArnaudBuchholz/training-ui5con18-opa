@@ -11,7 +11,9 @@
     "karma": "karma start",
     "karma-ci": "karma start karma-ci.conf.js",
     "watch": "start-server-and-test start http://localhost:8080 karma",
-    "test": "npm run lint && rimraf coverage && start-server-and-test serve http://localhost:8080 karma-ci",
+    "test:karma": "npm run lint && rimraf coverage && start-server-and-test serve http://localhost:8080 karma-ci",
+    "ui5-test-runner": "ui5-test-runner --port 8081 --url http://localhost:8080/test/testsuite.qunit.html --coverage",
+    "test": "npm run lint && rimraf coverage report && start-server-and-test serve http://localhost:8080 ui5-test-runner",
     "build": "rimraf dist && ui5 build --a",
     "ui5con19": "start-server-and-test serve-qunit-mockserver http://localhost:8080 setup-ui5con19",
     "serve-qunit-mockserver": "ui5 serve -o test/unit/unitTests.qunit.html?module=MockServer",
@@ -20,32 +22,33 @@
     "ui5-version": "node ui5-version"
   },
   "dependencies": {
-    "@openui5/sap.m": "^1.120.6",
-    "@openui5/sap.ui.core": "^1.120.6",
-    "@openui5/sap.ui.layout": "^1.120.6",
-    "@openui5/themelib_sap_belize": "^1.120.6"
+    "@openui5/sap.m": "^1.121.0",
+    "@openui5/sap.ui.core": "^1.121.0",
+    "@openui5/sap.ui.layout": "^1.121.0",
+    "@openui5/themelib_sap_belize": "^1.121.0"
   },
   "devDependencies": {
-    "@stryker-mutator/core": "^8.2.3",
-    "@stryker-mutator/karma-runner": "^8.2.3",
+    "@stryker-mutator/core": "^8.2.6",
+    "@stryker-mutator/karma-runner": "^8.2.6",
     "@ui5/cli": "^3.9.1",
     "@ui5/middleware-code-coverage": "^1.1.1",
     "colors": "^1.4.0",
-    "eslint": "^8.56.0",
+    "eslint": "^8.57.0",
     "gpf-js": "^1.0.0",
-    "inquirer": "^9.2.14",
-    "karma": "^6.4.2",
+    "inquirer": "^9.2.15",
+    "karma": "^6.4.3",
     "karma-chrome-launcher": "^3.2.0",
     "karma-coverage": "^2.2.1",
     "karma-ui5": "^3.0.4",
     "lodash": "^4.17.21",
     "mocha": "^10.3.0",
     "node-qunit": "^2.0.0",
-    "qunit": "^2.20.0",
-    "reserve": "^1.15.6",
+    "qunit": "^2.20.1",
+    "reserve": "^1.15.8",
     "rimraf": "^5.0.5",
     "sinon": "^17.0.1",
-    "start-server-and-test": "^2.0.3"
+    "start-server-and-test": "^2.0.3",
+    "ui5-test-runner": "^4.3.0"
   },
   "optionalDependencies": {
     "node-ui5": "^2.0.4"
