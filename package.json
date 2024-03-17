@@ -22,7 +22,7 @@
     "ui5-version": "node ui5-version",
     "demo:clean": "rimraf coverage report .nyc_output && npm uninstall --global ui5-test-runner nyc puppeteer selenium-webdriver playwright jsdom",
     "demo:preload": "ui5-test-runner --coverage --cache .ui5 --preload sap.m sap.ui.layout --no-screenshot --parallel 4",
-    "demo:offline": "ui5-test-runner --coverage --offline"
+    "demo:offline": "ui5-test-runner --coverage --cache .ui5 --offline"
   },
   "dependencies": {
     "@openui5/sap.m": "^1.121.1",
