@@ -19,13 +19,16 @@
     "serve-qunit-mockserver": "ui5 serve -o test/unit/unitTests.qunit.html?module=MockServer",
     "setup-ui5con19": "node ./workshop/setup ui5con19-mockserver",
     "reserve": "reserve",
-    "ui5-version": "node ui5-version"
+    "ui5-version": "node ui5-version",
+    "demo:clean": "rimraf coverage report .nyc_output && npm uninstall --global ui5-test-runner nyc puppeteer selenium-webdriver playwright jsdom",
+    "demo:preload": "ui5-test-runner --coverage --cache .ui5 --preload sap.m sap.ui.layout --no-screenshot --parallel 4",
+    "demo:offline": "ui5-test-runner --coverage --offline"
   },
   "dependencies": {
-    "@openui5/sap.m": "^1.121.0",
-    "@openui5/sap.ui.core": "^1.121.0",
-    "@openui5/sap.ui.layout": "^1.121.0",
-    "@openui5/themelib_sap_belize": "^1.121.0"
+    "@openui5/sap.m": "^1.121.1",
+    "@openui5/sap.ui.core": "^1.121.1",
+    "@openui5/sap.ui.layout": "^1.121.1",
+    "@openui5/themelib_sap_belize": "^1.121.1"
   },
   "devDependencies": {
     "@stryker-mutator/core": "^8.2.6",
@@ -35,7 +38,7 @@
     "colors": "^1.4.0",
     "eslint": "^8.57.0",
     "gpf-js": "^1.0.0",
-    "inquirer": "^9.2.15",
+    "inquirer": "^9.2.16",
     "karma": "^6.4.3",
     "karma-chrome-launcher": "^3.2.0",
     "karma-coverage": "^2.2.1",
@@ -48,7 +51,7 @@
     "rimraf": "^5.0.5",
     "sinon": "^17.0.1",
     "start-server-and-test": "^2.0.3",
-    "ui5-test-runner": "^4.3.0"
+    "ui5-test-runner": "^4.4.0"
   },
   "optionalDependencies": {
     "node-ui5": "^2.0.4"
