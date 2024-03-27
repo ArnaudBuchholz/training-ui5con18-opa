@@ -1,1 +1,1 @@
-QUnit.config.autostart = false;
+// QUnit.config.autostart = false;
