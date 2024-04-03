@@ -3,7 +3,7 @@ module.exports = function (config) {
   config.set({
     frameworks: ['ui5'],
     ui5: {
-      url: "https://ui5.sap.com/1.121.1"
+      url: "https://ui5.sap.com/1.122.1"
     },    
     reporters: ['progress'],
     logLevel: config.LOG_INFO,
