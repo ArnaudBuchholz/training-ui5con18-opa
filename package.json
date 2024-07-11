@@ -23,8 +23,7 @@
     "ui5-version": "node ui5-version",
     "demo:clean": "rimraf coverage report .nyc_output && npm uninstall --global ui5-test-runner nyc puppeteer selenium-webdriver playwright jsdom",
     "demo:preload": "ui5-test-runner --coverage --cache .ui5 --preload sap.m sap.ui.layout --no-screenshot --parallel 4",
-    "demo:offline": "ui5-test-runner --coverage --cache .ui5 --offline",
-    "wdio": "wdio run ./wdio.conf.js"
+    "demo:offline": "ui5-test-runner --coverage --cache .ui5 --offline"
   },
   "dependencies": {
     "@openui5/sap.m": "^1.125.0",
@@ -37,8 +36,8 @@
     "@stryker-mutator/karma-runner": "^8.2.6",
     "@ui5/cli": "^3.11.0",
     "@ui5/middleware-code-coverage": "^1.1.1",
-    "@wdio/browser-runner": "^8.39.1",
     "@wdio/cli": "^8.39.1",
+    "@wdio/local-runner": "^8.39.1",
     "@wdio/mocha-framework": "^8.39.0",
     "@wdio/spec-reporter": "^8.39.0",
     "colors": "^1.4.0",

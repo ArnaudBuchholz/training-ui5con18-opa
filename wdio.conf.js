@@ -4,7 +4,7 @@ exports.config = {
     // Runner Configuration
     // ====================
     // WebdriverIO supports running e2e tests as well as unit and component tests.
-    runner: 'browser',
+    runner: 'local',
     //
     // ==================
     // Specify Test Files
@@ -21,7 +21,6 @@ exports.config = {
     // of the config file unless it's absolute.
     //
     specs: [
-        './wdio.test.js'
     ],
     // Patterns to exclude.
     exclude: [
@@ -86,6 +85,13 @@ exports.config = {
     // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
     // gets prepended directly.
     baseUrl: 'http://localhost:8080',
+    services: [
+      ['qunit', {
+        paths: [
+          'test/unit/unitTests.qunit.html'
+        ]
+      }]
+    ],    
     //
     // Default timeout for all waitFor* commands.
     waitforTimeout: 10000,
