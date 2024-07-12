@@ -85,13 +85,6 @@ exports.config = {
     // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
     // gets prepended directly.
     baseUrl: 'http://localhost:8080',
-    services: [
-      ['qunit', {
-        paths: [
-          'test/unit/unitTests.qunit.html'
-        ]
-      }]
-    ],    
     //
     // Default timeout for all waitFor* commands.
     waitforTimeout: 10000,
@@ -107,7 +100,14 @@ exports.config = {
     // Services take over a specific job you don't want to take care of. They enhance
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
-    services: ['qunit'],
+    services: [
+      ['qunit', {
+        paths: [
+          'test/unit/unitTests.qunit-v2.html',
+          'test/integration/opaTests.qunit.html',
+        ]
+      }]
+    ],    
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
     // see also: https://webdriver.io/docs/frameworks
