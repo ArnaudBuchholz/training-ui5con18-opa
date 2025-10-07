@@ -15,6 +15,7 @@
     "ui5-test-runner": "ui5-test-runner --port 8081 --url http://localhost:8080/test/testsuite.qunit.html --coverage",
     "wdio": "wdio run ./wdio.conf.js",
     "test": "npm run lint && rimraf coverage report && start-server-and-test serve http://localhost:8080 ui5-test-runner",
+    "test2": "npm run lint && rimraf coverage report && node ../ui5-test-runner --start serve --port 8081 --url http://localhost:8080/test/testsuite.qunit.html --coverage",
     "build": "rimraf dist && ui5 build --a",
     "ui5con19": "start-server-and-test serve-qunit-mockserver http://localhost:8080 setup-ui5con19",
     "serve-qunit-mockserver": "ui5 serve -o test/unit/unitTests.qunit.html?module=MockServer",
@@ -23,7 +24,8 @@
     "ui5-version": "node ui5-version",
     "demo:clean": "rimraf coverage report .nyc_output && npm uninstall --global ui5-test-runner nyc puppeteer selenium-webdriver playwright jsdom",
     "demo:preload": "ui5-test-runner --coverage --cache .ui5 --preload sap.m sap.ui.layout --no-screenshot --parallel 4",
-    "demo:offline": "ui5-test-runner --coverage --cache .ui5 --offline"
+    "demo:offline": "ui5-test-runner --coverage --cache .ui5 --offline",
+    "update": "ncu -i --format group"
   },
   "dependencies": {
     "@openui5/sap.m": "^1.125.0",
@@ -51,6 +53,7 @@
     "lodash": "^4.17.21",
     "mocha": "^10.6.0",
     "node-qunit": "^2.0.0",
+    "npm-check-updates": "^19.0.0",
     "qunit": "^2.21.0",
     "reserve": "^2.0.2",
     "rimraf": "^6.0.0",
